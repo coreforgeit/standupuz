@@ -1,40 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="img/icon_black.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/basic_style.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/media.css">
+    <link rel="shortcut icon" href="../static/site/img/icon_black.png" type="image/x-icon">
+    <link rel="stylesheet" href="../static/site/css/basic_style.css">
+    <link rel="stylesheet" href="../static/site/css/sidenav_modal.css">
+    <link rel="stylesheet" href="../static/site/css/style.css">
+    <link rel="stylesheet" href="../static/site/css/media.css">
     <title>StandUp - О нас</title>
 </head>
+
 <body>
+
+    <ul id="slide-out" class="sidenav">
+        <li><a class="sidenav-close" href="#!"><img src="../static/site/img/Vector.svg" alt=""></a></li>
+        <li><a class="sidenav-close" href="index_affiche.html">Афиша</a></li>
+        <li><a class="sidenav-close" href="#">О проекте</a></li>
+    </ul>
 
     <header class="header">
         <div class="conteiner">
             <div class="header_flex">
                 <div class="header_logo">
-                    <img class="logo" src="img/WhiteSUz_wof_Png 2.svg" alt="Stadup">
+                    <img class="logo" src="../static/site/img/WhiteSUz_wof_Png 2.svg" alt="Stadup">
                 </div>
                 <div class="header_menu">
                     <ul class="header_menu_ul">
-                        <li><a class="menu_notActiv" href="index.html">Афиша</a></li>
+                        <li><a class="menu_notActiv" href="index_affiche.html">Афиша</a></li>
                         <li><a class="menu_activ" href="#">О проекте</a></li>
                     </ul>
                 </div>
                 <div class="header_right">
-                    <div class="header_right_phone">
+                    <div class="header_right_burger">
+                        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons"><img
+                                    src="../static/site/img/Menu.svg" alt="menu"></i></a>
+                    </div>
+                    <div class="header_right_phone phone">
                         <a href="tel:+998333333333">+ 998 33 333 33 33</a>
                     </div>
                     <div class="header_right_contacts">
-                        <a href="#"><img src="img/Instagram.svg" alt=""></a>
-                        <a href="#"><img src="img/Telegram.svg" alt=""></a>
+                        <a href="#"><img src="../static/site/img/Instagram.svg" alt=""></a>
+                        <a href="#"><img src="../static/site/img/Telegram.svg" alt=""></a>
                     </div>
                 </div>
             </div>
         </div>
     </header>
+
+    <div class="about_flex">
+
+        <section class="about">
+            <div class="conteiner">
+                <h3 class="about-h3">Мы русскоязычное стендап-сообщество в Узбекистане. </h3>
+                    <ul class="about-ul">
+                        <li>У нас собраны местные комики, релоканты, эмигранты и гасторлёры. </li>
+                        <li>Мы проводим разные комедийные шоу каждую неделю. </li>
+                        <li>Если вам требуется комик для корпоративного мероприятия, дня рождения или свадьбы, мы готовы предоставить вам наших талантливых артистов. Для вопросов о сотрудничестве свяжитесь с нами через Telegram по <a class="aLinkLi" href="#">ссылке</a> или напишите нам в директ <a class="aLinkLi" href="#">Instagram</a>.</li>
+                    </ul>
+                    <p class="about-p">Присоединяйтесь к нам и наслаждайтесь стендапом и комедийными шоу различных форматов!
+                    </p>
+            </div>
+        </section>
     
+        <footer class="footer">
+            <div class="conteiner">
+                <div class="footer_flex">
+                    <div class="phone">
+                        <a href="tel:+998333333333">+ 998 33 333 33 33</a>
+                    </div>
+                    <div class="header_right_contacts">
+                        <a href="#"><img src="../static/site/img/Instagram.svg" alt=""></a>
+                        <a href="#"><img src="../static/site/img/Telegram.svg" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    
+
+    <script type="text/javascript" src="../static/site/js/materialize.min.js"></script>
+    <script src="../static/site/js/demo_cards_standupuz.js"></script>
+    <script type="text/javascript" src="../static/site/js/main.js"></script>
+
 </body>
+
 </html>

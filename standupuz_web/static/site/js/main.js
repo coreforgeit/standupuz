@@ -91,7 +91,7 @@ function createCards(selector, array) {
     document.querySelector(selector).append(item)
   }
 }
-createCards('.cards_grid', cards['card_data'])
+createCards('.cards_grid', cards)
 
 function createModal(selector, array) {
   for (let i = 0; i < array.length; i++) {
@@ -151,7 +151,7 @@ function createModal(selector, array) {
     document.querySelector(selector).append(mod)
   }
 }
-createModal('body', cards['card_data'])
+createModal('body', cards)
 
 
 
