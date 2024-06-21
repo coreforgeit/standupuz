@@ -2,9 +2,10 @@ FROM python:3.11.5
 
 # Устанавливаем зависимости
 WORKDIR /app
-COPY /requirements/admin.txt /app/admin.txt
+#COPY /requirements/admin.txt /app/admin.txt
+COPY /requirements/site.txt .
 RUN pip install --upgrade pip && pip install --no-cache-dir -r admin.txt
-RUN pip install python-decouple
+#RUN #pip install -r site.txt
 
 COPY /standupuz_web .
 

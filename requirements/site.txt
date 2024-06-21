@@ -1,0 +1,4 @@
+pytelegrambotapi
+django
+pillow
+psycopg2

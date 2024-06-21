@@ -11,7 +11,7 @@ from .sqlite_temp import get_events, get_entities
 
 class EventRow(t.Protocol):
     id: int
-    create_at: datetime
+    created_at: datetime
     title: str
     event_date: date
     event_time: time
@@ -29,7 +29,7 @@ EventTable: sa.Table = sa.Table(
     METADATA,
 
     sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
-    sa.Column('create_at', sa.DateTime(timezone=True)),
+    sa.Column('created_at', sa.DateTime(timezone=True)),
     sa.Column('title', sa.String(255)),
     sa.Column('event_date', sa.Date()),
     sa.Column('event_time', sa.Time()),
@@ -60,7 +60,7 @@ async def add_event(
 ) -> None:
     now = datetime.now(Config.tz)
     query = EventTable.insert().values(
-        create_at=now,
+        created_at=now,
         title=title,
         event_date=event_date,
         event_time=event_time,
@@ -87,7 +87,7 @@ async def add_events():
             title=event[2],
             event_date=datetime.strptime(event[3], '%d.%m').date(),
             event_time=datetime.strptime(event[4], '%H:%M').time(),
-            text=event[6],
+            text=event[5],
             entities=event_entities,
             photo_id=event[6],
             is_active=True,

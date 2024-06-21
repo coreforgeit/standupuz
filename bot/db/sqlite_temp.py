@@ -39,3 +39,11 @@ def get_entities(event_id) -> list:
         entities.append(entity)
 
     return entities
+
+
+def get_options():
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+    result = cur.execute('select * from events_options').fetchall()
+    cur.close()
+    return result

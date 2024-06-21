@@ -1,5 +1,4 @@
 from pathlib import Path
-# from decouple import config
 
 import os
 
@@ -9,6 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
 DEBUG = bool(int(os.getenv('DEBUG')))
+# DEBUG = bool(int(config('DEBUG')))
+
+TOKEN_BOT = os.getenv('TOKEN_BOT')
 
 ALLOWED_HOSTS = ['*']
 
@@ -16,6 +18,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'events',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -66,6 +69,12 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }}
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -92,15 +101,14 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Asia/Tashkent'
-
 USE_I18N = True
-
 USE_TZ = True
 
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
