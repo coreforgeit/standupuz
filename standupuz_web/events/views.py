@@ -16,6 +16,7 @@ time_str_format = '%H:%M'
 # новые заказы
 def new_orders_view(request: HttpRequest):
     events = Event.objects.filter(is_active=True).all()
+    print(f'len {len(events)}')
     card_data = []
     for event in events:
         option = Option.objects.filter(event_id=event.id).order_by('price').first()

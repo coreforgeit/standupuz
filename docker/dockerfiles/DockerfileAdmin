@@ -2,8 +2,8 @@ FROM python:3.11.5
 
 # Устанавливаем зависимости
 WORKDIR /app
-#COPY /requirements/admin.txt /app/admin.txt
-COPY /requirements/site.txt .
+COPY /requirements/admin.txt /app/admin.txt
+#COPY /requirements/site.txt .
 RUN pip install --upgrade pip && pip install --no-cache-dir -r admin.txt
 #RUN #pip install -r site.txt
 

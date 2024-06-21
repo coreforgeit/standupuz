@@ -29,19 +29,19 @@ services:
       - ../standupuz_web/.env
 
 
-  bot:
-    build:
-      context: ..
-      dockerfile: /docker/dockerfiles/DockerfileBot
-      args:
-        - --no-cache
-    container_name: bot
-    volumes:
-      - ../bot:/app
-    depends_on:
-      - db
-    env_file:
-      - ../bot/.env
+#  bot:
+#    build:
+#      context: ..
+#      dockerfile: /docker/dockerfiles/DockerfileBot
+#      args:
+#        - --no-cache
+#    container_name: bot
+#    volumes:
+#      - ../bot:/app
+#    depends_on:
+#      - db
+#    env_file:
+#      - ../bot/.env
 
 
   nginx:

@@ -162,6 +162,36 @@ body {
     font-size: 20px;
 }
 
+.cards_mob {
+}
+.card_mob_img {
+}
+.card_mob_p {
+}
+.card_mob_footer {
+    display: flex;
+    gap: 5px;
+}
+.card_mob_btn_tg {
+    width: 100%;
+    height: 45px;
+    border-radius: 10px;
+    background: rgba(247, 225, 226, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(128, 52, 56, 1);
+}
+.card_mob_btn_copy {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: rgba(247, 225, 226, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .footer {
     background-color: rgba(128, 52, 56, 1);

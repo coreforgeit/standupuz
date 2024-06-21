@@ -11,8 +11,13 @@ function createCards(selector, array) {
   for (let i = 0; i < array.length; i++) {
     let item = document.createElement('a')
     item.classList.add('item', 'waves-effect', 'waves-light', 'btn', 'modal-trigger')
+    // if (window.innerWidth <= 768) {
+    //   item.setAttribute("href", `../static/templates/index_affiche_mob.html`);
+    // } else {
+    //   item.setAttribute("href", `#modal${i}`);
+    // }
     item.setAttribute("href", `#modal${i}`)
-    item.style.backgroundImage = "url('img/meet_1.png')"
+    item.style.backgroundImage = `url(${array[i]['photo_path']})`
 
     //информация о наличии мест
     let places = document.createElement('div')
@@ -93,6 +98,7 @@ function createCards(selector, array) {
 }
 createCards('.cards_grid', cards)
 
+
 function createModal(selector, array) {
   for (let i = 0; i < array.length; i++) {
     let mod = document.createElement('div')
@@ -152,6 +158,5 @@ function createModal(selector, array) {
   }
 }
 createModal('body', cards)
-
 
 
