@@ -18,8 +18,9 @@ async def main() -> None:
     # create_local_data_files()
     # await init_models()
     # await set_main_menu()
-    await bot.delete_webhook (drop_pending_updates=True)
-    await dp.start_polling(bot)
+    # await bot.delete_webhook (drop_pending_updates=True)
+    # await dp.start_polling(bot)
+    pass
 
 
 if __name__ == "__main__":

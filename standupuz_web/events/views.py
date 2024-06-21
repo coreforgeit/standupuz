@@ -15,6 +15,11 @@ time_str_format = '%H:%M'
 
 # новые заказы
 def new_orders_view(request: HttpRequest):
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    print('request.META')
+    for i in request.META:
+        print(i)
+
     events = Event.objects.filter(is_active=True).all()
     card_data = []
     for event in events:
