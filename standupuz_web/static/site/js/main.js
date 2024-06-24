@@ -11,12 +11,12 @@ function createCards(selector, array) {
   for (let i = 0; i < array.length; i++) {
     let item = document.createElement('a')
     item.classList.add('item', 'waves-effect', 'waves-light', 'btn', 'modal-trigger')
-    // if (window.innerWidth <= 768) {
-    //   item.setAttribute("href", `../static/templates/index_affiche_mob.html`);
-    // } else {
-    //   item.setAttribute("href", `#modal${i}`);
-    // }
-    item.setAttribute("href", `#modal${i}`)
+    if (window.innerWidth <= 768) {
+      item.setAttribute("href", `../templates/index_affiche_mob.html`);
+    } else {
+      item.setAttribute("href", `#modal${i}`);
+    }
+    // item.setAttribute("href", `#modal${i}`)
     item.style.backgroundImage = `url(${array[i]['photo_path']})`
 
     //информация о наличии мест
@@ -153,6 +153,18 @@ function createModal(selector, array) {
     let copy_img = document.createElement('img')
     copy_img.setAttribute('src', '../static/site/img/btn_copy.svg')
     btn_copy.appendChild(copy_img)
+
+    const linkToCopy = '#'
+    btn_copy.addEventListener('click', function(even) {
+      even.preventDefault();
+      navigator.clipboard.writeText(linkToCopy)
+        // .then(() => {
+        //   // alert('Link copied to clipboard!')
+        // })
+        .catch(err => {
+          console.error('Failed to copy link: ', err)
+        })
+    })
 
     document.querySelector(selector).append(mod)
   }
