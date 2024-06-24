@@ -14,26 +14,21 @@ time_str_format = '%H:%M'
 
 
 # новые заказы
-def new_orders_view(request: HttpRequest):
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    print('request.META')
-    for i in request.META:
-        print(i)
-
+def events_view(request: HttpRequest):
     events = Event.objects.filter(is_active=True).all()
-    print(f'len {len(events)}')
     card_data = []
     for event in events:
         option = Option.objects.filter(event_id=event.id).order_by('price').first()
         empty_options = Option.objects.filter(event_id=event.id, empty_place__gt=0).all()
-        print(len(empty_options))
 
         price = str(option.price) if option else '0'
         event: Event
         event_date: date = event.event_date
         event_time: time = event.event_time
+        photo = get_photo_url(event.photo_id)
         card_data.append({
-            'photo_path': get_photo_url(event.photo_id),
+            'event_id': photo,
+            'photo_path': photo,
             'places': 1 if empty_options else 0,
             'date_str': event_date.strftime(day_str_format),
             'time_str': event_time.strftime(time_str_format),
@@ -54,7 +49,19 @@ def new_orders_view(request: HttpRequest):
     return render(request, 'index_affiche.html', context)
 
 
-def orders_view(request: HttpRequest):
+def about_view(request: HttpRequest):
 
     context = {}
     return render(request, 'index_about.html', context)
+
+
+# мобильная о мероприятии
+def event_mob_view(request: HttpRequest):
+    print('>>>>>>>>>>>>>>>>>>')
+    for k, v in request.GET.items():
+        print(f'{k}: {v}')
+
+    evrnt_id = 10
+    events = Event.objects.get()
+    context = {}
+    return render(request, 'index_affiche_mob.html', context)

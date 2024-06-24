@@ -3,12 +3,13 @@ from django.urls import path
 from django.conf.urls.static import static
 
 from standupuz_web import settings
-from events.views import new_orders_view, orders_view
+from events.views import events_view, about_view
 
 urlpatterns = [
-    path('', new_orders_view, name='events'),
-    path('events/', new_orders_view, name='events'),
-    path('about/', orders_view, name='about'),
+    path('', events_view, name='events'),
+    path('events/', events_view, name='events'),
+    path('events_mob/', events_view, name='events'),
+    path('about/', about_view, name='about'),
     path('admin/', admin.site.urls),
 ]
 
