@@ -62,6 +62,6 @@ def event_mob_view(request: HttpRequest):
         print(f'{k}: {v}')
 
     evrnt_id = 10
-    events = Event.objects.get()
+    events = Event.objects.get(evrnt_id)
     context = {}
     return render(request, 'index_affiche_mob.html', context)
