@@ -12,7 +12,7 @@ function createCards(selector, array) {
     let item = document.createElement('a')
     item.classList.add('item', 'waves-effect', 'waves-light', 'btn', 'modal-trigger')
     if (window.innerWidth <= 768) {
-      item.setAttribute("href", `../templates/index_affiche_mob.html`);
+      item.setAttribute("href", `../event_mob/${array[i]['event_id']}`);
     } else {
       item.setAttribute("href", `#modal${i}`);
     }
@@ -148,6 +148,7 @@ function createModal(selector, array) {
     let btn_copy = document.createElement('a')
     btn_copy.classList.add('btn_copy')
     btn_copy.setAttribute('href', '#')
+
     btn_all.appendChild(btn_copy)
     
     let copy_img = document.createElement('img')
@@ -172,14 +173,17 @@ function createModal(selector, array) {
 createModal('body', cards)
 
 function affiche_mob_img(selector, array) {
-  for (let i = 0; i < array.length; i++) {
+  // for (let i = 0; i < array.length; i++) {
     let afficheMobImg = createElement('img')
-    afficheMobImg.setAttribute('src', `${array[i]['photo_path']})`)
+    afficheMobImg.setAttribute('src', `${array['photo_path']})`)
     afficheMobImg.classList.add('mod_img')
 
     document.querySelector(selector).append(afficheMobImg)
-  }
+  // }
 }
-affiche_mob_img('.card_mob_img', cards)
+affiche_mob_img('.card_mob_img', card)
 
+// function affiche_mob_p(selector, array) {
+//   let afficheMobP = createElement()
+// }
 
