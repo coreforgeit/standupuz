@@ -171,4 +171,15 @@ function createModal(selector, array) {
 }
 createModal('body', cards)
 
+function affiche_mob_img(selector, array) {
+  for (let i = 0; i < array.length; i++) {
+    let afficheMobImg = createElement('img')
+    afficheMobImg.setAttribute('src', `${array[i]['photo_path']})`)
+    afficheMobImg.classList.add('mod_img')
+
+    document.querySelector(selector).append(afficheMobImg)
+  }
+}
+affiche_mob_img('.card_mob_img', cards)
+
 
