@@ -12,7 +12,8 @@ function createCards(selector, array) {
     let item = document.createElement('a')
     item.classList.add('item', 'waves-effect', 'waves-light', 'btn', 'modal-trigger')
     item.setAttribute("href", `#modal${i}`)
-    item.style.backgroundImage = "url('img/meet_1.png')"
+    //item.style.backgroundImage = `url(${array[i]['photo_path']})`
+    places.style.backgroundColor = 'rgba(128, 255, 117, 1)'
 
     //информация о наличии мест
     let places = document.createElement('div')
@@ -105,7 +106,7 @@ function createModal(selector, array) {
 
     //кнопка "закрыть"
     let close_mod = document.createElement('img')
-    close_mod.setAttribute('src', 'img/close_modal.svg')
+    close_mod.setAttribute('src', '../static/site/img/close_modal.svg')
     close_mod.classList.add('modal-close')
     mod_content.appendChild(close_mod)
 
@@ -122,7 +123,7 @@ function createModal(selector, array) {
 
     //контент_right
     let content_right = document.createElement('img')
-    content_right.setAttribute('src', 'img/meet_1.png')
+    content_right.setAttribute('src', '../static/site/img/meet_1.png')
     content_right.classList.add('mod_img')
     content.appendChild(content_right)
 
@@ -145,7 +146,7 @@ function createModal(selector, array) {
     btn_all.appendChild(btn_copy)
     
     let copy_img = document.createElement('img')
-    copy_img.setAttribute('src', 'img/btn_copy.svg')
+    copy_img.setAttribute('src', '../static/site/img/btn_copy.svg')
     btn_copy.appendChild(copy_img)
 
     document.querySelector(selector).append(mod)

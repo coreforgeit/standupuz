@@ -77,7 +77,7 @@ body {
     padding-bottom: 46px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 46px;
 }
 

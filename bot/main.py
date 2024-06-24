@@ -6,7 +6,7 @@ from handlers import dp
 from config import DEBUG
 from init import set_main_menu, bot, log_error
 from db.base import init_models, db_command
-# from db.users import add_users
+from db.users import add_users
 from db.events import add_events
 from db.options import add_options
 
@@ -14,6 +14,8 @@ from db.options import add_options
 async def main() -> None:
     # await db_command()
     # await init_models()
+    # await add_users()
+    # await add_events()
     # await add_options()
     # create_local_data_files()
     # await init_models()
