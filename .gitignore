@@ -2,4 +2,4 @@ bot/.env
 standupuz_web/.env
 docker/.env
 .env
-.idea
+.idea/
