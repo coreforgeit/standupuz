@@ -3,6 +3,7 @@ import typing as t
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as sa_postgresql
 from utilits.entities_utils import save_entities
+from utilits.text_utils import add_tags
 
 from .base import METADATA, begin_connection
 from config import Config
@@ -22,6 +23,7 @@ class EventRow(t.Protocol):
     text_1: str
     text_2: str
     text_3: str
+    text_site: str
 
 
 EventTable: sa.Table = sa.Table(
@@ -41,6 +43,7 @@ EventTable: sa.Table = sa.Table(
     sa.Column('text_1', sa.Text()),
     sa.Column('text_2', sa.Text()),
     sa.Column('text_3', sa.Text()),
+    # sa.Column('text_site', sa.Text()),
 )
 
 
@@ -56,6 +59,7 @@ async def add_event(
         text_1: str,
         text_2: str,
         text_3: str,
+        # text_site: str
 
 ) -> None:
     now = datetime.now(Config.tz)
@@ -72,6 +76,7 @@ async def add_event(
         text_1=text_1,
         text_2=text_2,
         text_3=text_3,
+        # text_site=text_site,
     )
     async with begin_connection() as conn:
         await conn.execute(query)
@@ -82,20 +87,23 @@ async def add_events():
     events = get_events()
     for event in events[-5:]:
         event_entities = save_entities(get_entities(event[0]))
+        # text_site = add_tags(event[5], get_entities(event[0]))
+        # print(text_site)
+        # dt = datetime.strptime(event[3], '%d.%m').replace(year=2024)
 
-        await add_event(
-            title=event[2],
-            event_date=datetime.strptime(event[3], '%d.%m').date(),
-            event_time=datetime.strptime(event[4], '%H:%M').time(),
-            text=event[5],
-            entities=event_entities,
-            photo_id=event[6],
-            is_active=True,
-            page_id=event[8],
-            text_1=event[9],
-            text_2=event[10],
-            text_3=event[11]
-        )
+        # await add_event(
+        #     title=event[2],
+        #     event_date=datetime.strptime(event[3], '%d.%m').replace(year=2024).date(),
+        #     event_time=datetime.strptime(event[4], '%H:%M').time(),
+        #     text=event[5],
+        #     entities=event_entities,
+        #     photo_id=event[6],
+        #     is_active=True,
+        #     page_id=event[8],
+        #     text_1=event[9],
+        #     text_2=event[10],
+        #     text_3=event[11],
+        # )
 
     print(datetime.now() - time_start)
 '''
