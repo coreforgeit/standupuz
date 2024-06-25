@@ -29,7 +29,6 @@ dp = Dispatcher()
 bot = Bot(Config.token)
 
 # scheduler = AsyncIOScheduler(timezone=Config.tz)
-print(Config.db_url)
 ENGINE = create_async_engine(url=Config.db_url)
 
 # redis_client = Redis(host=Config.host, port=Config.redis_port, db=Config.redis_db)
