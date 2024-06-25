@@ -13,8 +13,14 @@ day_str_format = '%d/%m'
 time_str_format = '%H:%M'
 
 
+def home_page_redirect(request):
+    return redirect('events')
+
+
 # новые заказы
 def events_view(request: HttpRequest):
+    print('----')
+    print(request.path)
     events = Event.objects.filter(is_active=True).all()
     card_data = []
     for event in events:
@@ -26,8 +32,10 @@ def events_view(request: HttpRequest):
         event_date: date = event.event_date
         event_time: time = event.event_time
         photo = get_photo_url(event.photo_id)
+        # logging.warning('------')
+        # logging.warning(f'{price[:-3]} {price[-3:]}' if len(price) > 3 else price)
         card_data.append({
-            'event_id': photo,
+            'event_id': event.id,
             'photo_path': photo,
             'places': 1 if empty_options else 0,
             'date_str': event_date.strftime(day_str_format),
@@ -35,12 +43,8 @@ def events_view(request: HttpRequest):
             'day_str': days_of_week.get(event_date.weekday(), ''),
             'place': 'Steam Bar',
             'min_amount': f'{price[:-3]} {price[-3:]}' if len(price) > 3 else price,
-            'description':
-                '🔥Стендап в пабе Понаехали🍻\n\nОтмечаем праздники и приглашаем всех провести веселый, '
-                'летний вечер вторника с иностранным стендапером Денисом Комовым!\n\nОткрытый микрофон - '
-                'это горнило юмора, основа комедии, зачатие шуток, это база. Профессиональные и начинающие '
-                'артисты приходят сюда проверить новый материал, себя и просто повеселиться!\n\n'
-                'Это настоящий андерграунд в баре! Приглашайте друзей, мы будем рады всем!🤗',
+            'description': event.text.replace('\n', '<br>'),
+            'tg_link': f'https://t.me/standupuz_bot?start={event.id}'
          }
         )
 
@@ -56,12 +60,13 @@ def about_view(request: HttpRequest):
 
 
 # мобильная о мероприятии
-def event_mob_view(request: HttpRequest):
-    print('>>>>>>>>>>>>>>>>>>')
-    for k, v in request.GET.items():
-        print(f'{k}: {v}')
-
-    evrnt_id = 10
-    events = Event.objects.get(evrnt_id)
-    context = {}
+def event_mob_view(request: HttpRequest, event_id):
+    event_id = 10
+    event = Event.objects.filter(id=event_id).first()
+    card = {
+        'photo_path': get_photo_url(event.photo_id),
+        'description': event.text.replace('\n', '<br>'),
+        'tg_link': f'https://t.me/standupuz_bot?start={event.id}'
+         }
+    context = {'card': card}
     return render(request, 'index_affiche_mob.html', context)

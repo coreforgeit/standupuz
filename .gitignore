@@ -2,6 +2,6 @@ bot/.env
 standupuz_web/.env
 docker/.env
 .env
-/.idea/
-/.vscode/
-/bot/data/data.db
+.idea/
+.vscode/
+*.db
