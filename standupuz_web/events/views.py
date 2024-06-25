@@ -4,7 +4,7 @@ from datetime import datetime, date, time
 
 from .models import Event, Option
 from .data import days_of_week
-from .utils import get_photo_url
+from .utils import get_photo_url, get_photo_url_mob
 
 import os
 import logging
@@ -61,10 +61,10 @@ def about_view(request: HttpRequest):
 
 # мобильная о мероприятии
 def event_mob_view(request: HttpRequest, event_id):
-    event_id = 10
+    # event_id = 10
     event = Event.objects.filter(id=event_id).first()
     card = {
-        'photo_path': get_photo_url(event.photo_id),
+        'photo_path': get_photo_url_mob(event.photo_id),
         'description': event.text.replace('\n', '<br>'),
         'tg_link': f'https://t.me/standupuz_bot?start={event.id}'
          }

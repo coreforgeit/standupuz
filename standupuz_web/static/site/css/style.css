@@ -220,6 +220,7 @@ body {
 .content_flex {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 24px;
     margin-bottom: 24px;
 }
@@ -234,6 +235,8 @@ body {
 .mod_img {
     border-radius: 10px;
     align-self: center;
+    max-width: 440px;
+    align-self: flex-start;
 }
 .mod_footer {
     display: flex;
