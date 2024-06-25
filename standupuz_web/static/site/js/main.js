@@ -172,6 +172,7 @@ function createModal(selector, array) {
 }
 createModal('body', cards)
 
+//html - event_mob
 function affiche_mob_img(selector, array) {
   // for (let i = 0; i < array.length; i++) {
     let afficheMobImg = createElement('img')
@@ -183,7 +184,16 @@ function affiche_mob_img(selector, array) {
 }
 affiche_mob_img('.card_mob_img', card)
 
-// function affiche_mob_p(selector, array) {
-//   let afficheMobP = createElement()
-// }
+function affiche_mob_p(selector, array) {
+  let afficheMobP = document.querySelector(selector)
+  afficheMobP.innerHTML = `${array['description']}`
+}
+affiche_mob_p('.card_mob_p', card)
+
+function affiche_mob_btn_tg(selector, array) {
+  let mobBtnTg = document.querySelector(selector)
+  mobBtnTg.setAttribute('src', `${array['###']}`)
+}
+affiche_mob_btn_tg('.card_mob_btn_tg', card)
+
 
