@@ -233,6 +233,7 @@ body {
 }
 .mod_img {
     border-radius: 10px;
+    align-self: center;
 }
 .mod_footer {
     display: flex;
