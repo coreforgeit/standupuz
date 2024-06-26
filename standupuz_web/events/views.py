@@ -61,6 +61,8 @@ def about_view(request: HttpRequest):
 
 # мобильная о мероприятии
 def event_mob_view(request: HttpRequest, event_id):
+# def event_mob_view(request: HttpRequest):
+#     event_id = 9
     event = Event.objects.filter(id=event_id).first()
     card = {
         'photo_path': get_photo_url(event.photo_id),
