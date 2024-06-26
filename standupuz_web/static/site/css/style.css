@@ -162,6 +162,7 @@ body {
     font-size: 20px;
 }
 
+
 .cards_mob {
 }
 .card_mob_img {
@@ -218,6 +219,12 @@ body {
     margin-right: 0;
     margin-bottom: 49px;
     padding-right: 17px;
+    padding: 16px;
+    border-radius: 10px;
+}
+.modal-close:hover {
+    background-color: rgba(247, 225, 226, 1);
+    padding: 16px;
 }
 
 .content_flex {
