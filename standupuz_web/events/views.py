@@ -61,7 +61,6 @@ def about_view(request: HttpRequest):
 
 # мобильная о мероприятии
 def event_mob_view(request: HttpRequest, event_id):
-    # event_id = 10
     event = Event.objects.filter(id=event_id).first()
     empty_options = Option.objects.filter(event_id=event.id, empty_place__gt=0).all()
     card = {
