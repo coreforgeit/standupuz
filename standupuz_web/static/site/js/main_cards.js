@@ -185,6 +185,87 @@ function createModal(selector, array) {
                     .catch(err => {
                         console.error('Failed to copy link: ', err)
                     })
+
+      let mod = document.createElement('div')
+      mod.setAttribute('id', `modal${i}`)
+      mod.classList.add('modal')
+  
+      let mod_content = document.createElement('div')
+      mod_content.classList.add('modal-content')
+      mod.appendChild(mod_content)
+  
+      //кнопка "закрыть"
+      let close_mod = document.createElement('img')
+      close_mod.setAttribute('src', '../static/site/img/close_modal.svg')
+      close_mod.classList.add('modal-close')
+      mod_content.appendChild(close_mod)
+  
+      //контент_флекс
+      let content = document.createElement('div')
+      content.classList.add('content_flex')
+      mod_content.appendChild(content)
+  
+      //контент_left
+      let content_left = document.createElement('p')
+      content_left.classList.add('content_left')
+      content_left.innerHTML = array[i]['description']
+      content.appendChild(content_left)
+  
+      //контент_right
+      let content_right = document.createElement('img')
+      content_right.setAttribute('src', `${array[i]['photo_path']}`)
+      content_right.classList.add('mod_img')
+      content.appendChild(content_right)
+  
+      // //кнопки_футер
+      let btn_all = document.createElement('div')
+      btn_all.classList.add('mod_footer')
+      mod_content.appendChild(btn_all)
+  
+      // //кнопка_ссылка на tg
+      let btn_tg = document.createElement('a')
+      btn_tg.classList.add('btn_tg')
+//      btn_tg.setAttribute('href', `${array[i]['tg_link']}`)
+      btn_tg.setAttribute('href', `${array[i]['tg_link']}`)
+      btn_tg.innerHTML = `Забронировать через Telegram`
+      btn_all.appendChild(btn_tg)
+  
+      //событие актив-неактив
+      if (array[i]['places'] == 0) {
+        btn_tg.classList.add('disabled');
+        btn_tg.addEventListener('click', function (event) {
+          event.preventDefault();
+        });
+      }
+  
+      //кнопка "копировать ссылку"
+      let btn_copy = document.createElement('a')
+      btn_copy.classList.add('btn_copy')
+      btn_copy.setAttribute('href', `${array[i]['tg_link']}`)
+  
+      btn_all.appendChild(btn_copy)
+  
+      let copy_img = document.createElement('img')
+      copy_img.setAttribute('src', '../static/site/img/btn_copy.svg')
+      btn_copy.appendChild(copy_img)
+  
+      if (array[i]['places'] == 0) {
+        btn_copy.classList.add('disabled');
+        btn_copy.addEventListener('click', function (event) {
+          event.preventDefault();
+        });
+      }
+  
+      if (array[i]['places'] == 1) {
+        const linkToCopy = `${array[i]['tg_link']}`
+        btn_copy.addEventListener('click', function (even) {
+          even.preventDefault();
+          navigator.clipboard.writeText(linkToCopy)
+            // .then(() => {
+            //   // alert('Link copied to clipboard!')
+            // })
+            .catch(err => {
+              console.error('Failed to copy link: ', err)
             })
         }
 

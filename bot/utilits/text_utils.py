@@ -1,6 +1,8 @@
 from aiogram.types import MessageEntity
 from aiogram.enums.message_entity_type import MessageEntityType
 
+# import emoji
+
 
 tags_dict = {
     MessageEntityType.BOLD.value: ['<b>', '</b>'],
@@ -12,18 +14,22 @@ tags_dict = {
 
 
 def add_tags(text: str, entities: list[MessageEntity]) -> str:
-    # entities.reverse()
+    entities.reverse()
     # text = text.strip()
     # print(text[:2])
     print('----')
     print(text)
-
+    print('^^^^^')
     for entity in entities:
         start = entity.offset
         end = entity.offset + entity.length + 1
         tags = tags_dict.get(entity.type)
+
+        # emoji_count = emoji.emoji_count(text[:start])
+        # print(emoji_count)
+        # start -= emoji_count
         if tags:
-            print(f'<{entity.type}> {text[start]} {text[start:end]} {entity.offset}')
+            print(f'<{entity.type}> {text[start]} | {text[start:end]} {entity.offset}')
     #         text = f'{text[:end]}{tags[1]}{text[end:]}'
     #         text = f'{text[:start]}{tags[0]}{text[start:]}'
             # break
