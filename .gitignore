@@ -1,7 +1,8 @@
 bot/.env
 standupuz_web/.env
 docker/.env
-.env
+*.env
 .idea/
 .vscode/
 *.db
+pycache/
