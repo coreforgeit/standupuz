@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Event, Option
+from .models import Event, Option, Info
 
 
 @admin.register(Event)
@@ -26,3 +26,8 @@ class ViewAdminProfile(admin.ModelAdmin):
         return event.title if event else str(obj.event_id)
 
     event_name.short_description = 'Ивент'
+
+
+@admin.register(Info)
+class ViewAdminProfile(admin.ModelAdmin):
+    list_display = ['phone', 'text']

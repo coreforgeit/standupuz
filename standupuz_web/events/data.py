@@ -7,3 +7,13 @@ days_of_week = {
     5: "Суббота",
     6: "Воскресенье"
 }
+
+
+tags_dict = {
+    'bold': ['<b>', '</b>'],
+    'italic': ['<i>', '</i>'],
+    'code': ['<code>', '</code>'],
+    'underline': ['<u>', '</u>'],
+    'strikethrough': ['<s>', '</s>'],
+}
+

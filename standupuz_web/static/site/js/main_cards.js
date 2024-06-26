@@ -131,6 +131,7 @@ function createCards(selector, array) {
       // //кнопка_ссылка на tg
       let btn_tg = document.createElement('a')
       btn_tg.classList.add('btn_tg')
+//      btn_tg.setAttribute('href', `${array[i]['tg_link']}`)
       btn_tg.setAttribute('href', `${array[i]['tg_link']}`)
       btn_tg.innerHTML = `Забронировать через Telegram`
       btn_all.appendChild(btn_tg)

@@ -42,3 +42,19 @@ class Option(models.Model):
         verbose_name_plural = 'Тарифы'
         db_table = 'options'
         managed = False
+
+
+# инфо
+class Info(models.Model):
+    id = models.AutoField ('ID', primary_key=True)
+    phone = models.CharField ('Телефон', max_length=255)
+    text = models.TextField ('Текст', null=True, blank=True)
+
+    def __str__(self):
+        return f"<Info({self.id}>"
+
+    class Meta:
+        verbose_name = 'Инфо'
+        verbose_name_plural = 'Инфо'
+        db_table = 'site_info'
+        managed = False
