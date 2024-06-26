@@ -9,6 +9,8 @@ from .base import METADATA, begin_connection
 from config import Config
 from .sqlite_temp import get_events, get_entities
 
+import logging
+
 
 class EventRow(t.Protocol):
     id: int
@@ -82,28 +84,42 @@ async def add_event(
         await conn.execute(query)
 
 
+async def get_events_t():
+    query = EventTable.select()
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    for row in result.all():
+        logging.warning(len(row.entities))
+        logging.warning(row.entities)
+
+
 async def add_events():
     time_start = datetime.now()
     events = get_events()
-    for event in events[-5:]:
+    # print(len(events))
+    for event in events[-1:]:
         event_entities = save_entities(get_entities(event[0]))
+        logging.warning(len(event_entities))
+        logging.warning(event_entities)
+        print(event_entities)
         # text_site = add_tags(event[5], get_entities(event[0]))
         # print(text_site)
         # dt = datetime.strptime(event[3], '%d.%m').replace(year=2024)
 
-        # await add_event(
-        #     title=event[2],
-        #     event_date=datetime.strptime(event[3], '%d.%m').replace(year=2024).date(),
-        #     event_time=datetime.strptime(event[4], '%H:%M').time(),
-        #     text=event[5],
-        #     entities=event_entities,
-        #     photo_id=event[6],
-        #     is_active=True,
-        #     page_id=event[8],
-        #     text_1=event[9],
-        #     text_2=event[10],
-        #     text_3=event[11],
-        # )
+        await add_event(
+            title=event[2],
+            event_date=datetime.strptime(event[3], '%d.%m').replace(year=2024).date(),
+            event_time=datetime.strptime(event[4], '%H:%M').time(),
+            text=event[5],
+            entities=event_entities,
+            photo_id=event[6],
+            is_active=True,
+            page_id=event[8],
+            text_1=event[9],
+            text_2=event[10],
+            text_3=event[11],
+        )
 
     print(datetime.now() - time_start)
 '''

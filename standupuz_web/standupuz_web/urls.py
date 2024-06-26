@@ -5,12 +5,11 @@ from django.conf.urls.static import static
 from standupuz_web import settings
 from events import views
 
-import re
-
 urlpatterns = [
     path('', views.home_page_redirect, name='home'),
     path('events/', views.events_view, name='events'),
     path('event_mob/<int:event_id>/', views.event_mob_view, name='event_mob'),
+    # path('event_mob/', views.event_mob_view, name='event_mob'),
     path('about/', views.about_view, name='about'),
     path('admin/', admin.site.urls),
 ]

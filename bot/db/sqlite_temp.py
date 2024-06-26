@@ -5,8 +5,8 @@ from aiogram.types import MessageEntity
 
 
 # db_path = '"D:\PycharmProjects\\other\\standupuz\\bot\\data\\data.db"'
-db_path = os.path.join('bot', 'data', 'data.db')
-print(db_path)
+# db_path = os.path.join('bot', 'data', 'data.db')
+db_path = os.path.join('data', 'data.db')
 
 
 def get_users():
@@ -18,7 +18,6 @@ def get_users():
 
 
 def get_events():
-    print(os.path.exists(db_path))
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     result = cur.execute('select * from events').fetchall()
