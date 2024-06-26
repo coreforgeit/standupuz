@@ -5,4 +5,4 @@ docker/.env
 .idea/
 .vscode/
 *.db
-pycache/
+__pycache__/
