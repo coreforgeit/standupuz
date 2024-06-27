@@ -40,33 +40,33 @@ function affiche_mob_btn_copy(selector, array) {
     mobBtnCopy.setAttribute('href', array['tg_link'])
 
     if (array['places'] == 0) {
+        mobBtnCopy.style.backgroundColor = 'rgba(128, 117, 117, 1)';
         mobBtnCopy.classList.add('disabled');
         mobBtnCopy.addEventListener('click', function (event) {
             event.preventDefault();
         });
     }
     else {
+        mobBtnCopy.style.backgroundColor = 'rgba(247, 225, 226, 1)';
         const linkToCopy = `${array['tg_link']}`
         mobBtnCopy.addEventListener('click', function (even) {
             even.preventDefault();
             navigator.clipboard.writeText(linkToCopy)
-                // .then(() => {
-                //   // alert('Link copied to clipboard!')
-                // })
+                .then(() => {
+                  console.log('Link copied to clipboard!');
+                })
                 .catch(err => {
-                    console.error('Failed to copy link: ', err)
+                    console.error('Failed to copy link: ', err);
                 })
         })
     }
-
 }
-affiche_mob_btn_tg('.card_mob_btn_copy', card)
+affiche_mob_btn_copy('.card_mob_btn_copy', card)
 
 function img_copy_link (selector, array) {
     let copyLink = document.querySelector(selector)
-    let copyNot = "{% static 'site/img/btn_mob_copy_notActive.svg' %}"
     if(array['places'] == 0) {
-        copyLink.setAttribute('src', copyNot)
+        copyLink.setAttribute('src', notCopy)
     }
 }
 img_copy_link('.card_mob_btn_copy img', card)
