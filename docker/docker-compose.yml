@@ -14,11 +14,14 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
+    container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: standupuz@admin.com
+      PGADMIN_DEFAULT_PASSWORD: VdYlgZ9h
     ports:
       - "8080:80"
+#    env_file:
+#      - ../docker/.env
 
 
   web:
