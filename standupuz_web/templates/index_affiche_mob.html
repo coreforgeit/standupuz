@@ -36,7 +36,7 @@
                         <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons"><img src="{% static 'site/img/Menu.svg' %}" alt="menu"></i></a>
                     </div>
                     <div class="header_right_phone phone">
-                        <a href="tel:+998333333333">+ 998 33 333 33 33</a>
+                        <a href="tel:{{ phone }}">{{ phone }}</a>
                     </div>
                     <div class="header_right_contacts">
                         <a href="https://instagram.com/standup.uz" target="_blank"><img src="{% static 'site/img/Instagram.svg' %}" alt=""></a>
@@ -53,13 +53,16 @@
             <p class="card_mob_p"></p>
             <div class="card_mob_footer">
                 <a href="#" class="card_mob_btn_tg">Забронировать через Telegram</a>
-                <a href="#" class="card_mob_btn_copy"><img src="{% static 'site/img/btn_mob_copy.svg' %}" alt=""></a>
+                <a href="#" class="card_mob_btn_copy">
+                    <img src="{% static 'site/img/btn_mob_copy.svg' %}" alt="">
+                </a>
             </div>
         </div>
     </div>
 
     <script type="text/javascript" src="{% static 'site/js/materialize.min.js' %}"></script>
     <script>var card = {{ card|safe }};</script>
+    <script>const notCopy = "{% static 'site/img/btn_mob_copy_notActive.svg' %}";</script>
     <!-- <script src="../static/site/js/demo_cards_standupuz.js"></script> -->
     <script type="text/javascript" src="{% static 'site/js/main.js' %}"></script>
     <script type="text/javascript" src="{% static 'site/js/main_mob.js' %}"></script>
