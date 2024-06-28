@@ -61,7 +61,9 @@ services:
       - "443:443"
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt
+#      - ../nginx/conf.d/base.conf:/etc/nginx/conf.d/default.conf
+      - ../nginx/conf.d/base.conf:/etc/nginx/conf.d/base.conf
+#      - /etc/letsencrypt:/etc/letsencrypt
       - /home/standupuz/ssl:/etc/nginx/ssl
 #      - /var/log/nginx:/var/log/nginx
       - static_value:/var/html/static/
