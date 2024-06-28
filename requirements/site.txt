@@ -2,3 +2,5 @@ pytelegrambotapi
 django
 pillow
 psycopg2
+python-decouple
+emoji
