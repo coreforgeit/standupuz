@@ -96,9 +96,9 @@ async def get_events_t():
 
 async def add_events():
     events = get_events()
-    for event in events:
-        if event[7] != 1:
-            continue
+    for event in events[-3:]:
+        #if event[7] != 1:
+        #    continue
         event_entities = save_entities(get_entities(event[0]))
         logging.warning(datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date())
 
