@@ -15,23 +15,22 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: standupuz@admin.com
-      PGADMIN_DEFAULT_PASSWORD: VdYlgZ9h
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: standupuz@admin.com
+#      PGADMIN_DEFAULT_PASSWORD: VdYlgZ9h
     ports:
       - "8080:80"
-#    env_file:
-#      - ../docker/.env
+    env_file:
+      - ../docker/.env
 
 
   web:
     build:
       context: ..
-      dockerfile: /docker/dockerfiles/DockerfileAdmin
+      dockerfile: docker/dockerfiles/DockerfileAdmin
       args:
         - --no-cache
     container_name: web
-    command: sh -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ../standupuz_web:/app
     ports:
@@ -45,7 +44,7 @@ services:
   bot:
     build:
       context: ..
-      dockerfile: /docker/dockerfiles/DockerfileBot
+      dockerfile: docker/dockerfiles/DockerfileBot
       args:
         - --no-cache
     container_name: bot
