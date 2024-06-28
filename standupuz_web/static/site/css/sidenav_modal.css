@@ -409,7 +409,7 @@ nav ul a.btn-floating>.material-icons {
 }
 
 .modal .modal-content {
-    padding: 40px 32px 32px;
+    padding: 21px 32px 32px 40px;
 }
 
 .modal .modal-close {
