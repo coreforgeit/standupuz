@@ -377,13 +377,14 @@ nav ul a.btn-floating>.material-icons {
 
 .modal {
     display: none;
+    /* position: relative; */
     position: fixed;
     left: 0;
     right: 0;
     background-color: rgba(252, 247, 248, 1);
     padding: 0;
     max-height: 826px;
-    height: 80%;
+    height: 70%;
     width: 1010px;
     margin: auto;
     overflow-y: auto;
