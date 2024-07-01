@@ -15,8 +15,8 @@ from db.options import add_options
 async def main() -> None:
     # await db_command()
     await init_models()
-    await add_users()
-    await add_events()
+    # await add_users()
+    # await add_events()
     # await get_events_t()
     # create_local_data_files()
     # await init_models()
