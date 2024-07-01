@@ -61,7 +61,10 @@ services:
       - "443:443"
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../nginx/conf.d/base.conf:/etc/nginx/conf.d/base.conf
+#      - /etc/letsencrypt:/etc/letsencrypt
       - /home/standupuz/ssl:/etc/nginx/ssl
+#      - /var/log/nginx:/var/log/nginx
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
