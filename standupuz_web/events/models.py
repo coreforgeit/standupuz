@@ -15,7 +15,7 @@ class Event(models.Model):
     is_active = models.BooleanField ('Активен', default=True)
 
     def __str__(self):
-        return f"<Event({self.id}>"
+        return f"<Event({self.id})>"
 
     class Meta:
         verbose_name = 'Мероприятие'
@@ -35,7 +35,7 @@ class Option(models.Model):
     price = models.IntegerField ('Стоимость', null=True, blank=True)
 
     def __str__(self):
-        return f"<Option({self.id}>"
+        return f"<Option({self.id})>"
 
     class Meta:
         verbose_name = 'Тариф'
@@ -51,7 +51,7 @@ class Info(models.Model):
     text = models.TextField ('Текст', null=True, blank=True)
 
     def __str__(self):
-        return f"<Info({self.id}>"
+        return f"<Info({self.id})>"
 
     class Meta:
         verbose_name = 'Инфо'

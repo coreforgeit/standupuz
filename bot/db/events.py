@@ -8,6 +8,7 @@ from utilits.text_utils import add_tags
 from .base import METADATA, begin_connection
 from config import Config
 from .sqlite_temp import get_events, get_entities
+from .options import add_options
 
 import logging
 
@@ -60,10 +61,8 @@ async def add_event(
         page_id: int,
         text_1: str,
         text_2: str,
-        text_3: str,
-        # text_site: str
-
-) -> None:
+        text_3: str
+) -> int:
     now = datetime.now(Config.tz)
     query = EventTable.insert().values(
         created_at=now,
@@ -81,7 +80,8 @@ async def add_event(
         # text_site=text_site,
     )
     async with begin_connection() as conn:
-        await conn.execute(query)
+        result = await conn.execute(query)
+    return result.inserted_primary_key[0]
 
 
 async def get_events_t():
@@ -95,21 +95,16 @@ async def get_events_t():
 
 
 async def add_events():
-    time_start = datetime.now()
     events = get_events()
-    # print(len(events))
-    for event in events[-1:]:
+    for event in events[-3:]:
+        #if event[7] != 1:
+        #    continue
         event_entities = save_entities(get_entities(event[0]))
-        logging.warning(len(event_entities))
-        logging.warning(event_entities)
-        print(event_entities)
-        # text_site = add_tags(event[5], get_entities(event[0]))
-        # print(text_site)
-        # dt = datetime.strptime(event[3], '%d.%m').replace(year=2024)
+        logging.warning(datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date())
 
-        await add_event(
+        event_id = await add_event(
             title=event[2],
-            event_date=datetime.strptime(event[3], '%d.%m').replace(year=2024).date(),
+            event_date=datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date(),
             event_time=datetime.strptime(event[4], '%H:%M').time(),
             text=event[5],
             entities=event_entities,
@@ -120,22 +115,5 @@ async def add_events():
             text_2=event[10],
             text_3=event[11],
         )
-
-    print(datetime.now() - time_start)
-'''
-CREATE TABLE events (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    add_time   TEXT,
-    title      TEXT,
-    event_date TEXT,
-    event_time TEXT,
-    text       TEXT,
-    photo_id   TEXT,
-    is_active  INTEGER DEFAULT (0),
-    page_id    INTEGER,
-    text_1     TEXT,
-    text_2     TEXT,
-    text_3     TEXT
-);
-
-'''
+        logging.warning(event_id)
+        await add_options(event_id_old=event[0], event_id_new=event_id)
