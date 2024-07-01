@@ -15,6 +15,12 @@ body {
     margin: 0 auto;
 }
 
+.events_flex {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .header_flex {
     display: flex;
     justify-content: space-between;
@@ -72,7 +78,11 @@ body {
     margin-left: 16px;
 }
 
+.cards {
+    flex: 1;
+}
 .cards_grid {
+    /* flex: 1; */
     padding-top: 36px;
     padding-bottom: 46px;
     display: flex;
@@ -94,6 +104,19 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     text-decoration: none;
+    position: relative;
+}
+.item:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(153, 63, 67, 0.2);
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 8px;
 }
 
 .places {
@@ -203,6 +226,7 @@ body {
     background-color: rgba(128, 52, 56, 1);
     margin-bottom: 0;
     width: 100%;
+    margin-top: auto;
 }
 
 .footer_flex {

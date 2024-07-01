@@ -152,11 +152,11 @@ function createModal(selector, array) {
             // });
 
             // изменение фона при наведении на кнопку
-            btn_tg.addEventListener('mouseenter', function () {
-                btn_tg.style.backgroundColor = 'rgba(128, 52, 56, 1)'; // Цвет при наведении
+            btn_tg.addEventListener('mouseover', function () {
+                btn_tg.style.background = 'rgba(128, 52, 56, 1)'; // Цвет при наведении
             });
-            btn_tg.addEventListener('mouseleave', function () {
-                btn_tg.style.backgroundColor = ''; // Возвращение исходного цвета
+            btn_tg.addEventListener('mouseout', function () {
+                btn_tg.style.background = 'linear-gradient(180deg, #993F43 0%, #803438 100%)'; // Возвращение исходного цвета
             });
         }
 
@@ -176,16 +176,22 @@ function createModal(selector, array) {
         else {
             btn_copy.style.background = 'linear-gradient(180deg, #993F43 0%, #803438 100%)'
             const linkToCopy = `${array[i]['tg_link']}`
-            btn_copy.addEventListener('click', function (even) {
-                even.preventDefault();
-                navigator.clipboard.writeText(linkToCopy)
-                    // .then(() => {
-                    //   // alert('Link copied to clipboard!')
-                    // })
-                    .catch(err => {
-                        console.error('Failed to copy link: ', err)
-                    })
-            })
+            btn_copy.addEventListener('mouseover', function () {
+                btn_copy.style.background = 'rgba(128, 52, 56, 1)'; // Цвет при наведении
+            });
+            btn_copy.addEventListener('mouseout', function () {
+                btn_copy.style.background = 'linear-gradient(180deg, #993F43 0%, #803438 100%)'; // Возвращение исходного цвета
+            });
+            // btn_copy.addEventListener('click', function (even) {
+            //     even.preventDefault();
+            //     navigator.clipboard.writeText(linkToCopy)
+            //         // .then(() => {
+            //         //   // alert('Link copied to clipboard!')
+            //         // })
+            //         .catch(err => {
+            //             console.error('Failed to copy link: ', err)
+            //         })
+            // })
         }
 
         btn_all.appendChild(btn_copy)
