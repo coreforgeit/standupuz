@@ -36,8 +36,7 @@ ENGINE = create_async_engine(url=Config.db_url)
 
 async def set_main_menu():
     main_menu_commands = [
-        BotCommand(command='/start', description='Главный экран'),
-        BotCommand(command='/main', description='ЛК курьера'),
+        BotCommand(command='/start', description='Перезапуск 🚀'),
     ]
 
     await bot.set_my_commands(main_menu_commands)
@@ -54,7 +53,6 @@ def log_error(message, with_traceback: bool = True):
 
     log_file_path = os.path.join(log_path, f'{now.day}.log')
     logging.basicConfig (level=logging.WARNING, filename=log_file_path, encoding='utf-8')
-    # logger = logging.getLogger(f'error_logger_{now}')
 
     if with_traceback:
         ex_traceback = traceback.format_exc()

@@ -2,13 +2,12 @@ from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as sa_postgresql
-from utilits.entities_utils import save_entities
-from utilits.text_utils import add_tags
+from utils.entities_utils import save_entities
 
 from .base import METADATA, begin_connection
 from config import Config
-from .sqlite_temp import get_events, get_entities
-from .options import add_options
+from .sqlite_temp import get_events_l, get_entities_l
+from .options import add_options_t
 
 import logging
 
@@ -20,6 +19,7 @@ class EventRow(t.Protocol):
     event_date: date
     event_time: time
     text: str
+    entities: list[str]
     photo_id: str
     is_active: bool
     page_id: int
@@ -84,6 +84,27 @@ async def add_event(
     return result.inserted_primary_key[0]
 
 
+# возвращает ивенты
+async def get_events(active: bool = False) -> tuple[EventRow]:
+    query = EventTable.select()
+
+    if active:
+        query = query.where(EventTable.c.is_active)
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.all()
+
+
+# возвращает ивент
+async def get_event(event_id: int) -> EventRow:
+    query = EventTable.select().where(EventTable.c.id == event_id)
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.first()
+
+
 async def get_events_t():
     query = EventTable.select()
     async with begin_connection() as conn:
@@ -95,11 +116,11 @@ async def get_events_t():
 
 
 async def add_events():
-    events = get_events()
+    events = get_events_l()
     for event in events[-3:]:
         #if event[7] != 1:
         #    continue
-        event_entities = save_entities(get_entities(event[0]))
+        event_entities = save_entities(get_entities_l(event[0]))
         logging.warning(datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date())
 
         event_id = await add_event(
@@ -116,4 +137,4 @@ async def add_events():
             text_3=event[11],
         )
         logging.warning(event_id)
-        await add_options(event_id_old=event[0], event_id_new=event_id)
+        await add_options_t(event_id_old=event[0], event_id_new=event_id)
