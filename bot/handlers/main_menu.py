@@ -32,6 +32,7 @@ async def com_start(msg: Message, state: FSMContext):
         await msg.answer(
             text=info.hello_text,
             entities=recover_entities(info.hello_entities),
+            parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )
 
@@ -44,6 +45,7 @@ async def back_com_start(cb: CallbackQuery):
     await cb.message.edit_text(
         text=info.hello_text,
         entities=recover_entities(info.hello_entities),
+        parse_mode=None,
         reply_markup=kb.get_events_list_kb(events)
     )
 

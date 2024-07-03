@@ -1,7 +1,7 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 
 import db
-from enums import UserCB, BaseCB, Actions
+from enums import UserCB, BaseCB, Action
 
 
 # список ивентов
@@ -74,6 +74,6 @@ def get_sent_phone_kb(phone: str = None) -> InlineKeyboardMarkup:
 def get_sent_name_kb(name: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=f'{name}', callback_data=f'{UserCB.BOOK_6.value}:{name}')
-    kb.button(text='🔙 Назад', callback_data=f'{UserCB.BOOK_4.value}:{Actions.BACK.value}')
+    kb.button(text='🔙 Назад', callback_data=f'{UserCB.BOOK_4.value}:{Action.BACK.value}')
 
     return kb.adjust(1).as_markup()

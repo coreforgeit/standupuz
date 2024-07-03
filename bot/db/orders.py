@@ -62,3 +62,11 @@ async def update_order(order_id: int, in_google: bool = None) -> None:
     async with begin_connection() as conn:
         await conn.execute(query)
 
+
+# возвращает список пользователей
+async def get_users_for_mailing(event_list: list[int]) -> tuple[OrderRow]:
+    query = OrderTable.select().where(OrderTable.c.event_id.in_(event_list))
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.all()

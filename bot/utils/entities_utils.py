@@ -17,7 +17,8 @@ def save_entities(entities: t.Optional[list[MessageEntity]]) -> list[str]:
                      'url': entity.url,
                      'user': entity.user,
                      'language': entity.language,
-                     'custom_emoji_id': entity.custom_emoji_id}
+                     'custom_emoji_id': entity.custom_emoji_id
+                     }
                 )
             )
     return entities_list

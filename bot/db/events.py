@@ -29,6 +29,11 @@ class EventRow(t.Protocol):
     text_site: str
 
 
+class PopTimeRow(t.Protocol):
+    event_time: time
+    count_time: int
+
+
 EventTable: sa.Table = sa.Table(
     "events",
     METADATA,
@@ -59,9 +64,9 @@ async def add_event(
         photo_id: str,
         is_active: bool,
         page_id: int,
-        text_1: str,
-        text_2: str,
-        text_3: str
+        text_1: str = None,
+        text_2: str = None,
+        text_3: str = None
 ) -> int:
     now = datetime.now(Config.tz)
     query = EventTable.insert().values(
@@ -84,12 +89,61 @@ async def add_event(
     return result.inserted_primary_key[0]
 
 
+#  db.update_event (
+#                     is_active=is_active,
+#                     title=title,
+#                     date=event_date_str,
+#                     time=event_time_str,
+#                     page_id=table.id)
+# обновляет данные ивента
+async def update_event(
+        event_id: int = None,
+        page_id: int = None,
+        title: str = None,
+        new_date: date = None,
+        new_time: time = None,
+        photo_id: str = None,
+        text: str = None,
+        entities: list[str] = None,
+        text_1: str = None,
+        text_2: str = None,
+        text_3: str = None,
+        is_active: bool = None
+) -> None:
+    query = EventTable.update().where(EventTable.c.id == event_id)
+
+    if event_id:
+        query = query.where(EventTable.c.id == event_id)
+    elif page_id:
+        query = query.where(EventTable.c.page_id == page_id)
+    if title:
+        query = query.values(title=title)
+    if new_date:
+        query = query.values(date=new_date)
+    if new_time:
+        query = query.values(time=new_time)
+    if text_1:
+        query = query.values(text_1=text_1)
+    if text_2:
+        query = query.values(text_2=text_2)
+    if text_3:
+        query = query.values(text_3=text_3)
+    if page_id:
+        query = query.values(page_id=page_id)
+    if is_active is not None:
+        query = query.values(is_active=is_active)
+    async with begin_connection() as conn:
+        await conn.execute(query)
+
+
 # возвращает ивенты
-async def get_events(active: bool = False) -> tuple[EventRow]:
-    query = EventTable.select()
+async def get_events(active: bool = False, last_10: bool = False) -> tuple[EventRow]:
+    query = EventTable.select().order_by(sa.desc(EventTable.c.created_at))
 
     if active:
         query = query.where(EventTable.c.is_active)
+    if last_10:
+        query = query.limit(10)
     async with begin_connection() as conn:
         result = await conn.execute(query)
 
@@ -97,12 +151,31 @@ async def get_events(active: bool = False) -> tuple[EventRow]:
 
 
 # возвращает ивент
-async def get_event(event_id: int) -> EventRow:
+async def get_event(event_id: int = None, page_id: int = None) -> EventRow:
     query = EventTable.select().where(EventTable.c.id == event_id)
+    if event_id:
+        query = query.where(EventTable.c.id == event_id)
+    elif page_id:
+        query = EventTable.select().where(EventTable.c.page_id == page_id)
     async with begin_connection() as conn:
         result = await conn.execute(query)
 
     return result.first()
+
+
+# популярные варианты времени
+async def get_popular_time_list() -> tuple[PopTimeRow]:
+    query = (EventTable.select().with_only_columns(
+        EventTable.c.event_time,
+        sa.func.count(EventTable.c.id).label('count_time')).
+             group_by(EventTable.c.event_time).order_by(sa.func.count(EventTable.c.id)).limit(6)
+             )
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.all()
+
+
 
 
 async def get_events_t():

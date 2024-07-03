@@ -60,6 +60,15 @@ async def get_user_info(user_id: int) -> UserRow:
     return result.first()
 
 
+# возвращает список пользователей
+async def get_users() -> tuple[UserRow]:
+    query = UserTable.select()
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.all()
+
+
 # обновляет данные пользователя
 async def update_user_info(user_id: int, phone: str = None) -> None:
     query = UserTable.update().where(UserTable.c.user_id == user_id)
