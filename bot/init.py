@@ -4,7 +4,7 @@ from aiogram import Bot
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
-# from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.ext.asyncio import create_async_engine
 from datetime import datetime
 
@@ -29,10 +29,8 @@ dp = Dispatcher()
 # bot = Bot(Config.token, parse_mode=ParseMode.HTML)
 bot = Bot(Config.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-# scheduler = AsyncIOScheduler(timezone=Config.tz)
+scheduler = AsyncIOScheduler(timezone=Config.tz)
 ENGINE = create_async_engine(url=Config.db_url)
-
-# redis_client = Redis(host=Config.host, port=Config.redis_port, db=Config.redis_db)
 
 
 async def set_main_menu():

@@ -26,34 +26,41 @@ def get_photo_url_mob(photo_id: str) -> str:
 
 # обработка текста
 def add_tags(text: str, entities: list[str]) -> str:
-    # if len(entities) > 1:
-    #     entities.reverse()
-    logging.warning('^^^^')
-    logging.warning(f'{type(entities)} {len(entities)}')
-    logging.warning(entities)
+    if len(entities) > 1:
+        entities.reverse()
+    # logging.warning('^^^^')
+    club = None
 
-    # logging.warning(entities)
-    # entities.reverse()
-    # logging.warning(entities)
     for entity_str in entities:
-        logging.warning(entity_str)
-    #     try:
-    #         logging.warning(entity_str)
-    #         entity = json.loads(entity_str)
-    #
-    #         start = entity['offset']
-    #
-    #         emoji_count = emoji.emoji_count(text[:start])
-    #         start -= emoji_count
-    #         end = start + entity.length
-    #
-    #         tags = tags_dict.get(entity.type)
-    #         if tags:
-    #             # print(f'<{entity.type}> {text[start]} | {text[start:end]} {entity.offset}')
-    #             text = f'{text[:end]}{tags[1]}{text[end:]}'
-    #             text = f'{text[:start]}{tags[0]}{text[start:]}'
-    #
-    #     except:
-    #         pass
+        # logging.warning(entity_str)
+        # logging.warning(type(entity_str))
+        # entity = json.loads(entity_str)
+        # logging.warning(type(entity))
+        try:
+            entity: dict = json.loads(entity_str)
+
+            start = entity['offset']
+            emoji_count = emoji.emoji_count(text[:start])
+            start -= emoji_count
+            end = start + entity['length']
+
+            length = len(text)
+
+
+
+            # tags = tags_dict.get(entity['type'])
+            # logging.warning(tags)
+            # if tags:
+            #     text = f'{text[:end]}{tags[1]}{text[end:]}'
+            #     text = f'{text[:start]}{tags[0]}{text[start:]}'
+            #
+            # elif entity['type'] == 'text_link':
+            #     tl_text = text[start:end]
+            #     tl_text0 = text[start:end]
+            #     logging.warning(tl_text)
+
+
+        except:
+            pass
 
     return text.replace('\n', '<br>')

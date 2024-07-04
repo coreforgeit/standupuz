@@ -9,7 +9,7 @@ import re
 
 import db
 import keyboards as kb
-from config import Config
+from config import Config, DEBUG
 from init import dp, bot
 from utils.base_utils import hand_date, hand_time
 from utils.entities_utils import recover_entities, save_entities
@@ -31,6 +31,7 @@ async def edit_event(state: FSMContext, chat_id=None):
         text = f'{data["text"]}\n\n' \
                f'==============\n' \
                f'Название: {data["title"]}\n' \
+               f'📍 Локация: {data["club"]}\n' \
                f'📅 Дата: {data["date"]}\n' \
                f'⏰ Время: {data["time"]}\n' \
                f'🫰 Места:\n{tariff_text}'
@@ -74,10 +75,10 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
     event_id = int(event_id_str)
 
     if action == Action.NEW.value:
-        # text
-        # photo_id = 'AgACAgIAAxkBAAILkWaGTBTmNF5imYbl7qomolVeK-5GAAIe1TEbUf84SDNLPE4RuP-eAQADAgADeAADNQQ'
-        # work
-        photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
+        if DEBUG:
+            photo_id = 'AgACAgIAAxkBAAILkWaGTBTmNF5imYbl7qomolVeK-5GAAIe1TEbUf84SDNLPE4RuP-eAQADAgADeAADNQQ'
+        else:
+            photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
         await state.update_data(data={
             'is_first': True,
             'photo_id': photo_id,
@@ -87,7 +88,8 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             'date': '',
             'time': '',
             'tariffs': [],
-            'type': 'new'
+            'type': 'new',
+            'club': '',
         })
 
     elif action == Action.EDIT.value:
@@ -103,6 +105,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             'time': '',
             'tariffs': [],
             'type': 'edit',
+            'club': '',
             'event_id': event_id,
             'is_active': event_info.is_active
         })
@@ -169,6 +172,9 @@ async def edit_text(msg: Message, state: FSMContext):
     if data['step'] == EditEventStep.TITLE.value:
         await state.update_data(data={'title': msg.text})
 
+    elif data['step'] == EditEventStep.CLUB.value:
+        await state.update_data(data={'club': msg.text})
+
     elif data['step'] == EditEventStep.DATE.value:
         date = hand_date(msg.text)
         if date == 'error':
@@ -198,6 +204,8 @@ async def edit_text(msg: Message, state: FSMContext):
             tariff_info = tariff.strip().split(' ')
             place = int(tariff_info[0]) if tariff_info[0].isdigit() else 0
             price = int(tariff_info[1]) if tariff_info[1].isdigit() else None
+            if price < 10000:
+                price *= 1000
             text = re.sub(r'\d+', '', tariff).strip().capitalize()
             tariffs.append({'place': place, 'price': price, 'text': text})
 
@@ -208,7 +216,7 @@ async def edit_text(msg: Message, state: FSMContext):
 
 # принимает колбек с датой
 @dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_2.value))
-async def create_new_event(cb: CallbackQuery, state: FSMContext):
+async def edit_event_2(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
     if data['step'] == EditEventStep.DATE.value:
@@ -247,6 +255,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             await state.clear()
             event_id = await db.add_event(
                 title=data['title'],
+                club=data.get('club'),
                 event_date=datetime.strptime(data['date'], Config.date_form).date(),
                 event_time=datetime.strptime(data['time'], Config.time_form).time(),
                 text=data['text'],

@@ -1,33 +1,36 @@
 from django.contrib import admin
 
-from .models import Event, Option, Info
+from .models import Event, Option, Info, InfoBot, User
 
 
 @admin.register(Event)
-class ViewAdminProfile(admin.ModelAdmin):
+class ViewAdminEvent(admin.ModelAdmin):
     list_display = ['title', 'event_date', 'event_time']
-    # list_filter = ['status', 'city_id']
-    # ordering = ['-last_activity']
-
-    # def city_str(self, obj):
-    #     return maps.cities_dict.get (obj.city_id, 'н/д')
-    #
-    # city_str.short_description = 'Город'
 
 
 @admin.register(Option)
-class ViewAdminProfile(admin.ModelAdmin):
-    list_display = ['event_name', 'name', 'empty_place', 'price']
-    # list_display = ['name', 'empty_place', 'price']
+class ViewAdminOption(admin.ModelAdmin):
+    list_display = ['name', 'event_name', 'empty_place', 'price']
 
     def event_name(self, obj):
-        # print(obj.event_id)
         event = Event.objects.filter(id=obj.event_id).first()
         return event.title if event else str(obj.event_id)
 
     event_name.short_description = 'Ивент'
 
 
+@admin.register(User)
+class ViewAdminUser(admin.ModelAdmin):
+    list_display = ['full_name', 'username', 'phone', 'last_visit']
+    ordering = ['-last_visit']
+
+
 @admin.register(Info)
-class ViewAdminProfile(admin.ModelAdmin):
-    list_display = ['phone', 'text']
+class ViewAdminInfo(admin.ModelAdmin):
+    list_display = ['text', 'phone']
+
+
+@admin.register(InfoBot)
+class ViewAdminInfoBot(admin.ModelAdmin):
+    list_display = ['text_1', 'text_2', 'text_3']
+

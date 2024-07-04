@@ -41,6 +41,7 @@ EventTable: sa.Table = sa.Table(
     sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
     sa.Column('created_at', sa.DateTime(timezone=True)),
     sa.Column('title', sa.String(255)),
+    sa.Column('club', sa.String(255)),
     sa.Column('event_date', sa.Date()),
     sa.Column('event_time', sa.Time()),
     sa.Column('text', sa.Text()),
@@ -60,6 +61,7 @@ async def add_event(
         event_date: date,
         event_time: time,
         text: str,
+        club: str,
         entities: list[str],
         photo_id: str,
         is_active: bool,
@@ -72,6 +74,7 @@ async def add_event(
     query = EventTable.insert().values(
         created_at=now,
         title=title,
+        club=club,
         event_date=event_date,
         event_time=event_time,
         text=text,
@@ -182,31 +185,27 @@ async def get_popular_time_list() -> tuple[PopTimeRow]:
     return result.all()
 
 
-
-
-async def get_events_t():
-    query = EventTable.select()
+# закрывает старые ивенты
+async def close_old_events() -> None:
+    now = datetime.now(Config.tz)
+    query = EventTable.update().where(EventTable.c.event_date < now.date()).values(is_active=False)
     async with begin_connection() as conn:
-        result = await conn.execute(query)
-
-    for row in result.all():
-        logging.warning(len(row.entities))
-        logging.warning(row.entities)
+        await conn.execute(query)
 
 
 async def add_events():
     events = get_events_l()
-    for event in events[-3:]:
-        #if event[7] != 1:
-        #    continue
-        event_entities = save_entities(get_entities_l(event[0]))
-        logging.warning(datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date())
+    for event in events:
+        if event[7] != 1:
+            continue
 
+        event_entities = save_entities(get_entities_l(event[0]))
         event_id = await add_event(
             title=event[2],
             event_date=datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date(),
             event_time=datetime.strptime(event[4], '%H:%M').time(),
             text=event[5],
+            club='',
             entities=event_entities,
             photo_id=event[6],
             is_active=True,
@@ -215,5 +214,4 @@ async def add_events():
             text_2=event[10],
             text_3=event[11],
         )
-        logging.warning(event_id)
         await add_options_t(event_id_old=event[0], event_id_new=event_id)

@@ -10,6 +10,7 @@ class Action(str, Enum):
 
 class EditEventStep(str, Enum):
     TITLE = 'title'
+    CLUB = 'club'
     DATE = 'date'
     TIME = 'time'
     PRICE = 'price'

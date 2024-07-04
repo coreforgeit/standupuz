@@ -106,7 +106,7 @@ async def del_options(event_id: int) -> None:
 
 
 async def add_options_t(event_id_old: int, event_id_new: int):
-    options = get_options(event_id_old)
+    options = get_options_l(event_id_old)
     for option in options:
         await add_option(
             event_id=event_id_new,

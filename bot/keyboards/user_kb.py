@@ -25,9 +25,12 @@ def get_social_medias_kb() -> InlineKeyboardMarkup:
 
 
 # забронировать места
-def get_book_kb(options: tuple[db.OptionRow]) -> InlineKeyboardMarkup:
+def get_book_kb(options: tuple[db.OptionRow], from_start: bool = False) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(text='🔙 Назад', callback_data=BaseCB.CLOSE.value)
+    if from_start:
+        kb.button(text='🔙 Назад', callback_data=BaseCB.BACK_COM_START.value)
+    else:
+        kb.button(text='🔙 Назад', callback_data=BaseCB.CLOSE.value)
     for option in options:
         if option.empty_place > 0:
             caption = f'{option.name} ({option.empty_place})'

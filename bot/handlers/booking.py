@@ -11,27 +11,8 @@ import keyboards as kb
 from config import DEBUG
 from init import dp, bot, log_error
 
-from utils.base_utils import is_admin, end_book
-from utils.entities_utils import recover_entities
+from utils.message_utils import send_event, end_book
 from enums import BaseCB, UserCB, UserStatus
-
-
-async def send_event(event_id: int, user_id: int) -> None:
-    event_info = await db.get_event(event_id)
-    entities = recover_entities(event_info.entities)
-    options = await db.get_options(event_id)
-
-    photo_id = event_info.photo_id
-    if DEBUG:
-        photo_id = 'AgACAgIAAxkBAAMGZecrNFZ3ctI1jBQlYNCIneaND5IAAkTaMRuSRDhLC7cywGea_iYBAAMCAAN5AAM0BA'
-    await bot.send_photo(
-        chat_id=user_id,
-        photo=photo_id,
-        caption=event_info.text,
-        caption_entities=entities,
-        parse_mode=None,
-        reply_markup=kb.get_book_kb(options)
-    )
 
 
 # показывает ивент

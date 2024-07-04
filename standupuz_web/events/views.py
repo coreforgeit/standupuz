@@ -19,7 +19,7 @@ def home_page_redirect(request):
 
 # новые заказы
 def events_view(request: HttpRequest):
-    events = Event.objects.filter(is_active=True).all()
+    events = Event.objects.filter(is_active=True).order_by('event_date').all()
     info = Info.objects.get(id=1)
     card_data = []
     for event in events:
@@ -38,11 +38,12 @@ def events_view(request: HttpRequest):
             'date_str': event_date.strftime(day_str_format),
             'time_str': event_time.strftime(time_str_format),
             'day_str': days_of_week.get(event_date.weekday(), ''),
-            'place': 'Steam Bar',
+            'place': event.club or '',
             'min_amount': f'{price[:-3]} {price[-3:]}' if len(price) > 3 else price,
-            # 'description': event.text.replace('\n', '<br>'),
-            'description': add_tags(text=event.text, entities=event.entities),
-            'tg_link': f'https://t.me/standupuz_bot?start={event.id}'
+            'description': event.text.replace('\n', '<br>'),
+            # 'description': add_tags(text=event.text, entities=event.entities),
+            'tg_link': f'https://t.me/standupuz_bot?start={event.id}',
+            # 'tg_link': f'https://t.me/tushchkan_test_3_bot?start={event.id}'
          }
         )
 
@@ -71,7 +72,7 @@ def event_mob_view(request: HttpRequest, event_id):
         'photo_path': get_photo_url_mob(event.photo_id),
         'places': 1 if empty_options else 0,
         'description': event.text.replace('\n', '<br>'),
-        'tg_link': f'https://t.me/standupuz_bot?start={event.id}'
+        'tg_link': f'https://t.me/standupuz_bot?start={event.id}',
          }
     context = {'card': card, 'phone': info.phone}
     return render(request, 'index_affiche_mob.html', context)

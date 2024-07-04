@@ -64,6 +64,7 @@ def get_edit_event_kb(type_event: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     if type_event == Action.NEW.value:
         kb.button(text='🖍 Название', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.TITLE.value}')
+        kb.button(text='📍 Локация', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.CLUB.value}')
         kb.button(text='📅 Дата', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.DATE.value}')
         kb.button(text='⏰ Время', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.TIME.value}')
         kb.button(text='🫰 Места и опции', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.PRICE.value}')
@@ -72,7 +73,7 @@ def get_edit_event_kb(type_event: str) -> InlineKeyboardMarkup:
     else:
         kb.button(text='✅ Подтвердить', callback_data=f'{AdminCB.EDIT_EVENT_ACCEPT.value}')
 
-    return kb.adjust(1, 3, 1).as_markup()
+    return kb.adjust(2, 3, 1).as_markup()
 
 
 # предлагает выбрать время
