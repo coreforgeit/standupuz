@@ -203,7 +203,7 @@ async def edit_text(msg: Message, state: FSMContext):
         for tariff in tariff_list:
             tariff_info = tariff.strip().split(' ')
             place = int(tariff_info[0]) if tariff_info[0].isdigit() else 0
-            price = int(tariff_info[1]) if tariff_info[1].isdigit() else None
+            price = int(tariff_info[1]) if tariff_info[1].isdigit() else 0
             if price < 10000:
                 price *= 1000
             text = re.sub(r'\d+', '', tariff).strip().capitalize()
