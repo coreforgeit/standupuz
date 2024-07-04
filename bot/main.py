@@ -9,7 +9,7 @@ from init import set_main_menu, bot, log_error
 from db.base import init_models, db_command
 from db.users import add_users
 from db.events import add_events, get_events_t
-from db.options import add_options
+from db.options import add_options_t
 
 
 async def main() -> None:
@@ -21,9 +21,9 @@ async def main() -> None:
     # create_local_data_files()
     # await init_models()
     # logging.warning('ok')
-    # await set_main_menu()
-    # await bot.delete_webhook (drop_pending_updates=True)
-    # await dp.start_polling(bot)
+    await set_main_menu()
+    await bot.delete_webhook (drop_pending_updates=True)
+    await dp.start_polling(bot)
     pass
 
 

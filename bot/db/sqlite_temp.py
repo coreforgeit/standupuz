@@ -9,7 +9,7 @@ from aiogram.types import MessageEntity
 db_path = os.path.join('data', 'data.db')
 
 
-def get_users():
+def get_users_l():
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     result = cur.execute('select * from users').fetchall()
@@ -17,7 +17,7 @@ def get_users():
     return result
 
 
-def get_events():
+def get_events_l():
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     result = cur.execute('select * from events').fetchall()
@@ -25,7 +25,7 @@ def get_events():
     return result
 
 
-def get_entities(event_id) -> list:
+def get_entities_l(event_id) -> list:
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     results = cur.execute('select type, offset, length, url from entities where event_id = ? ',
@@ -42,7 +42,7 @@ def get_entities(event_id) -> list:
     return entities
 
 
-def get_options(event_id: int):
+def get_options_l(event_id: int):
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     result = cur.execute('select * from events_options where event_id = ?', (event_id,)).fetchall()

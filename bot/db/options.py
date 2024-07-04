@@ -2,12 +2,12 @@ from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as sa_postgresql
-from utilits.entities_utils import save_entities
+from utils.entities_utils import save_entities
 from random import randint
 
 from .base import METADATA, begin_connection
 from config import Config
-from .sqlite_temp import get_options
+from .sqlite_temp import get_options_l
 
 
 class OptionRow(t.Protocol):
@@ -36,15 +36,15 @@ OptionTable: sa.Table = sa.Table(
 
 async def add_option(
         event_id: int,
-        name: str,
+        title: str,
         empty_place: int,
         all_place: int,
         cell: str,
-        price: int,
+        price: int = None,
 ) -> None:
     query = OptionTable.insert().values(
         event_id=event_id,
-        name=name,
+        name=title,
         empty_place=empty_place,
         all_place=all_place,
         cell=cell,
@@ -54,12 +54,63 @@ async def add_option(
         await conn.execute(query)
 
 
-async def add_options(event_id_old: int, event_id_new: int):
+# возвращает опции ивента
+async def get_options(event_id: int) -> tuple[OptionRow]:
+    query = OptionTable.select().where(OptionTable.c.event_id == event_id)
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.all()
+
+
+# возвращает опцию
+async def get_option(option_id: int) -> OptionRow:
+    query = OptionTable.select().where(OptionTable.c.id == option_id)
+    async with begin_connection() as conn:
+        result = await conn.execute(query)
+
+    return result.first()
+
+
+# обновляет опцию
+async def update_option(
+        option_id: int,
+        edit_place: int = None,
+        title: str = None,
+        empty_place: int = None,
+        all_place: int = None,
+        cell: str = None
+) -> None:
+    query = OptionTable.update().where(OptionTable.c.id == option_id)
+
+    if edit_place:
+        query = query.values(empty_place=OptionTable.c.empty_place + edit_place)
+    if title:
+        query = query.values(name=title)
+    if empty_place:
+        query = query.values(empty_place=empty_place)
+    if all_place:
+        query = query.values(all_place=all_place)
+    if title:
+        query = query.values(cell=cell)
+
+    async with begin_connection() as conn:
+        await conn.execute(query)
+
+
+# удаляет опции ивента
+async def del_options(event_id: int) -> None:
+    query = OptionTable.delete().where(OptionTable.c.event_id == event_id)
+    async with begin_connection() as conn:
+        await conn.execute(query)
+
+
+async def add_options_t(event_id_old: int, event_id_new: int):
     options = get_options(event_id_old)
     for option in options:
         await add_option(
             event_id=event_id_new,
-            name=option[2],
+            title=option[2],
             empty_place=option[3],
             all_place=option[4],
             cell=option[5],
