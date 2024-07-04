@@ -3,18 +3,10 @@ FROM python:3.11.5
 # Устанавливаем зависимости
 WORKDIR /app
 COPY /requirements/admin.txt /app/admin.txt
-#COPY /requirements/site.txt .
+
 RUN pip install --upgrade pip && pip install --no-cache-dir -r admin.txt
-#RUN #pip install -r site.txt
 
 COPY /standupuz_web .
 
 # Добавляем задержку перед запуском сервера
-#CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:8000"]
-CMD ["sh", "-c", "python manage.py megrate && python manage.py runserver 0.0.0.0:8000"]
-
-#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-#CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:8000 --noreload"]
-
-
-
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic && python manage.py runserver 0.0.0.0:8000"]

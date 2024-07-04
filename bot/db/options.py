@@ -54,19 +54,14 @@ async def add_option(
         await conn.execute(query)
 
 
-async def add_options():
-    time_start = datetime.now()
-    options = get_options()
+async def add_options(event_id_old: int, event_id_new: int):
+    options = get_options(event_id_old)
     for option in options:
-        if option[1] > 136:
-            print(option)
-            await add_option(
-                event_id=option[1],
-                name=option[2],
-                empty_place=option[3],
-                all_place=option[4],
-                cell=option[5],
-                price=randint(1, 10) * 10000
-            )
-
-    print(datetime.now() - time_start)
+        await add_option(
+            event_id=event_id_new,
+            name=option[2],
+            empty_place=option[3],
+            all_place=option[4],
+            cell=option[5],
+            price=randint(1, 10) * 10000
+        )
