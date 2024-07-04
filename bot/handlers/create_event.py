@@ -75,9 +75,9 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
     if action == Action.NEW.value:
         # text
-        photo_id = 'AgACAgIAAxkBAAILkWaGTBTmNF5imYbl7qomolVeK-5GAAIe1TEbUf84SDNLPE4RuP-eAQADAgADeAADNQQ'
+        # photo_id = 'AgACAgIAAxkBAAILkWaGTBTmNF5imYbl7qomolVeK-5GAAIe1TEbUf84SDNLPE4RuP-eAQADAgADeAADNQQ'
         # work
-        # photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
+        photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
         await state.update_data(data={
             'is_first': True,
             'photo_id': photo_id,
@@ -140,7 +140,6 @@ async def edit_text(msg: Message, state: FSMContext):
 @dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_1.value))
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     _, step = cb.data.split(':')
-    print(f'step: {step}')
     await state.set_state(AdminStatus.EDIT_EVENT)
     await state.update_data(data={'step': step})
     if step == EditEventStep.TITLE.value:
