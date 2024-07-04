@@ -182,16 +182,16 @@ function createModal(selector, array) {
             btn_copy.addEventListener('mouseout', function () {
                 btn_copy.style.background = 'linear-gradient(180deg, #993F43 0%, #803438 100%)'; // Возвращение исходного цвета
             });
-            // btn_copy.addEventListener('click', function (even) {
-            //     even.preventDefault();
-            //     navigator.clipboard.writeText(linkToCopy)
-            //         // .then(() => {
-            //         //   // alert('Link copied to clipboard!')
-            //         // })
-            //         .catch(err => {
-            //             console.error('Failed to copy link: ', err)
-            //         })
-            // })
+            btn_copy.addEventListener('click', function (even) {
+                even.preventDefault();
+                navigator.clipboard.writeText(linkToCopy)
+                    // .then(() => {
+                    //   // alert('Link copied to clipboard!')
+                    // })
+                    .catch(err => {
+                        console.error('Failed to copy link: ', err)
+                    })
+            })
         }
 
         btn_all.appendChild(btn_copy)
