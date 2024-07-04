@@ -44,7 +44,7 @@ async def add_order(user_id: int, phone: str, event_id: int, option: str, count_
         user_id=user_id,
         phone=phone,
         event_id=event_id,
-        option=option,
+        option_name=option,
         count_place=count_place,
         page_id=page_id
     )

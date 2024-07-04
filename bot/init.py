@@ -2,6 +2,7 @@ from aiogram import Dispatcher
 from aiogram.types.bot_command import BotCommand
 from aiogram import Bot
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 
 # from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -26,7 +27,7 @@ except:
 loop = asyncio.get_event_loop()
 dp = Dispatcher()
 # bot = Bot(Config.token, parse_mode=ParseMode.HTML)
-bot = Bot(Config.token)
+bot = Bot(Config.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
 # scheduler = AsyncIOScheduler(timezone=Config.tz)
 ENGINE = create_async_engine(url=Config.db_url)
@@ -58,7 +59,8 @@ def log_error(message, with_traceback: bool = True):
         ex_traceback = traceback.format_exc()
         tb = ''
         msg = ''
-        start_row = '  File'
+        # start_row = '  File'
+        start_row = '  File "/app'
         tb_split = ex_traceback.split('\n')
         for row in tb_split:
             if row.startswith(start_row) and not re.search ('venv', row):

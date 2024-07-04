@@ -36,12 +36,12 @@ async def edit_hello_text_1(cb: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStatus.EDIT_HELLO_TEXT)
 
     info = await db.get_info()
-    events = await db.get_events(active=True)
+    # events = await db.get_events(active=True)
     sent = await cb.message.answer(
         text=info.hello_text,
         entities=recover_entities(info.hello_entities),
         parse_mode=None,
-        reply_markup=kb.get_events_list_kb(events)
+        reply_markup=kb.get_edit_hello_text_kb()
         )
     await state.update_data(data={'message_id': sent.message_id})
 

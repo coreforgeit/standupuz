@@ -86,7 +86,7 @@ async def update_option(
     if edit_place:
         query = query.values(empty_place=OptionTable.c.empty_place + edit_place)
     if title:
-        query = query.values(title=title)
+        query = query.values(name=title)
     if empty_place:
         query = query.values(empty_place=empty_place)
     if all_place:

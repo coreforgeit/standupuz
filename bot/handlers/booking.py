@@ -11,7 +11,7 @@ import keyboards as kb
 from config import DEBUG
 from init import dp, bot, log_error
 
-from utils.base_utils import is_admin
+from utils.base_utils import is_admin, end_book
 from utils.entities_utils import recover_entities
 from enums import BaseCB, UserCB, UserStatus
 
@@ -47,8 +47,8 @@ async def view_event(cb: CallbackQuery):
 @dp.callback_query(lambda cb: cb.data.startswith(UserCB.BOOK_1.value))
 async def book_1(cb: CallbackQuery, state: FSMContext):
     event_id, option_id = map(int, cb.data.split(':')[1:])
-    log_error(event_id, with_traceback=False)
-    log_error(option_id, with_traceback=False)
+    # log_error(event_id, with_traceback=False)
+    # log_error(option_id, with_traceback=False)
 
     if not option_id:
         await cb.answer('Свободные места закончились', show_alert=True)
@@ -196,8 +196,7 @@ async def book_6(user_id: int, state: FSMContext):
 
     await bot.edit_message_text(text=text, chat_id=user_id, message_id=data['message_id'])
 
-    log_error('АП!', with_traceback=False)
-    # await end_book(data)
+    await end_book(data)
 
 
 # Принимает имя текстом

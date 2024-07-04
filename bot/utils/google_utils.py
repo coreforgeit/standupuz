@@ -54,7 +54,7 @@ async def create_new_page(date: str, time: str, tariffs: list[dict], title: str)
     page.update(range_name=cells, values=head_list)
     sleep(1)
     # триггер активности
-    page.update('C1', 'S')
+    page.update(range_name='C1', values=[['S']])
 
     return page.id
 
@@ -72,6 +72,7 @@ async def google_update() -> str:
 
         await db.update_info(text_1=base_text_1, text_2=base_text_2, text_3=base_text_3)
     except Exception as ex:
+        log_error(ex)
         error_text = f'{error_text}\n❌ Не удалось обновить базовые тексты:\n{ex}'
 
     active_events = await db.get_events(active=True)
@@ -89,6 +90,7 @@ async def google_update() -> str:
                 await db.update_event(text_1=text_1, text_2=text_2, text_3=text_3, page_id=table.id)
 
             except Exception as ex:
+                log_error(ex)
                 error_text = f'{error_text}\n❌ Не удалось обновить тексты {table.title}:\n{ex}'
 
             # проверить опции
@@ -97,10 +99,9 @@ async def google_update() -> str:
                 title = table.acell ('B2').value
                 event_date_str = table.acell ('B3').value
                 event_time_str = table.acell ('B4').value
-                now = datetime.now(Config.tz)
                 event_datetime = datetime.strptime(
-                    __date_string=f'{event_date_str}.{now.year} {event_time_str}',
-                    __format=Config.datetime_form).replace(microsecond=0)
+                    f'{event_date_str} {event_time_str}',
+                    Config.datetime_form).replace(microsecond=0)
 
                 await db.update_event (
                     is_active=is_active,
@@ -110,6 +111,7 @@ async def google_update() -> str:
                     page_id=table.id)
 
             except Exception as ex:
+                log_error(ex)
                 error_text = f'{error_text}\n❌ Не удалось обновить опции {table.title}:\n{ex}'
 
             # опции мест. Сначала удаляем все старые, записываем новые
@@ -153,30 +155,32 @@ async def google_update() -> str:
                             cell=cell
                         )
                 except Exception as ex:
+                    log_error(ex)
                     error_text = f'{error_text}\n❌ Не удалось обновить места {table.title} {option[0]}:\n{ex}'
 
             # проверить места
-            places = table.get_values('C11:M200')
+            # places = table.get_values('C11:M200')
 
-            for place in places:
-                if place[2] != '-':
-                    try:
-                        order_id = int(place[0])
-                        book_count = int(place[1])
-                        book_option = place[2]
-                        phone = place[5]
-
-                        await db.add_order(
-                            user_id=order_id,
-                            phone=phone,
-                            event_id=event.id,
-                            option=book_option,
-                            count_place=book_count,
-                            page_id=table.id
-                        )
-                    except Exception as ex:
-                        error_text = (f'{error_text}\n❌ Не удалось обновить бронь {table.title}\n'
-                                      f'{place[1]} {place[2]} {place[1]} тел. {place[5]}:\n{ex}')
+            # for place in places:
+            #     if place[2] != '-':
+            #         try:
+            #             order_id = int(place[0])
+            #             book_count = int(place[1])
+            #             book_option = place[2]
+            #             phone = place[5]
+            #
+            #             await db.add_order(
+            #                 user_id=order_id,
+            #                 phone=phone,
+            #                 event_id=event.id,
+            #                 option=book_option,
+            #                 count_place=book_count,
+            #                 page_id=table.id
+            #             )
+            #         except Exception as ex:
+            #             log_error(ex)
+            #             error_text = (f'{error_text}\n❌ Не удалось обновить бронь {table.title}\n'
+            #                           f'{place[1]} {place[2]} {place[1]} тел. {place[5]}:\n{ex}')
 
     return error_text
 

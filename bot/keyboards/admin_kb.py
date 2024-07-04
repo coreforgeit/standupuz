@@ -42,7 +42,7 @@ def get_send_message_kb(events: tuple[db.EventRow], data: dict) -> InlineKeyboar
         callback_data=f'{AdminCB.SEND_MESSAGE_3.value}:{Action.EVERYONE.value}'
     )
     for event in events:
-        emoji = '✔️' if not data['everyone'] and event.id in data['choice_list'] else ''
+        emoji = '✔️' if data['everyone'] or event.id in data['choice_list'] else ''
         kb.button(
             text=f'{emoji} {event.title} ({event.event_date})'.strip(),
             callback_data=f'{AdminCB.SEND_MESSAGE_3.value}:{event.id}'
@@ -63,14 +63,14 @@ def get_edit_hello_text_kb() -> InlineKeyboardMarkup:
 def get_edit_event_kb(type_event: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     if type_event == Action.NEW.value:
-        kb.button(text='🖍 Название', callback_data=f'{AdminCB.EDIT_EVENT_1}:{EditEventStep.TITLE.value}')
-        kb.button(text='📅 Дата', callback_data=f'{AdminCB.EDIT_EVENT_1}:{EditEventStep.DATE.value}')
-        kb.button(text='⏰ Время', callback_data=f'{AdminCB.EDIT_EVENT_1}:{EditEventStep.TIME.value}')
-        kb.button(text='🫰 Места и опции', callback_data=f'{AdminCB.EDIT_EVENT_1}:{EditEventStep.PRICE.value}')
-        kb.button(text='✅ Создать', callback_data=f'{AdminCB.EDIT_EVENT_ACCEPT}')
+        kb.button(text='🖍 Название', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.TITLE.value}')
+        kb.button(text='📅 Дата', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.DATE.value}')
+        kb.button(text='⏰ Время', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.TIME.value}')
+        kb.button(text='🫰 Места и опции', callback_data=f'{AdminCB.EDIT_EVENT_1.value}:{EditEventStep.PRICE.value}')
+        kb.button(text='✅ Создать', callback_data=f'{AdminCB.EDIT_EVENT_ACCEPT.value}')
 
     else:
-        kb.button(text='✅ Подтвердить', callback_data=f'{AdminCB.EDIT_EVENT_ACCEPT}')
+        kb.button(text='✅ Подтвердить', callback_data=f'{AdminCB.EDIT_EVENT_ACCEPT.value}')
 
     return kb.adjust(1, 3, 1).as_markup()
 
@@ -80,7 +80,7 @@ def get_choice_date_kb() -> InlineKeyboardMarkup:
     date_list = get_weekend_date_list()
     kb = InlineKeyboardBuilder()
     for date in date_list:
-        kb.button(text=f'{date}', callback_data=f'{AdminCB.EDIT_EVENT_2}:{date}')
+        kb.button(text=f'{date}', callback_data=f'{AdminCB.EDIT_EVENT_2.value}:{date}')
 
     kb.button(text='🔙 Назад', callback_data=AdminCB.BACK_EDIT_EVENT.value)
     return kb.adjust(2).as_markup()

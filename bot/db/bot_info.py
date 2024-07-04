@@ -2,6 +2,7 @@ import typing as t
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql as psql
 from .base import METADATA, begin_connection
+from utils.entities_utils import save_entities
 
 from datetime import datetime
 
@@ -41,7 +42,7 @@ async def get_info() -> InfoRow:
 # обновляет данные
 async def update_info(
         hello_text: str = None,
-        hello_entities: list[str] = None,
+        hello_entities: list = None,
         text_1: str = None,
         text_2: str = None,
         text_3: str = None,
@@ -50,7 +51,7 @@ async def update_info(
     if hello_text:
         query = query.values(hello_text=hello_text)
     if hello_entities:
-        query = query.values(hello_entities=hello_entities)
+        query = query.values(hello_entities=save_entities(hello_entities))
     if text_1:
         query = query.values(text_1=text_1)
     if text_2:

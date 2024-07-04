@@ -20,17 +20,21 @@ async def is_admin(user_id):
 def hand_date(text: str) -> str:
     date = text.replace(' ', '.')
     date_list = text.split('.')
-
+    today = datetime.now(Config.tz)
     if len(date_list) == 1:
-        today = datetime.now(Config.tz)
         if int(date_list[0]) > today.day:
             # date = f'{date_list[0]}.{today.month}.{today.year}'
-            date = f'{date_list[0]}.{today.month}'
+            month = f'0{today.month}' if today.month < 10 else today.month
+            date = f'{date_list[0]}.{month}.{today.year}'
         else:
             month = today.month + 1 if today.month < 12 else 1
-            # year = today.year if month != 1 else today.year + 1
-            # date = f'{date_list[0]}.{month}.{year}'
-            date = f'{date_list[0]}.{month}'
+            year = today.year if month != 1 else today.year + 1
+            date = f'{date_list[0]}.{month}.{year}'
+            # month = f'0{month}' if month < 10 else month
+            # date = f'{date_list[0]}.{month}'
+
+    elif len(date_list) == 2:
+        date = f'{date_list[0]}.{date_list[1]}.{today.year}'
 
     return date
 

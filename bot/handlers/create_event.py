@@ -3,11 +3,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 from aiogram.enums.content_type import ContentType
 from asyncio import sleep
+from datetime import datetime
 
 import re
 
 import db
 import keyboards as kb
+from config import Config
 from init import dp, bot
 from utils.base_utils import hand_date, hand_time
 from utils.entities_utils import recover_entities, save_entities
@@ -22,7 +24,7 @@ async def edit_event(state: FSMContext, chat_id=None):
 
     tariff_text = ''
     for tariff in data['tariffs']:
-        price_str = f'{tariff["text"]} UZS' if tariff["text"] else ''
+        price_str = f'{tariff["price"]} UZS' if tariff["price"] else ''
         tariff_text += f'{tariff["place"]} - {tariff["text"]} {price_str}\n'
 
     if data['type'] == Action.NEW.value:
@@ -42,12 +44,13 @@ async def edit_event(state: FSMContext, chat_id=None):
             photo=data['photo_id'],
             caption=text,
             caption_entities=data['entities'],
+            parse_mode=None,
             reply_markup=kb.get_edit_event_kb(data['type'])
         )
 
         await state.update_data(data={'is_first': False, 'chat_id': sent.chat.id, 'message_id': sent.message_id})
     else:
-        photo = InputMediaPhoto(media=data['photo_id'], caption=text, caption_entities=data['entities'])
+        photo = InputMediaPhoto(media=data['photo_id'], caption=text, caption_entities=data['entities'], parse_mode=None)
         await bot.edit_message_media(
             chat_id=data['chat_id'],
             message_id=data['message_id'],
@@ -72,9 +75,9 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
     if action == Action.NEW.value:
         # text
-        # photo_id = 'AgACAgIAAxkBAAIk0GS33TlFAAHiL3zjexrnj0gkFiF7RwACNMoxGx-iwEnWhZJ-wyQWyQEAAwIAA20AAy8E'
+        photo_id = 'AgACAgIAAxkBAAILkWaGTBTmNF5imYbl7qomolVeK-5GAAIe1TEbUf84SDNLPE4RuP-eAQADAgADeAADNQQ'
         # work
-        photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
+        # photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
         await state.update_data(data={
             'is_first': True,
             'photo_id': photo_id,
@@ -137,6 +140,7 @@ async def edit_text(msg: Message, state: FSMContext):
 @dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_1.value))
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     _, step = cb.data.split(':')
+    print(f'step: {step}')
     await state.set_state(AdminStatus.EDIT_EVENT)
     await state.update_data(data={'step': step})
     if step == EditEventStep.TITLE.value:
@@ -192,7 +196,7 @@ async def edit_text(msg: Message, state: FSMContext):
         tariffs = []
         tariff_list = msg.text.split(',')
         for tariff in tariff_list:
-            tariff_info = tariff.strip().strip(' ')
+            tariff_info = tariff.strip().split(' ')
             place = int(tariff_info[0]) if tariff_info[0].isdigit() else 0
             price = int(tariff_info[1]) if tariff_info[1].isdigit() else None
             text = re.sub(r'\d+', '', tariff).strip().capitalize()
@@ -210,6 +214,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
     if data['step'] == EditEventStep.DATE.value:
         _, date = cb.data.split(':')
+        date = hand_date(date)
         await state.update_data(data={'date': date})
 
     elif data['step'] == EditEventStep.TIME.value:
@@ -243,8 +248,8 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             await state.clear()
             event_id = await db.add_event(
                 title=data['title'],
-                event_date=data['date'],
-                event_time=data['time'],
+                event_date=datetime.strptime(data['date'], Config.date_form).date(),
+                event_time=datetime.strptime(data['time'], Config.time_form).time(),
                 text=data['text'],
                 entities=save_entities(data['entities']),
                 photo_id=data['photo_id'],

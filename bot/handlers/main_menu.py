@@ -15,6 +15,11 @@ from utils.entities_utils import recover_entities
 from enums import BaseCB
 
 
+# @dp.message()
+# async def ddd(msg: Message):
+#     print(msg.photo[-1].file_id)
+
+
 # команда старт
 @dp.message(CommandStart())
 async def com_start(msg: Message, state: FSMContext):
@@ -22,7 +27,7 @@ async def com_start(msg: Message, state: FSMContext):
     await db.add_user(user_id=msg.from_user.id, full_name=msg.from_user.full_name, username=msg.from_user.username)
     # admin_status = await is_admin(msg.from_user.id)
     admin_status = False
-    # admin_status = True if msg.from_user.id == 524275902 else False
+    admin_status = True if msg.from_user.id == 524275902 else False
     if admin_status:
         text = '<b>Действия администратора:</b>'
         await msg.answer(text, reply_markup=kb.get_admin_kb())
@@ -59,6 +64,6 @@ async def social_medias(cb: CallbackQuery):
 
 # Отмена
 @dp.callback_query(lambda cb: cb.data.startswith(BaseCB.CLOSE.value))
-async def social_medias(cb: CallbackQuery, state: FSMContext):
+async def social_media(cb: CallbackQuery, state: FSMContext):
     await cb.message.delete()
     await state.clear()

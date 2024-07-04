@@ -119,9 +119,15 @@ async def update_event(
     if title:
         query = query.values(title=title)
     if new_date:
-        query = query.values(date=new_date)
+        query = query.values(event_date=new_date)
     if new_time:
-        query = query.values(time=new_time)
+        query = query.values(event_time=new_time)
+    if photo_id:
+        query = query.values(photo_id=photo_id)
+    if text:
+        query = query.values(text=text)
+    if entities:
+        query = query.values(entities=entities)
     if text_1:
         query = query.values(text_1=text_1)
     if text_2:

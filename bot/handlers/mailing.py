@@ -10,7 +10,7 @@ from enums import AdminCB, AdminStatus, Action
 
 
 # Отправить сообщение
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.BACK_START.value))
+@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_1.value))
 async def send_message_1(cb: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStatus.SEND_MESSAGE)
     await state.update_data(data={'choice_list': [], 'everyone': False})
@@ -100,6 +100,7 @@ async def send_message_4(cb: CallbackQuery, state: FSMContext):
 
     counter = 0
     users_id = list(set(users_id))
+    # users_id = [5772948261, 524275902]
     for user_id in users_id:
         try:
             if cb.message.content_type == ContentType.TEXT:
