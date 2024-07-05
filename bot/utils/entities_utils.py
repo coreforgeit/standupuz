@@ -29,6 +29,7 @@ def recover_entities(entities: t.Optional[list[str]]) -> list[MessageEntity]:
     entities_list = []
     if entities:
         for entity in entities:
+            print(entity)
             entity_dict = json.loads(entity)
             entities_list.append(MessageEntity(
                 type=entity_dict['type'],

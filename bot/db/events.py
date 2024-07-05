@@ -113,12 +113,13 @@ async def update_event(
         text_3: str = None,
         is_active: bool = None
 ) -> None:
-    query = EventTable.update().where(EventTable.c.id == event_id)
+    query = EventTable.update()
 
     if event_id:
         query = query.where(EventTable.c.id == event_id)
     elif page_id:
         query = query.where(EventTable.c.page_id == page_id)
+
     if title:
         query = query.values(title=title)
     if new_date:
@@ -137,8 +138,6 @@ async def update_event(
         query = query.values(text_2=text_2)
     if text_3:
         query = query.values(text_3=text_3)
-    if page_id:
-        query = query.values(page_id=page_id)
     if is_active is not None:
         query = query.values(is_active=is_active)
     async with begin_connection() as conn:

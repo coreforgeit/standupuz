@@ -28,8 +28,6 @@ async def view_event(cb: CallbackQuery):
 @dp.callback_query(lambda cb: cb.data.startswith(UserCB.BOOK_1.value))
 async def book_1(cb: CallbackQuery, state: FSMContext):
     event_id, option_id = map(int, cb.data.split(':')[1:])
-    # log_error(event_id, with_traceback=False)
-    # log_error(option_id, with_traceback=False)
 
     if not option_id:
         await cb.answer('Свободные места закончились', show_alert=True)
@@ -42,11 +40,7 @@ async def book_1(cb: CallbackQuery, state: FSMContext):
         text = event_info.text_1 if event_info.text_1 else info.text_1
         await cb.message.edit_text(text, reply_markup=kb.get_alert_kb(1))
     else:
-        # event_id = int (cb_data[1])
-        # option_id = int (cb_data[2])
         event_info = await db.get_event(event_id)
-
-        # await state.clear()
         await state.set_state(UserStatus.CHOICE_COUNT_PLACE)
 
         text = event_info.text_1 if event_info.text_1 else info.text_1

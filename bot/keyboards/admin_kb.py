@@ -25,7 +25,7 @@ def get_10_last_event_kb(events: tuple[db.EventRow]) -> InlineKeyboardMarkup:
     kb.button(text='🔙 Назад', callback_data=AdminCB.BACK_START.value)
 
     for event in events:
-        is_active = 'актив.' if event['is_active'] == 1 else 'не актив.'
+        is_active = 'актив.' if event.is_active == 1 else 'не актив.'
         kb.button(
             text=f'{event.title} ({is_active})',
             callback_data=f'{AdminCB.NEW_EVENT.value}:{Action.EDIT.value}:{event.id}')

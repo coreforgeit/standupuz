@@ -77,7 +77,6 @@ async def google_update() -> str:
 
     active_events = await db.get_events(active=True)
     active_page_ids = [event.page_id for event in active_events]
-    # active_page_ids = [706229500, ]
     for table in tables:
         if table.id in active_page_ids:
             event = await db.get_event(page_id=table.id)

@@ -146,20 +146,24 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStatus.EDIT_EVENT)
     await state.update_data(data={'step': step})
     if step == EditEventStep.TITLE.value:
-        await cb.answer('🖍Изменить название')
+        await cb.answer('🖍 Изменить название')
+        await cb.message.edit_reply_markup(reply_markup=kb.get_back_edit_event_kb())
+
+    if step == EditEventStep.CLUB.value:
+        await cb.answer('🖍 Изменить локацию')
         await cb.message.edit_reply_markup(reply_markup=kb.get_back_edit_event_kb())
 
     elif step == EditEventStep.DATE.value:
-        await cb.answer('🖍Изменить дату')
+        await cb.answer('🖍 Изменить дату')
         await cb.message.edit_reply_markup(reply_markup=kb.get_choice_date_kb())
 
     elif step == EditEventStep.TIME.value:
         pop_time = await db.get_popular_time_list()
-        await cb.answer('🖍Изменить время')
+        await cb.answer('🖍 Изменить время')
         await cb.message.edit_reply_markup(reply_markup=kb.get_choice_time_kb(pop_time))
 
     elif step == EditEventStep.PRICE.value:
-        await cb.answer('🖍Места и опции')
+        await cb.answer('🖍 Места и опции')
         await cb.message.edit_reply_markup(reply_markup=kb.get_back_edit_event_kb())
 
 
