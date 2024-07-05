@@ -2,7 +2,6 @@ from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as sa_postgresql
-from utils.entities_utils import save_entities
 from random import randint
 
 from .base import METADATA, begin_connection

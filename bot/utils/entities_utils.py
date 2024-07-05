@@ -3,40 +3,38 @@ from aiogram.types import MessageEntity
 import typing as t
 import json
 
+import db
+
 
 # подготавливает сущности к сохранению (превращает в список строк)
-def save_entities(entities: t.Optional[list[MessageEntity]]) -> list[str]:
-    entities_list = []
+async def save_entities(event_id: int, entities: t.Optional[list[MessageEntity]]) -> None:
     if entities:
         for entity in entities:
-            entities_list.append (
-                json.dumps (
-                    {'type': entity.type,
-                     'offset': entity.offset,
-                     'length': entity.length,
-                     'url': entity.url,
-                     'user': entity.user,
-                     'language': entity.language,
-                     'custom_emoji_id': entity.custom_emoji_id
-                     }
-                )
+            await db.add_entity(
+                event_id=event_id,
+                type_entity=entity.type,
+                offset=entity.offset,
+                length=entity.length,
+                url=entity.url,
+                user=entity.user,
+                language=entity.language,
+                custom_emoji_id=entity.custom_emoji_id
             )
-    return entities_list
 
 
 # восстанавливает сущности
-def recover_entities(entities: t.Optional[list[str]]) -> list[MessageEntity]:
+async def recover_entities(event_id: int) -> list[MessageEntity]:
+    entities = await db.get_entities(event_id)
     entities_list = []
     if entities:
         for entity in entities:
-            print(entity)
-            entity_dict = json.loads(entity)
             entities_list.append(MessageEntity(
-                type=entity_dict['type'],
-                offset=entity_dict['offset'],
-                length=entity_dict['length'],
-                url=entity_dict['url'],
-                user=entity_dict['user'],
-                language=entity_dict['language'],
+                type=entity.type_entity,
+                offset=entity.offset,
+                length=entity.length,
+                url=entity.url,
+                user=None,
+                language=entity.language,
+                custom_emoji_id=entity.custom_emoji_id
             ))
     return entities_list

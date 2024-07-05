@@ -2,7 +2,7 @@ from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as sa_postgresql
-from utils.entities_utils import save_entities
+# from utils.entities_utils import save_entities
 
 from .base import METADATA, begin_connection
 from config import Config
@@ -62,7 +62,7 @@ async def add_event(
         event_time: time,
         text: str,
         club: str,
-        entities: list[str],
+        # entities: list[str],
         photo_id: str,
         is_active: bool,
         page_id: int,
@@ -78,7 +78,7 @@ async def add_event(
         event_date=event_date,
         event_time=event_time,
         text=text,
-        entities=entities,
+        # entities=entities,
         photo_id=photo_id,
         is_active=is_active,
         page_id=page_id,
@@ -198,14 +198,14 @@ async def add_events():
         if event[7] != 1:
             continue
 
-        event_entities = save_entities(get_entities_l(event[0]))
+        # event_entities = save_entities(get_entities_l(event[0]))
         event_id = await add_event(
             title=event[2],
             event_date=datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date(),
             event_time=datetime.strptime(event[4], '%H:%M').time(),
             text=event[5],
             club='',
-            entities=event_entities,
+            # entities=event_entities,
             photo_id=event[6],
             is_active=True,
             page_id=event[8],

@@ -6,7 +6,7 @@ import db
 import keyboards as kb
 from init import dp, bot, log_error
 from utils.google_utils import google_update
-from utils.entities_utils import recover_entities, save_entities
+# from utils.entities_utils import recover_entities
 from enums import AdminCB, AdminStatus
 
 
@@ -36,10 +36,10 @@ async def edit_hello_text_1(cb: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStatus.EDIT_HELLO_TEXT)
 
     info = await db.get_info()
-    # events = await db.get_events(active=True)
+    # entities = await db.get_events(active=True)
     sent = await cb.message.answer(
         text=info.hello_text,
-        entities=recover_entities(info.hello_entities),
+        # entities=recover_entities(info.hello_entities),
         parse_mode=None,
         reply_markup=kb.get_edit_hello_text_kb()
         )

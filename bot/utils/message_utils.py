@@ -10,7 +10,7 @@ from utils.entities_utils import recover_entities
 
 async def send_event(event_id: int, user_id: int, from_start: bool = False) -> None:
     event_info = await db.get_event(event_id)
-    entities = recover_entities(event_info.entities)
+    entities = await recover_entities(event_id)
     options = await db.get_options(event_id)
 
     photo_id = event_info.photo_id

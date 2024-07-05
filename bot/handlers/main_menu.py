@@ -12,7 +12,7 @@ from config import Config, DEBUG
 from init import dp, bot
 
 from utils.base_utils import is_admin
-from utils.entities_utils import recover_entities
+# from utils.entities_utils import recover_entities
 from utils.message_utils import send_event
 from enums import BaseCB
 
@@ -47,7 +47,7 @@ async def com_start(msg: Message, state: FSMContext):
         events = await db.get_events(active=True)
         await msg.answer(
             text=info.hello_text,
-            entities=recover_entities(info.hello_entities),
+            # entities=recover_entities(info.hello_entities),
             parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )
@@ -62,7 +62,7 @@ async def back_com_start(cb: CallbackQuery):
     if cb.message.content_type == ContentType.TEXT:
         await cb.message.edit_text(
             text=info.hello_text,
-            entities=recover_entities(info.hello_entities),
+            # entities=recover_entities(info.hello_entities),
             parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )
@@ -70,7 +70,7 @@ async def back_com_start(cb: CallbackQuery):
         await cb.message.delete()
         await cb.message.answer(
             text=info.hello_text,
-            entities=recover_entities(info.hello_entities),
+            # entities=recover_entities(info.hello_entities),
             parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )

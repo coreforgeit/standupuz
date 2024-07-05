@@ -94,7 +94,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
     elif action == Action.EDIT.value:
         event_info = await db.get_event(event_id=event_id)
-        entities = recover_entities(event_info.entities)
+        entities = await recover_entities(event_id=event_id)
         await state.update_data(data={
             'is_first': True,
             'photo_id': event_info.photo_id,
@@ -263,11 +263,12 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
                 event_date=datetime.strptime(data['date'], Config.date_form).date(),
                 event_time=datetime.strptime(data['time'], Config.time_form).time(),
                 text=data['text'],
-                entities=save_entities(data['entities']),
                 photo_id=data['photo_id'],
                 page_id=page_id,
                 is_active=True,
             )
+            await save_entities(event_id=event_id, entities=data['entities'])
+
             # tariffs.append({'place': place, 'price': price, 'text': text})
             row_number = 5
             for option in data['tariffs']:
