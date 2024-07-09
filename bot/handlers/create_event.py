@@ -289,8 +289,9 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             event_id=data['event_id'],
             photo_id=data['photo_id'],
             text=data['text'],
-            entities=save_entities(data['entities']),
+            # entities=save_entities(data['entities']),
         )
+        await save_entities(event_id=data['event_id'], entities=data['entities'])
         await cb.message.edit_reply_markup(
             reply_markup=kb.update_is_active_event_kb(data['is_active'], data['event_id']))
 

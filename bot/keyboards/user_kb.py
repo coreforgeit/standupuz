@@ -50,7 +50,7 @@ def get_alert_kb(step: int) -> InlineKeyboardMarkup:
         kb.button(text='🔙 Назад', callback_data=f'{BaseCB.CLOSE.value}')
     else:
         kb.button(text='Принял, далее', callback_data=f'{UserCB.BOOK_3.value}')
-        kb.button(text='🔙 Назад', callback_data=f'{UserCB.BOOK_1.value}:0')
+        kb.button(text='🔙 Назад', callback_data=f'{UserCB.BOOK_1.value}:0:1')
     return kb.adjust(1).as_markup()
 
 

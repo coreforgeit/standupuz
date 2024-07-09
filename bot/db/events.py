@@ -146,7 +146,8 @@ async def update_event(
 
 # возвращает ивенты
 async def get_events(active: bool = False, last_10: bool = False) -> tuple[EventRow]:
-    query = EventTable.select().order_by(sa.desc(EventTable.c.created_at))
+    # query = EventTable.select().order_by(sa.desc(EventTable.c.created_at))
+    query = EventTable.select().order_by(EventTable.c.event_date)
 
     if active:
         query = query.where(EventTable.c.is_active)
