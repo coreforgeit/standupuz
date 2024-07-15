@@ -147,12 +147,12 @@ async def update_event(
 # возвращает ивенты
 async def get_events(active: bool = False, last_10: bool = False) -> tuple[EventRow]:
     # query = EventTable.select().order_by(sa.desc(EventTable.c.created_at))
-    query = EventTable.select().order_by(EventTable.c.event_date)
+    query = EventTable.select()
 
     if active:
-        query = query.where(EventTable.c.is_active)
+        query = query.where(EventTable.c.is_active).order_by(EventTable.c.event_date)
     if last_10:
-        query = query.limit(10)
+        query = query.limit(10).order_by(sa.desc(EventTable.c.event_date))
     async with begin_connection() as conn:
         result = await conn.execute(query)
 
