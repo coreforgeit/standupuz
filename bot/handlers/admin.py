@@ -4,9 +4,8 @@ from aiogram.filters import StateFilter
 
 import db
 import keyboards as kb
-from init import dp, bot, log_error
+from init import dp, bot
 from utils.google_utils import google_update
-# from utils.entities_utils import recover_entities
 from enums import AdminCB, AdminStatus
 
 
@@ -26,20 +25,14 @@ async def send_message_1(cb: CallbackQuery, state: FSMContext):
     await cb.message.edit_text(text, reply_markup=kb.get_10_last_event_kb(events))
 
 
-# =====================================================================
-# текст приветствия
-
-
 # показывает текст, предлагает поменять
 @dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_HELLO_TEXT_1.value))
 async def edit_hello_text_1(cb: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStatus.EDIT_HELLO_TEXT)
 
     info = await db.get_info()
-    # entities = await db.get_events(active=True)
     sent = await cb.message.answer(
         text=info.hello_text,
-        # entities=recover_entities(info.hello_entities),
         parse_mode=None,
         reply_markup=kb.get_edit_hello_text_kb()
         )
@@ -86,5 +79,3 @@ async def update_google_table(cb: CallbackQuery, state: FSMContext):
                 f'{error_text}')
 
     await sent.edit_text(text=text[:4000])
-
-

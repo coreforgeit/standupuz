@@ -106,7 +106,7 @@ async def send_message_4(cb: CallbackQuery, state: FSMContext):
             if cb.message.content_type == ContentType.TEXT:
                 await bot.send_message(
                     chat_id=user_id,
-                    text=cb.message.text,entities=cb.message.entities,
+                    text=cb.message.text, entities=cb.message.entities,
                     parse_mode=None
                 )
             elif cb.message.content_type == ContentType.PHOTO:

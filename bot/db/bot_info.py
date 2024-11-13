@@ -49,8 +49,7 @@ async def update_info(
     query = InfoTable.update().where(InfoTable.c.id == 1)
     if hello_text:
         query = query.values(hello_text=hello_text)
-    # if hello_entities:
-    #     query = query.values(hello_entities=save_entities(hello_entities))
+
     if text_1:
         query = query.values(text_1=text_1)
     if text_2:

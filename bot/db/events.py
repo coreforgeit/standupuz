@@ -2,14 +2,9 @@ from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as sa_postgresql
-# from utils.entities_utils import save_entities
 
 from .base import METADATA, begin_connection
 from config import Config
-from .sqlite_temp import get_events_l, get_entities_l
-from .options import add_options_t
-
-import logging
 
 
 class EventRow(t.Protocol):
@@ -192,27 +187,3 @@ async def close_old_events() -> None:
     query = EventTable.update().where(EventTable.c.event_date < now.date()).values(is_active=False)
     async with begin_connection() as conn:
         await conn.execute(query)
-
-
-async def add_events():
-    events = get_events_l()
-    for event in events:
-        if event[7] != 1:
-            continue
-
-        # event_entities = save_entities(get_entities_l(event[0]))
-        event_id = await add_event(
-            title=event[2],
-            event_date=datetime.strptime(f'{event[3]}.2024', '%d.%m.%Y').date(),
-            event_time=datetime.strptime(event[4], '%H:%M').time(),
-            text=event[5],
-            club='',
-            # entities=event_entities,
-            photo_id=event[6],
-            is_active=True,
-            page_id=event[8],
-            text_1=event[9],
-            text_2=event[10],
-            text_3=event[11],
-        )
-        await add_options_t(event_id_old=event[0], event_id_new=event_id)

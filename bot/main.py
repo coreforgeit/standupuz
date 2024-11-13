@@ -1,13 +1,12 @@
 import asyncio
-import logging
 import sys
 import logging
 
 from handlers import dp
 from config import DEBUG
 from init import set_main_menu, bot, log_error, scheduler
-from db.base import init_models, db_command
-from db.events import add_events, close_old_events
+from db.base import init_models
+from db.events import close_old_events
 
 
 async def start_schedulers():
@@ -16,7 +15,6 @@ async def start_schedulers():
 
 
 async def main() -> None:
-    # await db_command()
     await init_models()
     await set_main_menu()
     await start_schedulers()

@@ -1,7 +1,6 @@
 from aiogram.types import ErrorEvent
 
-import db
-from init import dp, bot, log_error
+from init import dp, log_error
 
 
 @dp.errors()

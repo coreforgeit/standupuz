@@ -26,7 +26,6 @@ except:
 
 loop = asyncio.get_event_loop()
 dp = Dispatcher()
-# bot = Bot(Config.token, parse_mode=ParseMode.HTML)
 bot = Bot(Config.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
 scheduler = AsyncIOScheduler(timezone=Config.tz)
@@ -57,7 +56,6 @@ def log_error(message, with_traceback: bool = True):
         ex_traceback = traceback.format_exc()
         tb = ''
         msg = ''
-        # start_row = '  File'
         start_row = '  File "/app'
         tb_split = ex_traceback.split('\n')
         for row in tb_split:

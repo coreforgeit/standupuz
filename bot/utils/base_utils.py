@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
-import asyncio
 
 import db
 from init import bot, log_error
 from config import Config
-from utils.google_utils import add_new_order_in_table
 
 
 # проверка на админа
@@ -23,15 +21,12 @@ def hand_date(text: str) -> str:
     today = datetime.now(Config.tz)
     if len(date_list) == 1:
         if int(date_list[0]) > today.day:
-            # date = f'{date_list[0]}.{today.month}.{today.year}'
             month = f'0{today.month}' if today.month < 10 else today.month
             date = f'{date_list[0]}.{month}.{today.year}'
         else:
             month = today.month + 1 if today.month < 12 else 1
             year = today.year if month != 1 else today.year + 1
             date = f'{date_list[0]}.{month}.{year}'
-            # month = f'0{month}' if month < 10 else month
-            # date = f'{date_list[0]}.{month}'
 
     elif len(date_list) == 2:
         date = f'{date_list[0]}.{date_list[1]}.{today.year}'
@@ -74,12 +69,3 @@ def get_weekend_date_list():
         date_list.append(date.strftime(Config.day_form))
 
     return date_list
-
-
-# Закрывает ивенты
-async def close_events():
-    events = await db.get_events(active=True)
-    now = datetime.now(Config.tz)
-
-
-

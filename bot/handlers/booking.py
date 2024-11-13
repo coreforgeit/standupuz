@@ -1,18 +1,16 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
-from aiogram.enums.content_type import ContentType
 
 import re
 import asyncio
 
 import db
 import keyboards as kb
-from config import DEBUG
-from init import dp, bot, log_error
+from init import dp, bot
 
 from utils.message_utils import send_event, end_book
-from enums import BaseCB, UserCB, UserStatus
+from enums import UserCB, UserStatus
 
 
 # показывает ивент

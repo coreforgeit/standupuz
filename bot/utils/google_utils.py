@@ -1,5 +1,4 @@
 import gspread
-from gspread.exceptions import WorksheetNotFound
 from gspread.exceptions import APIError
 from gspread.utils import ValueRenderOption
 from time import sleep
@@ -117,14 +116,12 @@ async def google_update() -> str:
             options = table.get_values ('A5:B9')
 
             old_event_options = await db.get_options(event_id=event.id)
-            # await db.del_options(event.id)
             row_num = 5
             for option in options:
                 try:
                     option_title = option[0]
                     empty_place = int(option[1])
                     cell = f'B{row_num}'
-                    # cell_f = table.acell (cell, value_render_option='FORMULA').value
                     cell_f = table.acell (cell, value_render_option=ValueRenderOption.formula).value
                     all_place = int(cell_f.split('-')[0][1:])
                     option_id = None
@@ -156,30 +153,6 @@ async def google_update() -> str:
                 except Exception as ex:
                     log_error(ex)
                     error_text = f'{error_text}\n❌ Не удалось обновить места {table.title} {option[0]}:\n{ex}'
-
-            # проверить места
-            # places = table.get_values('C11:M200')
-
-            # for place in places:
-            #     if place[2] != '-':
-            #         try:
-            #             order_id = int(place[0])
-            #             book_count = int(place[1])
-            #             book_option = place[2]
-            #             phone = place[5]
-            #
-            #             await db.add_order(
-            #                 user_id=order_id,
-            #                 phone=phone,
-            #                 event_id=event.id,
-            #                 option=book_option,
-            #                 count_place=book_count,
-            #                 page_id=table.id
-            #             )
-            #         except Exception as ex:
-            #             log_error(ex)
-            #             error_text = (f'{error_text}\n❌ Не удалось обновить бронь {table.title}\n'
-            #                           f'{place[1]} {place[2]} {place[1]} тел. {place[5]}:\n{ex}')
 
     return error_text
 
@@ -216,6 +189,3 @@ def add_new_order_in_table(
     cell = f'C{empty_row_index}:I{empty_row_index}'
     sleep(1)
     page.update(range_name=cell, values=row)
-    # вернуть если формула будет криво работать
-    # sleep(1)
-    # page.update(option_count_cell, empty_place)

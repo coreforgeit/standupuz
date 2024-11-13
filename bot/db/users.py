@@ -5,7 +5,6 @@ import sqlalchemy.dialects.postgresql as sa_postgresql
 
 from .base import METADATA, begin_connection
 from config import Config
-from .sqlite_temp import get_users_l
 
 
 class UserRow(t.Protocol):
@@ -76,17 +75,3 @@ async def update_user_info(user_id: int, phone: str = None) -> None:
         query = query.values(phone=phone)
     async with begin_connection() as conn:
         await conn.execute(query)
-
-
-async def add_users():
-    time_start = datetime.now()
-    users = get_users_l()
-    for user in users:
-        await add_user(
-            user_id=int(user[1]),
-            full_name=user[2],
-            username=user[3],
-            phone=user[5],
-        )
-
-    print(datetime.now() - time_start)

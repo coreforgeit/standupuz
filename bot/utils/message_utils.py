@@ -26,7 +26,6 @@ async def send_event(event_id: int, user_id: int, from_start: bool = False) -> N
     )
 
 
-
 # добавляет пользователя в таблицу
 async def end_book(data: dict):
     # запись в таблицу, запись в базу, оповещение

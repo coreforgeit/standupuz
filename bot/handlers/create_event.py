@@ -51,7 +51,9 @@ async def edit_event(state: FSMContext, chat_id=None):
 
         await state.update_data(data={'is_first': False, 'chat_id': sent.chat.id, 'message_id': sent.message_id})
     else:
-        photo = InputMediaPhoto(media=data['photo_id'], caption=text, caption_entities=data['entities'], parse_mode=None)
+        photo = InputMediaPhoto(
+            media=data['photo_id'], caption=text, caption_entities=data['entities'], parse_mode=None
+        )
         await bot.edit_message_media(
             chat_id=data['chat_id'],
             message_id=data['message_id'],

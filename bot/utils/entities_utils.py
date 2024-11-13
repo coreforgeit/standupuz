@@ -1,8 +1,6 @@
 from aiogram.types import MessageEntity
 
 import typing as t
-import json
-
 import db
 
 

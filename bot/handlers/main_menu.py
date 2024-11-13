@@ -3,23 +3,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import CommandStart
 from aiogram.enums.content_type import ContentType
 
-import re
-import asyncio
-
 import db
 import keyboards as kb
-from config import Config, DEBUG
-from init import dp, bot
+from config import DEBUG
+from init import dp
 
 from utils.base_utils import is_admin
-# from utils.entities_utils import recover_entities
 from utils.message_utils import send_event
 from enums import BaseCB
-
-
-# @dp.message()
-# async def ddd(msg: Message):
-#     print(msg.photo[-1].file_id)
 
 
 # команда старт
@@ -34,7 +25,6 @@ async def com_start(msg: Message, state: FSMContext):
         return
 
     if DEBUG:
-        admin_status = False
         admin_status = True if msg.from_user.id == 524275902 else False
     else:
         admin_status = await is_admin(msg.from_user.id)
@@ -47,7 +37,6 @@ async def com_start(msg: Message, state: FSMContext):
         events = await db.get_events(active=True)
         await msg.answer(
             text=info.hello_text,
-            # entities=recover_entities(info.hello_entities),
             parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )
@@ -62,7 +51,6 @@ async def back_com_start(cb: CallbackQuery):
     if cb.message.content_type == ContentType.TEXT:
         await cb.message.edit_text(
             text=info.hello_text,
-            # entities=recover_entities(info.hello_entities),
             parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )
@@ -70,7 +58,6 @@ async def back_com_start(cb: CallbackQuery):
         await cb.message.delete()
         await cb.message.answer(
             text=info.hello_text,
-            # entities=recover_entities(info.hello_entities),
             parse_mode=None,
             reply_markup=kb.get_events_list_kb(events)
         )

@@ -16,8 +16,3 @@ def begin_connection() -> t.AsyncContextManager [AsyncConnection]:
 async def init_models():
     async with ENGINE.begin () as conn:
         await conn.run_sync (METADATA.create_all)
-
-
-async def db_command():
-    async with begin_connection() as conn:
-        await conn.execute(sa.text('DROP TABLE IF EXISTS options'))

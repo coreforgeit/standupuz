@@ -4,10 +4,7 @@ from datetime import datetime, date, time
 
 from .models import Event, Option, Info
 from .data import days_of_week
-from .utils import get_photo_url, get_photo_url_mob, add_tags
-
-import os
-import logging
+from .utils import get_photo_url, get_photo_url_mob
 
 day_str_format = '%d/%m'
 time_str_format = '%H:%M'
@@ -41,9 +38,7 @@ def events_view(request: HttpRequest):
             'place': event.club or '',
             'min_amount': f'{price[:-3]} {price[-3:]}' if len(price) > 3 else price,
             'description': event.text.replace('\n', '<br>'),
-            # 'description': add_tags(text=event.text, entities=event.entities),
             'tg_link': f'https://t.me/standupuz_bot?start={event.id}',
-            # 'tg_link': f'https://t.me/tushchkan_test_3_bot?start={event.id}'
          }
         )
 

@@ -1,12 +1,7 @@
-from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
-import sqlalchemy.dialects.postgresql as sa_postgresql
-from random import randint
 
 from .base import METADATA, begin_connection
-from config import Config
-from .sqlite_temp import get_options_l
 
 
 class EntityRow(t.Protocol):
@@ -69,7 +64,7 @@ async def get_entities(event_id: int,) -> tuple[EntityRow]:
     return result.all()
 
 
-async def delete_entities(event_id: int,) -> tuple[EntityRow]:
+async def delete_entities(event_id: int,) -> None:
     query = EntityTable.delete().where(EntityTable.c.event_id == event_id)
     async with begin_connection() as conn:
         await conn.execute(query)

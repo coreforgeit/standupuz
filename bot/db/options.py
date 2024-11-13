@@ -1,12 +1,8 @@
-from datetime import datetime, date, time
 import typing as t
 import sqlalchemy as sa
-import sqlalchemy.dialects.postgresql as sa_postgresql
 from random import randint
 
 from .base import METADATA, begin_connection
-from config import Config
-from .sqlite_temp import get_options_l
 
 
 class OptionRow(t.Protocol):
@@ -102,16 +98,3 @@ async def del_options(event_id: int) -> None:
     query = OptionTable.delete().where(OptionTable.c.event_id == event_id)
     async with begin_connection() as conn:
         await conn.execute(query)
-
-
-async def add_options_t(event_id_old: int, event_id_new: int):
-    options = get_options_l(event_id_old)
-    for option in options:
-        await add_option(
-            event_id=event_id_new,
-            title=option[2],
-            empty_place=option[3],
-            all_place=option[4],
-            cell=option[5],
-            price=randint(1, 10) * 10000
-        )

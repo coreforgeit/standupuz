@@ -33,4 +33,3 @@ class ViewAdminInfo(admin.ModelAdmin):
 @admin.register(InfoBot)
 class ViewAdminInfoBot(admin.ModelAdmin):
     list_display = ['text_1', 'text_2', 'text_3']
-
