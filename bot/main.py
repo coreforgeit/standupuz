@@ -17,7 +17,8 @@ async def start_schedulers():
 async def main() -> None:
     await init_models()
     await set_main_menu()
-    await start_schedulers()
+    if DEBUG:
+        await start_schedulers()
     await bot.delete_webhook (drop_pending_updates=True)
     await dp.start_polling(bot)
     pass
