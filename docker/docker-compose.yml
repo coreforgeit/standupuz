@@ -69,10 +69,8 @@ services:
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf
       - ../nginx/conf.d/base.conf:/etc/nginx/conf.d/base.conf
-#      - ../log/nginx:/var/log/nginx
-#      - ../ssl:/etc/nginx/ssl
+      - ../logs/nginx:/var/log/nginx
       - /etc/letsencrypt:/etc/letsencrypt
-#      - /var/log/nginx:/var/log/nginx
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     restart: unless-stopped
