@@ -185,10 +185,6 @@ async def get_popular_time_list() -> tuple[PopTimeRow]:
 # закрывает старые ивенты
 async def close_old_events() -> None:
     now = datetime.now(Config.tz)
-    log_error(
-        f'>>>\nnow: {now}\nnow.date: {now.date()}\n',
-        with_traceback=False
-    )
     query = EventTable.update().where(EventTable.c.event_date < now.date()).values(is_active=False)
     async with begin_connection() as conn:
         await conn.execute(query)
