@@ -8,6 +8,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
     env_file:
       - ../docker/.env
 
@@ -17,6 +18,7 @@ services:
     container_name: pgadmin
     ports:
       - "8080:80"
+    restart: unless-stopped
     env_file:
       - ../docker/.env
 
@@ -30,6 +32,9 @@ services:
     container_name: web
     volumes:
       - ../standupuz_web:/app
+      - ../logs/django:/app/logs
+
+    restart: unless-stopped
     ports:
       - "8000:8000"
     depends_on:
@@ -47,6 +52,8 @@ services:
     container_name: bot
     volumes:
       - ../bot:/app
+      - ../logs/bot:/app/logs
+    restart: unless-stopped
     depends_on:
       - db
     env_file:
@@ -68,6 +75,7 @@ services:
 #      - /var/log/nginx:/var/log/nginx
       - static_value:/var/html/static/
       - media_value:/var/html/media/
+    restart: unless-stopped
     depends_on:
       - web
 

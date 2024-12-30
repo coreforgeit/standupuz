@@ -5,6 +5,7 @@ import sqlalchemy.dialects.postgresql as sa_postgresql
 
 from .base import METADATA, begin_connection
 from config import Config
+from init import log_error
 
 
 class EventRow(t.Protocol):
@@ -147,8 +148,8 @@ async def get_events(active: bool = False, last_10: bool = False) -> tuple[Event
     if active:
         query = query.where(EventTable.c.is_active).order_by(EventTable.c.event_date)
     if last_10:
-        query = query.limit(10).order_by(EventTable.c.event_date)
-        # query = query.limit(10).order_by(sa.desc(EventTable.c.event_date))
+        # query = query.limit(10).order_by(EventTable.c.event_date)
+        query = query.limit(10).order_by(sa.desc(EventTable.c.event_date))
     async with begin_connection() as conn:
         result = await conn.execute(query)
 
@@ -184,6 +185,10 @@ async def get_popular_time_list() -> tuple[PopTimeRow]:
 # закрывает старые ивенты
 async def close_old_events() -> None:
     now = datetime.now(Config.tz)
+    log_error(
+        f'>>>\nnow: {now}\nnow.date: {now.date()}\n',
+        with_traceback=False
+    )
     query = EventTable.update().where(EventTable.c.event_date < now.date()).values(is_active=False)
     async with begin_connection() as conn:
         await conn.execute(query)

@@ -136,6 +136,6 @@ async def send_message_4(cb: CallbackQuery, state: FSMContext):
             counter += 1
         except Exception as ex:
             pass
-            log_error(f'send message user {user_id} {ex}', with_traceback=False)
+            # log_error(f'send message user {user_id} {ex}', with_traceback=False)
 
     await sent.edit_text(f'⌛️ Отправлено {counter} сообщений')

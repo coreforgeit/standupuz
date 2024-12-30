@@ -10,14 +10,16 @@ from db.events import close_old_events
 
 
 async def start_schedulers():
-    scheduler.add_job(close_old_events, 'cron', hour=0)
+    # scheduler.add_job(close_old_events, 'cron', hour=0)
+    scheduler.add_job(close_old_events, 'cron', hour=15)
     scheduler.start()
 
 
 async def main() -> None:
     await init_models()
     await set_main_menu()
-    await start_schedulers()
+    if DEBUG:
+        await start_schedulers()
     await bot.delete_webhook (drop_pending_updates=True)
     await dp.start_polling(bot)
     pass
