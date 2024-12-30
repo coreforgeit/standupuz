@@ -10,7 +10,8 @@ from db.events import close_old_events
 
 
 async def start_schedulers():
-    scheduler.add_job(close_old_events, 'cron', hour=0)
+    # scheduler.add_job(close_old_events, 'cron', hour=0)
+    scheduler.add_job(close_old_events, 'cron', hour=15)
     scheduler.start()
 
 
