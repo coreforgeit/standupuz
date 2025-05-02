@@ -14,6 +14,13 @@ from enums import BaseCB
 
 
 # команда старт
+# @dp.message()
+# async def com_start(msg: Message, state: FSMContext):
+#     if msg.photo:
+#         print(msg.photo[-1].file_id)
+
+
+# команда старт
 @dp.message(CommandStart())
 async def com_start(msg: Message, state: FSMContext):
     await state.clear()

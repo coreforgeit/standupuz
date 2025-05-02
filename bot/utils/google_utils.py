@@ -10,7 +10,7 @@ from init import log_error
 
 
 # добавляет данные в таблицу
-async def create_new_page(date: str, time: str, tariffs: list[dict], title: str) -> int:
+async def create_new_page(date: str, time: str, title: str, tariffs: list[dict] = None, ticket_url: str = None) -> int:
     gc = gspread.service_account(filename=Config.google_key_path)
     table = gc.open_by_key(Config.google_table_id)
     # проверка таблицы
@@ -27,10 +27,15 @@ async def create_new_page(date: str, time: str, tariffs: list[dict], title: str)
                     ['Время', time]]
 
     option_row = 5
-    for tariff in tariffs:
-        formula = f'={tariff["place"]}-SUMIFS(D:D; E:E; A{option_row})'
-        setting_list.append([tariff["text"], formula])
-        option_row += 1
+    if tariffs:
+        for tariff in tariffs:
+            formula = f'={tariff["place"]}-SUMIFS(D:D; E:E; A{option_row})'
+            setting_list.append([tariff["text"], formula])
+            option_row += 1
+
+    if ticket_url:
+        setting_list.append(['Ссылка', ticket_url])
+
     page.update(range_name=f'a1:b10', values=setting_list, raw=False)
 
     # тексты

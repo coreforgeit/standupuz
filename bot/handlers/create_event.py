@@ -2,6 +2,7 @@ from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 from aiogram.enums.content_type import ContentType
+from aiogram.enums.message_entity_type import MessageEntityType
 from asyncio import sleep
 from datetime import datetime
 
@@ -10,14 +11,14 @@ import re
 import db
 import keyboards as kb
 from config import Config, DEBUG
-from init import dp, bot
+from init import dp, bot, log_error
 from utils.base_utils import hand_date, hand_time
 from utils.entities_utils import recover_entities, save_entities
 from utils.google_utils import create_new_page
 from enums import AdminStatus, Action, AdminCB, EditEventStep
 
 
-# основная функция изменений
+# основная функция изменений https://ticketon.uz/tashkent/event/stendap-otkrytyy-mikrofon-uz
 async def edit_event(state: FSMContext, chat_id=None):
     await state.set_state(AdminStatus.CREATE_EVENT)
     data = await state.get_data()
@@ -34,6 +35,7 @@ async def edit_event(state: FSMContext, chat_id=None):
                f'📍 Локация: {data["club"]}\n' \
                f'📅 Дата: {data["date"]}\n' \
                f'⏰ Время: {data["time"]}\n' \
+               f'🔗 Ссылка: {data["ticket_url"]}\n' \
                f'🫰 Места:\n{tariff_text}'
 
     else:
@@ -78,7 +80,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
     if action == Action.NEW.value:
         if DEBUG:
-            photo_id = 'AgACAgIAAxkBAAILkWaGTBTmNF5imYbl7qomolVeK-5GAAIe1TEbUf84SDNLPE4RuP-eAQADAgADeAADNQQ'
+            photo_id = 'AgACAgIAAxkBAAIZ_2gUuLrNeqcp3rrc4EVFQ4TqQ6xeAAI58DEbRdSpSOA0drmJIeU3AQADAgADeAADNgQ'
         else:
             photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
         await state.update_data(data={
@@ -92,6 +94,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             'tariffs': [],
             'type': 'new',
             'club': '',
+            'ticket_url': '',
         })
 
     elif action == Action.EDIT.value:
@@ -109,7 +112,8 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             'type': 'edit',
             'club': '',
             'event_id': event_id,
-            'is_active': event_info.is_active
+            'is_active': event_info.is_active,
+            'ticket_url': event_info.ticket_url,
         })
 
     await edit_event(state, chat_id=cb.message.chat.id)
@@ -175,47 +179,55 @@ async def edit_text(msg: Message, state: FSMContext):
     await msg.delete()
     data = await state.get_data()
 
-    if data['step'] == EditEventStep.TITLE.value:
-        await state.update_data(data={'title': msg.text})
+    try:
+        if data['step'] == EditEventStep.TITLE.value:
+            await state.update_data(data={'title': msg.text})
 
-    elif data['step'] == EditEventStep.CLUB.value:
-        await state.update_data(data={'club': msg.text})
+        elif data['step'] == EditEventStep.CLUB.value:
+            await state.update_data(data={'club': msg.text})
 
-    elif data['step'] == EditEventStep.DATE.value:
-        date = hand_date(msg.text)
-        if date == 'error':
-            sent = await msg.answer('❌ Некорректный формат даты')
-            await sleep(3)
-            await sent.delete()
-            return
+        elif data['step'] == EditEventStep.DATE.value:
+            date = hand_date(msg.text)
+            if date == 'error':
+                sent = await msg.answer('❌ Некорректный формат даты')
+                await sleep(3)
+                await sent.delete()
+                return
 
-        else:
-            await state.update_data(data={'date': date})
+            else:
+                await state.update_data(data={'date': date})
 
-    elif data['step'] == EditEventStep.TIME.value:
-        time = hand_time(msg.text)
-        if time == 'error':
-            sent = await msg.answer('❌ Некорректный формат времени')
-            await sleep(3)
-            await sent.delete()
-            return
+        elif data['step'] == EditEventStep.TIME.value:
+            time = hand_time(msg.text)
+            if time == 'error':
+                sent = await msg.answer('❌ Некорректный формат времени')
+                await sleep(3)
+                await sent.delete()
+                return
 
-        else:
-            await state.update_data(data={'time': time})
+            else:
+                await state.update_data(data={'time': time})
 
-    elif data['step'] == EditEventStep.PRICE.value:
-        tariffs = []
-        tariff_list = msg.text.split(',')
-        for tariff in tariff_list:
-            tariff_info = tariff.strip().split(' ')
-            place = int(tariff_info[0]) if tariff_info[0].isdigit() else 0
-            price = int(tariff_info[1]) if tariff_info[1].isdigit() else 0
-            if price < 10000:
-                price *= 1000
-            text = re.sub(r'\d+', '', tariff).strip().capitalize()
-            tariffs.append({'place': place, 'price': price, 'text': text})
+        elif data['step'] == EditEventStep.PRICE.value:
+            if msg.entities and msg.entities[0].type == MessageEntityType.URL.value:
+                await state.update_data(data={'ticket_url': msg.text})
 
-        await state.update_data(data={'tariffs': tariffs})
+            else:
+                tariffs = []
+                tariff_list = msg.text.split(',')
+                for tariff in tariff_list:
+                    tariff_info = tariff.strip().split(' ')
+                    place = int(tariff_info[0]) if tariff_info[0].isdigit() else 0
+                    price = int(tariff_info[1]) if tariff_info[1].isdigit() else 0
+                    if price < 10000:
+                        price *= 1000
+                    text = re.sub(r'\d+', '', tariff).strip().capitalize()
+                    tariffs.append({'place': place, 'price': price, 'text': text})
+
+                await state.update_data(data={'tariffs': tariffs})
+
+    except Exception as e:
+        log_error(e)
 
     await edit_event(state)
 
@@ -248,11 +260,17 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             await cb.answer('❗️Ошибка. Добавьте название', show_alert=True)
             return
 
-        if not data['tariffs']:
+        if not data['tariffs'] and not data['ticket_url']:
             await cb.answer('❗️Ошибка. Добавьте опции', show_alert=True)
             return
 
-        page_id = await create_new_page(data['date'], data['time'], data['tariffs'], data['title'])
+        page_id = await create_new_page(
+            date=data['date'],
+            time=data['time'],
+            tariffs=data.get('tariffs'),
+            title=data['title'],
+            ticket_url=data['ticket_url'],
+        )
         if not page_id:
             await cb.answer(
                 '❗️Ошибка. Вкладка с таким названием уже существует. Удалите старую вкладку или переименуйте '
@@ -266,6 +284,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
                 event_time=datetime.strptime(data['time'], Config.time_form).time(),
                 text=data['text'],
                 photo_id=data['photo_id'],
+                ticket_url=data['ticket_url'],
                 page_id=page_id,
                 is_active=True,
             )

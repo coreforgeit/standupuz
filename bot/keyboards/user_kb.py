@@ -25,19 +25,26 @@ def get_social_medias_kb() -> InlineKeyboardMarkup:
 
 
 # забронировать места
-def get_book_kb(options: tuple[db.OptionRow], from_start: bool = False) -> InlineKeyboardMarkup:
+def get_book_kb(
+        options: tuple[db.OptionRow] = None, ticket_url: str = False, from_start: bool = False
+) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     if from_start:
         kb.button(text='🔙 Назад', callback_data=BaseCB.BACK_COM_START.value)
     else:
         kb.button(text='🔙 Назад', callback_data=BaseCB.CLOSE.value)
-    for option in options:
-        if option.empty_place > 0:
-            caption = f'{option.name} ({option.empty_place})'
-            kb.button(text=caption, callback_data=f'{UserCB.BOOK_1.value}:{option.event_id}:{option.id}')
-        else:
-            caption = f'{option.name} (Мест нет)'
-            kb.button(text=caption, callback_data=f'{UserCB.BOOK_1.value}:{option.event_id}:0')
+
+    if ticket_url:
+        kb.button(text='💳 Купить билет', url=ticket_url)
+
+    if options:
+        for option in options:
+            if option.empty_place > 0:
+                caption = f'{option.name} ({option.empty_place})'
+                kb.button(text=caption, callback_data=f'{UserCB.BOOK_1.value}:{option.event_id}:{option.id}')
+            else:
+                caption = f'{option.name} (Мест нет)'
+                kb.button(text=caption, callback_data=f'{UserCB.BOOK_1.value}:{option.event_id}:0')
 
     return kb.adjust(1).as_markup()
 

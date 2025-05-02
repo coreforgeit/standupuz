@@ -22,7 +22,7 @@ class EventRow(t.Protocol):
     text_1: str
     text_2: str
     text_3: str
-    text_site: str
+    ticket_url: str
 
 
 class PopTimeRow(t.Protocol):
@@ -48,7 +48,7 @@ EventTable: sa.Table = sa.Table(
     sa.Column('text_1', sa.Text()),
     sa.Column('text_2', sa.Text()),
     sa.Column('text_3', sa.Text()),
-    # sa.Column('text_site', sa.Text()),
+    sa.Column('ticket_url', sa.Text()),
 )
 
 
@@ -60,6 +60,7 @@ async def add_event(
         club: str,
         # entities: list[str],
         photo_id: str,
+        ticket_url: str,
         is_active: bool,
         page_id: int,
         text_1: str = None,
@@ -81,7 +82,7 @@ async def add_event(
         text_1=text_1,
         text_2=text_2,
         text_3=text_3,
-        # text_site=text_site,
+        ticket_url=ticket_url,
     )
     async with begin_connection() as conn:
         result = await conn.execute(query)
@@ -107,6 +108,7 @@ async def update_event(
         text_1: str = None,
         text_2: str = None,
         text_3: str = None,
+        ticket_url: str = None,
         is_active: bool = None
 ) -> None:
     query = EventTable.update()
@@ -128,6 +130,8 @@ async def update_event(
         query = query.values(text=text)
     if entities:
         query = query.values(entities=entities)
+    if ticket_url:
+        query = query.values(ticket_url=ticket_url)
     if text_1:
         query = query.values(text_1=text_1)
     if text_2:
@@ -185,10 +189,6 @@ async def get_popular_time_list() -> tuple[PopTimeRow]:
 # закрывает старые ивенты
 async def close_old_events() -> None:
     now = datetime.now(Config.tz)
-    log_error(
-        f'>>>\nnow: {now}\nnow.date: {now.date()}\n',
-        with_traceback=False
-    )
     query = EventTable.update().where(EventTable.c.event_date < now.date()).values(is_active=False)
     async with begin_connection() as conn:
         await conn.execute(query)

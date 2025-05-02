@@ -37,6 +37,7 @@ async def book_1(cb: CallbackQuery, state: FSMContext):
         event_info = await db.get_event(data['event_id'])
         text = event_info.text_1 if event_info.text_1 else info.text_1
         await cb.message.edit_text(text, reply_markup=kb.get_alert_kb(1))
+
     else:
         event_info = await db.get_event(event_id)
         await state.set_state(UserStatus.CHOICE_COUNT_PLACE)
