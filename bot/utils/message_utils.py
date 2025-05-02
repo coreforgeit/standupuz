@@ -14,15 +14,15 @@ async def send_event(event_id: int, user_id: int, from_start: bool = False) -> N
     options = await db.get_options(event_id)
 
     photo_id = event_info.photo_id
-    if DEBUG:
-        photo_id = 'AgACAgIAAxkBAAMGZecrNFZ3ctI1jBQlYNCIneaND5IAAkTaMRuSRDhLC7cywGea_iYBAAMCAAN5AAM0BA'
+    # if DEBUG:
+    #     photo_id = 'AgACAgIAAxkBAAMGZecrNFZ3ctI1jBQlYNCIneaND5IAAkTaMRuSRDhLC7cywGea_iYBAAMCAAN5AAM0BA'
     await bot.send_photo(
         chat_id=user_id,
         photo=photo_id,
         caption=event_info.text,
         caption_entities=entities,
         parse_mode=None,
-        reply_markup=kb.get_book_kb(options, from_start)
+        reply_markup=kb.get_book_kb(options=options, ticket_url=event_info.ticket_url, from_start=from_start)
     )
 
 

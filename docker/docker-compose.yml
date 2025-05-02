@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:13
@@ -16,6 +14,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
+#    volumes:
+#      - pgadmin_data:/var/lib/pgadmin
     ports:
       - "8080:80"
     restart: unless-stopped
@@ -78,6 +78,7 @@ services:
       - web
 
 volumes:
+  pgadmin_data:
   postgres_data:
   static_value:
   media_value:
