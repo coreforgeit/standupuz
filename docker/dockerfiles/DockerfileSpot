@@ -1,0 +1,26 @@
+# === Этап сборки ===
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# 1) Копируем манифесты зависимостей
+COPY package.json package-lock.json* yarn.lock* ./
+
+# 2) Устанавливаем все зависимости (npm или Yarn — на ваш выбор)
+# Если вы используете npm:
+RUN npm ci --ignore-scripts
+# Если вы предпочитаете Yarn, замените на:
+# RUN yarn install --frozen-lockfile
+
+# 3) Копируем код и собираем продакшн-сборку
+COPY . .
+RUN npm run build
+# или, если у вас в package.json скрипт build под Yarn:
+# RUN yarn build
+
+# === Этап продакшн-сервера ===
+FROM nginx:stable-alpine
+# Копируем статические файлы билда в папку Nginx
+COPY --from=builder /app/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
