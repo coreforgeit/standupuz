@@ -18,6 +18,8 @@ class Event(models.Model):
     text_2 = models.TextField('Текст 2', null=True, blank=True)
     text_3 = models.TextField('Текст 3', null=True, blank=True)
 
+    objects = models.Manager()
+
     def __str__(self):
         return f"<Event({self.title})>"
 
