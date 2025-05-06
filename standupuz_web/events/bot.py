@@ -2,7 +2,7 @@ import telebot
 
 from standupuz_web.settings import TOKEN_BOT
 
-bot = telebot.TeleBot(TOKEN_BOT, parse_mode='html')
+bot = telebot.TeleBot(TOKEN_BOT)
 
 
 # скачивает фото

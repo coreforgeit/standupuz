@@ -1,6 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http.request import HttpRequest
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from datetime import datetime, date, time
+
+import random
+import logging
+import json
 
 from .models import Event, Option, Info
 from .data import days_of_week
@@ -8,6 +15,31 @@ from .utils import get_photo_url, get_photo_url_mob
 
 day_str_format = '%d/%m'
 time_str_format = '%H:%M'
+
+
+class FoxView(APIView):
+    def get(self, request, *args, **kwargs):
+        logging.warning('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
+        try:
+            weird_fox_quotes = [
+                "Лиса не хитрая — она просто забыла, что хотела.",
+                "Настоящая лиса не крадёт кур. Она их арендует по бартеру.",
+                "Если лиса молчит — значит, у неё грузится Windows XP.",
+                "Не всякая рыжая в лесу — лиса. Иногда это сбежавший парик.",
+                "Лиса знает три пути: к норе, к холодильнику и обратно.",
+                "Когда жизнь кидает палки в лапы — лиса делает из них костёр и жарит маршмеллоу.",
+                "Лиса не врёт. Она тренирует альтернативные факты.",
+                "Одинокая лиса — это просто кошка с дипломом философа.",
+                "Лиса идёт одна не потому что гордая, а потому что потерялась.",
+                "Настоящая лиса всегда с хвостом. Даже если это скотч."
+            ]
+            quotes = random.choice(weird_fox_quotes)
+            logging.warning(quotes)
+
+            # return Response(json.dumps({"text": quotes}), status=status.HTTP_200_OK)
+            return Response({"text": quotes}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"text": str(e)}, status=status.HTTP_200_OK)
 
 
 def home_page_redirect(request):

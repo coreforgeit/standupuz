@@ -7,6 +7,7 @@ from events import views
 
 urlpatterns = [
     path('', views.home_page_redirect, name='home'),
+    path('fox/', views.FoxView.as_view(), name='fox'),
     path('events/', views.events_view, name='events'),
     path('event_mob/<int:event_id>/', views.event_mob_view, name='event_mob'),
     # path('event_mob/', views.event_mob_view, name='event_mob'),
