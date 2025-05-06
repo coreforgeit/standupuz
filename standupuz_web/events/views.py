@@ -1,5 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http.request import HttpRequest
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from datetime import datetime, date, time
 
 from .models import Event, Option, Info
@@ -71,3 +75,42 @@ def event_mob_view(request: HttpRequest, event_id):
          }
     context = {'card': card, 'phone': info.phone}
     return render(request, 'index_affiche_mob.html', context)
+
+
+
+def build_card(ev: Event) -> dict:
+    option = Option.objects.filter(event_id=ev.id).order_by('price').first()
+    has_places = Option.objects.filter(event_id=ev.id, empty_place__gt=0).exists()
+    price_str = str(option.price) if option else '0'
+
+    return {
+        'event_id':   ev.id,
+        'photo_path': get_photo_url(ev.photo_id),
+        'places':     1 if has_places else 0,
+        'date_str':   ev.event_date.strftime(day_str_format),
+        'time_str':   ev.event_time.strftime(time_str_format),
+        'day_str':    days_of_week.get(ev.event_date.weekday(), ''),
+        'place':      ev.club or '',
+        'min_amount': f'{price_str[:-3]} {price_str[-3:]}' if len(price_str) > 3 else price_str,
+        'description': ev.text.replace('\n', '<br>'),
+        'tg_link':    f'https://t.me/standupuz_bot?start={ev.id}',
+    }
+
+class EventsListAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        events = Event.objects.filter(is_active=True).order_by('event_date')
+        cards = [build_card(ev) for ev in events]
+        return Response({'cards': cards}, status=status.HTTP_200_OK)
+
+
+class EventDetailAPIView(APIView):
+    def get(self, request, event_id, *args, **kwargs):
+        try:
+            ev = Event.objects.get(pk=event_id, is_active=True)
+        except Event.DoesNotExist:
+            return Response({'detail': 'Event not found.'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        card = build_card(ev)
+        return Response(card, status=status.HTTP_200_OK)
+
