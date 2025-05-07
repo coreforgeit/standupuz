@@ -1,7 +1,9 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
+from datetime import time
+import typing as t
 
 import db
-from config import Config
+from settings.config import Config
 from utils.base_utils import get_weekend_date_list
 from enums import AdminCB, BaseCB, Action, EditEventStep
 
@@ -20,7 +22,7 @@ def get_admin_kb() -> InlineKeyboardMarkup:
 
 
 # 10 последних ивентов
-def get_10_last_event_kb(events: tuple[db.EventRow]) -> InlineKeyboardMarkup:
+def get_10_last_event_kb(events: list[db.Event]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text='🔙 Назад', callback_data=AdminCB.BACK_START.value)
 
@@ -34,7 +36,7 @@ def get_10_last_event_kb(events: tuple[db.EventRow]) -> InlineKeyboardMarkup:
 
 
 # Отправка сообщений
-def get_send_message_kb(events: tuple[db.EventRow], data: dict) -> InlineKeyboardMarkup:
+def get_send_message_kb(events: list[db.Event], data: dict) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text='🔙 Назад', callback_data=BaseCB.CLOSE.value)
     kb.button(
@@ -88,7 +90,7 @@ def get_choice_date_kb() -> InlineKeyboardMarkup:
 
 
 # предлагает выбрать время
-def get_choice_time_kb(times: tuple[db.PopTimeRow]) -> InlineKeyboardMarkup:
+def get_choice_time_kb(times: list[db.PopTimeRow]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     for time in times:
         time_str = time.event_time.strftime(Config.time_form)

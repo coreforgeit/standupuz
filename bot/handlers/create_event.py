@@ -10,11 +10,10 @@ import re
 
 import db
 import keyboards as kb
-from config import Config, DEBUG
-from init import dp, bot, log_error
-from utils.base_utils import hand_date, hand_time
-from utils.entities_utils import recover_entities, save_entities
-from utils.google_utils import create_new_page
+import utils
+from settings import conf, log_error
+from init import client_router, bot
+import utils as ut
 from enums import AdminStatus, Action, AdminCB, EditEventStep
 
 
@@ -65,21 +64,21 @@ async def edit_event(state: FSMContext, chat_id=None):
 
 
 # возвращает к
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.BACK_EDIT_EVENT.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.BACK_EDIT_EVENT.value))
 async def back_edit_event(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     await cb.message.edit_reply_markup(reply_markup=kb.get_edit_event_kb(data['type']))
 
 
 # начало создания
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.NEW_EVENT.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.NEW_EVENT.value))
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     await state.clear()
     _, action, event_id_str = cb.data.split(':')
     event_id = int(event_id_str)
 
     if action == Action.NEW.value:
-        if DEBUG:
+        if conf.debug:
             photo_id = 'AgACAgIAAxkBAAIZ_2gUuLrNeqcp3rrc4EVFQ4TqQ6xeAAI58DEbRdSpSOA0drmJIeU3AQADAgADeAADNgQ'
         else:
             photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
@@ -98,8 +97,8 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
         })
 
     elif action == Action.EDIT.value:
-        event_info = await db.get_event(event_id=event_id)
-        entities = await recover_entities(event_id=event_id)
+        event_info = await db.Event.get_event(event_id=event_id)
+        entities = ut.recover_entities(event_info.entities)
         await state.update_data(data={
             'is_first': True,
             'photo_id': event_info.photo_id,
@@ -120,7 +119,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
 
 # принимает дату текстом
-@dp.message(StateFilter(AdminStatus.CREATE_EVENT))
+@client_router.message(StateFilter(AdminStatus.CREATE_EVENT))
 async def edit_text(msg: Message, state: FSMContext):
     await msg.delete()
 
@@ -146,7 +145,7 @@ async def edit_text(msg: Message, state: FSMContext):
 
 # ==================================================================
 # распределяет изменения, даёт статусы
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_1.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_1.value))
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     _, step = cb.data.split(':')
     await state.set_state(AdminStatus.EDIT_EVENT)
@@ -164,7 +163,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
         await cb.message.edit_reply_markup(reply_markup=kb.get_choice_date_kb())
 
     elif step == EditEventStep.TIME.value:
-        pop_time = await db.get_popular_time_list()
+        pop_time = await db.Event.get_popular_time_list()
         await cb.answer('🖍 Изменить время')
         await cb.message.edit_reply_markup(reply_markup=kb.get_choice_time_kb(pop_time))
 
@@ -174,7 +173,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
 
 # принимает текст сообщения
-@dp.message(StateFilter(AdminStatus.EDIT_EVENT))
+@client_router.message(StateFilter(AdminStatus.EDIT_EVENT))
 async def edit_text(msg: Message, state: FSMContext):
     await msg.delete()
     data = await state.get_data()
@@ -187,7 +186,7 @@ async def edit_text(msg: Message, state: FSMContext):
             await state.update_data(data={'club': msg.text})
 
         elif data['step'] == EditEventStep.DATE.value:
-            date = hand_date(msg.text)
+            date = ut.hand_date(msg.text)
             if date == 'error':
                 sent = await msg.answer('❌ Некорректный формат даты')
                 await sleep(3)
@@ -198,7 +197,7 @@ async def edit_text(msg: Message, state: FSMContext):
                 await state.update_data(data={'date': date})
 
         elif data['step'] == EditEventStep.TIME.value:
-            time = hand_time(msg.text)
+            time = ut.hand_time(msg.text)
             if time == 'error':
                 sent = await msg.answer('❌ Некорректный формат времени')
                 await sleep(3)
@@ -233,13 +232,13 @@ async def edit_text(msg: Message, state: FSMContext):
 
 
 # принимает колбек с датой
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_2.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_2.value))
 async def edit_event_2(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
     if data['step'] == EditEventStep.DATE.value:
         _, date = cb.data.split(':')
-        date = hand_date(date)
+        date = ut.hand_date(date)
         await state.update_data(data={'date': date})
 
     elif data['step'] == EditEventStep.TIME.value:
@@ -250,7 +249,7 @@ async def edit_event_2(cb: CallbackQuery, state: FSMContext):
 
 
 # подтвердить
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_ACCEPT.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_ACCEPT.value))
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
 
@@ -264,7 +263,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             await cb.answer('❗️Ошибка. Добавьте опции', show_alert=True)
             return
 
-        page_id = await create_new_page(
+        page_id = await ut.create_new_page(
             date=data['date'],
             time=data['time'],
             tariffs=data.get('tariffs'),
@@ -277,25 +276,26 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
                 'ивент', show_alert=True)
         else:
             await state.clear()
-            event_id = await db.add_event(
+            event_id = await db.Event.add_event(
                 title=data['title'],
                 club=data.get('club'),
-                event_date=datetime.strptime(data['date'], Config.date_form).date(),
-                event_time=datetime.strptime(data['time'], Config.time_form).time(),
+                event_date=datetime.strptime(data['date'], conf.date_form).date(),
+                event_time=datetime.strptime(data['time'], conf.time_form).time(),
                 text=data['text'],
+                entities=ut.save_entities(data['entities']),
                 photo_id=data['photo_id'],
                 ticket_url=data['ticket_url'],
                 page_id=page_id,
                 is_active=True,
             )
-            await save_entities(event_id=event_id, entities=data['entities'])
+            # await save_entities(event_id=event_id, entities=data['entities'])
 
             # tariffs.append({'place': place, 'price': price, 'text': text})
             row_number = 5
             for option in data['tariffs']:
-                await db.add_option(
+                await db.Option.add_option(
                     event_id=event_id,
-                    title=option['text'],
+                    name=option['text'],
                     empty_place=option['place'],
                     all_place=option['place'],
                     cell=f'B{row_number}',
@@ -306,23 +306,23 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             await cb.message.edit_reply_markup(reply_markup=kb.update_is_active_event_kb(True, event_id))
 
     else:
-        await db.update_event(
+        await db.Event.update_event(
             event_id=data['event_id'],
             photo_id=data['photo_id'],
             text=data['text'],
-            # entities=save_entities(data['entities']),
+            entities=ut.save_entities(data['entities']),
         )
-        await save_entities(event_id=data['event_id'], entities=data['entities'])
+        # await save_entities(event_id=data['event_id'], entities=data['entities'])
         await cb.message.edit_reply_markup(
             reply_markup=kb.update_is_active_event_kb(data['is_active'], data['event_id']))
 
 
 # изменить статус ивента
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.EVENT_ACTIVE_STATUS.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.EVENT_ACTIVE_STATUS.value))
 async def event_active_status(cb: CallbackQuery):
     _, new_state_str, event_id_str = cb.data.split(':')
     new_state = bool(int(new_state_str))
     event_id = int(event_id_str)
 
-    await db.update_event(event_id=event_id, is_active=new_state)
+    await db.Event.update_event(event_id=event_id, is_active=new_state)
     await cb.message.edit_reply_markup(reply_markup=kb.update_is_active_event_kb(new_state, event_id))

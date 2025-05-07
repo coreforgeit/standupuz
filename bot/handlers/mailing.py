@@ -3,14 +3,17 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 from aiogram.enums.content_type import ContentType
 
+import random
+
 import db
 import keyboards as kb
-from init import dp, bot, log_error
+from init import client_router, bot
+from settings import conf, log_error
 from enums import AdminCB, AdminStatus, Action
 
 
 # Отправить сообщение
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_1.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_1.value))
 async def send_message_1(cb: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStatus.SEND_MESSAGE)
     await state.update_data(data={'choice_list': [], 'everyone': False})
@@ -18,11 +21,11 @@ async def send_message_1(cb: CallbackQuery, state: FSMContext):
 
 
 # команда старт
-@dp.message(StateFilter(AdminStatus.SEND_MESSAGE))
+@client_router.message(StateFilter(AdminStatus.SEND_MESSAGE))
 async def send_message_2(msg: Message, state: FSMContext):
     await msg.delete()
     data = await state.get_data()
-    events = await db.get_events(last_10=True)
+    events = await db.Event.get_events(last_10=True)
 
     await state.update_data(data={'events': events})
     keyboard = kb.get_send_message_kb(events=events, data=data)
@@ -57,7 +60,7 @@ async def send_message_2(msg: Message, state: FSMContext):
 
 
 # Сменить клавиатуру
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_3.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_3.value))
 async def send_message_3(cb: CallbackQuery, state: FSMContext):
     _, action = cb.data.split(':')
     data = await state.get_data()
@@ -80,7 +83,7 @@ async def send_message_3(cb: CallbackQuery, state: FSMContext):
 
 
 # Рассылка
-@dp.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_4.value))
+@client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.SEND_MESSAGE_4.value))
 async def send_message_4(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     if data == {}:
@@ -88,54 +91,70 @@ async def send_message_4(cb: CallbackQuery, state: FSMContext):
         return
 
     await state.clear()
-    await cb.answer('⏳ Рассылка сообщений, может уйти некоторое время')
-    sent = await cb.message.answer('⏳')
+    # await cb.answer('⏳ Рассылка сообщений, может уйти некоторое время')
+    sent = await cb.message.answer('<b>⏳ Рассылка</b>')
 
     if data['everyone']:
-        users = await db.get_users()
+        users = await db.User.get_users()
         users_id = [user.user_id for user in users]
     else:
-        orders = await db.get_users_for_mailing(data['choice_list'])
+        orders = await db.Order.get_users_for_mailing(data['choice_list'])
         users_id = [order.user_id for order in orders]
 
     counter = 0
     users_id = list(set(users_id))
+    count_users = len(users_id)
     # users_id = [5772948261, 524275902]
     for user_id in users_id:
         try:
-            if cb.message.content_type == ContentType.TEXT:
-                await bot.send_message(
-                    chat_id=user_id,
-                    text=cb.message.text, entities=cb.message.entities,
-                    parse_mode=None
-                )
-            elif cb.message.content_type == ContentType.PHOTO:
-                await bot.send_photo(
-                    chat_id=user_id,
-                    photo=cb.message.photo[-1].file_id,
-                    caption=cb.message.caption,
-                    caption_entities=cb.message.caption_entities,
-                    parse_mode=None
-                )
-            elif cb.message.content_type == ContentType.VIDEO:
-                await bot.send_video(
-                    chat_id=user_id,
-                    video=cb.message.video.file_id,
-                    caption=cb.message.caption,
-                    caption_entities=cb.message.caption_entities,
-                    parse_mode=None
-                )
-            elif cb.message.content_type == ContentType.ANIMATION:
-                await bot.send_animation(
-                    chat_id=user_id,
-                    animation=cb.message.animation.file_id,
-                    aption=cb.message.caption,
-                    caption_entities=cb.message.caption_entities,
-                    parse_mode=None
-                )
+            await bot.copy_message(
+                chat_id=user_id,
+                from_chat_id=cb.message.chat.id,
+                message_id=cb.message.message_id,
+                parse_mode=None,
+            )
+            # if cb.message.content_type == ContentType.TEXT:
+            #     await bot.send_message(
+            #         chat_id=user_id,
+            #         text=cb.message.text, entities=cb.message.entities,
+            #         parse_mode=None
+            #     )
+            # elif cb.message.content_type == ContentType.PHOTO:
+            #     await bot.send_photo(
+            #         chat_id=user_id,
+            #         photo=cb.message.photo[-1].file_id,
+            #         caption=cb.message.caption,
+            #         caption_entities=cb.message.caption_entities,
+            #         parse_mode=None
+            #     )
+            # elif cb.message.content_type == ContentType.VIDEO:
+            #     await bot.send_video(
+            #         chat_id=user_id,
+            #         video=cb.message.video.file_id,
+            #         caption=cb.message.caption,
+            #         caption_entities=cb.message.caption_entities,
+            #         parse_mode=None
+            #     )
+            # elif cb.message.content_type == ContentType.ANIMATION:
+            #     await bot.send_animation(
+            #         chat_id=user_id,
+            #         animation=cb.message.animation.file_id,
+            #         aption=cb.message.caption,
+            #         caption_entities=cb.message.caption_entities,
+            #         parse_mode=None
+            #     )
             counter += 1
+            if random.randint(0, 50) == 30:
+                text = (
+                    f'<b>⏳ Рассылка</b>\n'
+                    f'Отправлено {counter} из {count_users}'
+                )
+                await sent.edit_text(text)
         except Exception as ex:
             pass
-            # log_error(f'send message user {user_id} {ex}', with_traceback=False)
+            # log_error(f'send message user {user_id} {ex}', wt=False)
 
-    await sent.edit_text(f'⌛️ Отправлено {counter} сообщений')
+    await sent.edit_text(
+                    f'<b>✅ Рассылка завершена</b>\n'
+                    f'Отправлено {counter} из {count_users}'
+    )

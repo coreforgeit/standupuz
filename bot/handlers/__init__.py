@@ -1,8 +1,7 @@
-from .main_menu import dp
-from .booking import dp
-from .admin import dp
-from .mailing import dp
-from .create_event import dp
-from .exceptions import dp
+from .admin import client_router
+from .booking import client_router
+from .create_event import client_router
+from .mailing import client_router
 
-__all__ = ['dp']
+__all__ = ['client_router']
+

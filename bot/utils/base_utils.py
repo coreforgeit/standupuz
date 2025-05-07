@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
-import db
-from init import bot, log_error
-from config import Config
+from init import bot
+from settings import log_error
+from settings.config import Config
 
 
 # проверка на админа

@@ -1,6 +1,7 @@
 django
 django-unfold
 djangorestframework
+django-cors-headers
 pillow
 psycopg2
 python-decouple
