@@ -17,37 +17,10 @@ day_str_format = '%d/%m'
 time_str_format = '%H:%M'
 
 
-class FoxView(APIView):
-    def get(self, request, *args, **kwargs):
-        logging.warning('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
-        try:
-            weird_fox_quotes = [
-                "Лиса не хитрая — она просто забыла, что хотела.",
-                "Настоящая лиса не крадёт кур. Она их арендует по бартеру.",
-                "Если лиса молчит — значит, у неё грузится Windows XP.",
-                "Не всякая рыжая в лесу — лиса. Иногда это сбежавший парик.",
-                "Лиса знает три пути: к норе, к холодильнику и обратно.",
-                "Когда жизнь кидает палки в лапы — лиса делает из них костёр и жарит маршмеллоу.",
-                "Лиса не врёт. Она тренирует альтернативные факты.",
-                "Одинокая лиса — это просто кошка с дипломом философа.",
-                "Лиса идёт одна не потому что гордая, а потому что потерялась.",
-                "Настоящая лиса всегда с хвостом. Даже если это скотч."
-            ]
-            quotes = random.choice(weird_fox_quotes)
-            logging.warning(quotes)
-
-            # return Response(json.dumps({"text": quotes}), status=status.HTTP_200_OK)
-            return Response({"text": quotes}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"text": str(e)}, status=status.HTTP_200_OK)
-
-
 def home_page_redirect(request):
     return redirect('events')
 
 
- # path('api/event/', views.EventsListAPIView.as_view(), name='api-event-list'),
- #    path('api/event/<int:event_id>/', views.EventDetailAPIView.as_view(), name='api-event-detail'),
 def build_card(ev: Event) -> dict:
     option = Option.objects.filter(event_id=ev.id).order_by('price').first()
     has_places = Option.objects.filter(event_id=ev.id, empty_place__gt=0).exists()
@@ -83,6 +56,22 @@ class EventDetailAPIView(APIView):
 
         card = build_card(ev)
         return Response(card, status=status.HTTP_200_OK)
+
+
+class InfoAPIView(APIView):
+    def get(self, request, event_id, *args, **kwargs):
+        return Response({
+            "phone": '+ 998 50 011 37 56',
+            "text": '''<h3 class="about-h3">Мы русскоязычное стендап-сообщество в Узбекистане. </h3>
+    
+    <ul class="about-ul">
+    <li>У нас собраны местные комики, релоканты, эмигранты и гастролёры. </li>
+    <li>Мы проводим разные комедийные шоу каждую неделю. </li>
+    <li>Если вам требуется комик для корпоративного мероприятия, дня рождения или свадьбы, мы готовы предоставить вам наших талантливых артистов. Для вопросов о сотрудничестве свяжитесь с нами через Telegram по <a class="aLinkLi" href="https://t.me/StandUp_UZB">ссылке</a> или напишите нам в директ <a class="aLinkLi" href="https://instagram.com/standup.uz">Instagram</a>.</li>
+    </ul>
+    <p class="about-p">Присоединяйтесь к нам и наслаждайтесь стендапом и комедийными шоу различных форматов!
+    </p>''',
+        })
 
 
 
