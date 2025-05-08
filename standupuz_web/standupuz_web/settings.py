@@ -10,6 +10,9 @@ SECRET_KEY = os.getenv('DJANGO_KEY')
 DEBUG = bool(int(os.getenv('DEBUG')))
 # DEBUG = bool(int(config('DEBUG')))
 
+DAY_STR_FORMAT = '%d/%m'
+TIME_STR_FORMAT = '%H:%M'
+
 if DEBUG:
     TOKEN_BOT = os.getenv('TOKEN_TEST')
 else:
