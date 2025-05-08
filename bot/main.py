@@ -2,31 +2,50 @@ import asyncio
 import sys
 import logging
 
-from handlers import dp
-from config import DEBUG
-from init import set_main_menu, bot, log_error, scheduler
+from aiogram import Dispatcher
+
+import db
+from handlers import client_router
+from handlers.main_menu import main_router
+from handlers.exceptions import error_router
+from settings import conf, log_error
+from init import set_main_menu, bot
 from db.base import init_models
-from db.events import close_old_events
+from utils import start_schedulers, shutdown_schedulers
 
 
-async def start_schedulers():
-    scheduler.add_job(close_old_events, 'cron', hour=0)
-    scheduler.start()
+dp = Dispatcher()
 
 
 async def main() -> None:
     await init_models()
+    # await db.Entity.old_data_insert()
+    # await db.Event.old_data_insert()
+    # await db.Option.old_data_insert()
+    # await db.Order.old_data_insert()
+    # await db.Info.old_data_insert()
+    # await db.SiteInfo.old_data_insert()
+    # await db.User.old_data_insert()
+    # await get_pay_token()
+    # await init_models()
     await set_main_menu()
-    if not DEBUG:
+    if not conf.debug:
         await start_schedulers()
-    await bot.delete_webhook (drop_pending_updates=True)
+    # else:
+    #     pass
+    #     await start_schedulers()
+    dp.include_router(main_router)
+    dp.include_router(client_router)
+    dp.include_router(error_router)
     await dp.start_polling(bot)
-    pass
+    if not conf.debug:
+        await shutdown_schedulers()
+    await bot.session.close()
 
 
 if __name__ == "__main__":
-    if DEBUG:
+    if conf.debug:
         logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     else:
-        log_error('start_bot', with_traceback=False)
+        log_error('start_bot', wt=False)
     asyncio.run(main())

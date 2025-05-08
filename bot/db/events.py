@@ -1,28 +1,14 @@
+import os.path
+
+import sqlalchemy as sa
+from sqlalchemy.orm import Mapped, mapped_column
+import sqlalchemy.dialects.postgresql as sa_postgresql
 from datetime import datetime, date, time
 import typing as t
-import sqlalchemy as sa
-import sqlalchemy.dialects.postgresql as sa_postgresql
 
-from .base import METADATA, begin_connection
-from config import Config
-from init import log_error
-
-
-class EventRow(t.Protocol):
-    id: int
-    created_at: datetime
-    title: str
-    event_date: date
-    event_time: time
-    text: str
-    entities: list[str]
-    photo_id: str
-    is_active: bool
-    page_id: int
-    text_1: str
-    text_2: str
-    text_3: str
-    ticket_url: str
+from .base import Base, begin_connection
+from init import bot
+from settings import log_error, conf
 
 
 class PopTimeRow(t.Protocol):
@@ -30,73 +16,71 @@ class PopTimeRow(t.Protocol):
     count_time: int
 
 
-EventTable: sa.Table = sa.Table(
-    "events",
-    METADATA,
+class Event(Base):
+    __tablename__ = "events"
 
-    sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
-    sa.Column('created_at', sa.DateTime(timezone=True)),
-    sa.Column('title', sa.String(255)),
-    sa.Column('club', sa.String(255)),
-    sa.Column('event_date', sa.Date()),
-    sa.Column('event_time', sa.Time()),
-    sa.Column('text', sa.Text()),
-    sa.Column('entities', sa_postgresql.ARRAY(sa.String(255))),
-    sa.Column('photo_id', sa.String(255)),
-    sa.Column('is_active', sa.Boolean()),
-    sa.Column('page_id', sa.Integer),
-    sa.Column('text_1', sa.Text()),
-    sa.Column('text_2', sa.Text()),
-    sa.Column('text_3', sa.Text()),
-    sa.Column('ticket_url', sa.Text()),
-)
+    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
+    created_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), nullable=True)
+    title: Mapped[str] = mapped_column(sa.String(255), nullable=True)
+    club: Mapped[str] = mapped_column(sa.String(255), nullable=True)
+    event_date: Mapped[date] = mapped_column(sa.Date(), nullable=True)
+    event_time: Mapped[time] = mapped_column(sa.Time(), nullable=True)
+    text: Mapped[str] = mapped_column(sa.Text(), nullable=True)
+    entities: Mapped[str] = mapped_column(sa.Text, nullable=True)
+    photo_id: Mapped[str] = mapped_column(sa.String(255), nullable=True)
+    is_active: Mapped[bool] = mapped_column(sa.Boolean(), nullable=True)
+    page_id: Mapped[int] = mapped_column(sa.Integer(), nullable=True)
+    text_1: Mapped[str] = mapped_column(sa.Text(), nullable=True)
+    text_2: Mapped[str] = mapped_column(sa.Text(), nullable=True)
+    text_3: Mapped[str] = mapped_column(sa.Text(), nullable=True)
+    ticket_url: Mapped[str] = mapped_column(sa.Text(), nullable=True)
 
+    @classmethod
+    async def add_event(
+            cls,
+            title: str,
+            event_date: date,
+            event_time: time,
+            text: str,
+            club: str,
+            photo_id: str,
+            ticket_url: str,
+            is_active: bool,
+            page_id: int,
+            entities: str = None,
+            text_1: str = None,
+            text_2: str = None,
+            text_3: str = None,
+    ) -> int:
+        now = datetime.now(conf.tz)
+        stmt = sa.insert(cls).values(
+            created_at=now,
+            title=title,
+            club=club,
+            event_date=event_date,
+            event_time=event_time,
+            text=text,
+            entities=entities,
+            photo_id=photo_id,
+            is_active=is_active,
+            page_id=page_id,
+            text_1=text_1,
+            text_2=text_2,
+            text_3=text_3,
+            ticket_url=ticket_url,
+        )
+        async with begin_connection() as conn:
+            try:
+                result = await conn.execute(stmt)
+                await conn.commit()
+                return result.inserted_primary_key[0]
+            except Exception as e:
+                log_error(f"add_event failed: {e}")
+                raise
 
-async def add_event(
-        title: str,
-        event_date: date,
-        event_time: time,
-        text: str,
-        club: str,
-        # entities: list[str],
-        photo_id: str,
-        ticket_url: str,
-        is_active: bool,
-        page_id: int,
-        text_1: str = None,
-        text_2: str = None,
-        text_3: str = None
-) -> int:
-    now = datetime.now(Config.tz)
-    query = EventTable.insert().values(
-        created_at=now,
-        title=title,
-        club=club,
-        event_date=event_date,
-        event_time=event_time,
-        text=text,
-        # entities=entities,
-        photo_id=photo_id,
-        is_active=is_active,
-        page_id=page_id,
-        text_1=text_1,
-        text_2=text_2,
-        text_3=text_3,
-        ticket_url=ticket_url,
-    )
-    async with begin_connection() as conn:
-        result = await conn.execute(query)
-    return result.inserted_primary_key[0]
-
-
-#  db.update_event (
-#                     is_active=is_active,
-#                     title=title,
-#                     date=event_date_str,
-#                     time=event_time_str,
-#                     page_id=table.id)
-# обновляет данные ивента
-async def update_event(
+    @classmethod
+    async def update_event(
+        cls,
         event_id: int = None,
         page_id: int = None,
         title: str = None,
@@ -104,91 +88,174 @@ async def update_event(
         new_time: time = None,
         photo_id: str = None,
         text: str = None,
-        entities: list[str] = None,
+        entities: str = None,
         text_1: str = None,
         text_2: str = None,
         text_3: str = None,
         ticket_url: str = None,
-        is_active: bool = None
-) -> None:
-    query = EventTable.update()
+        is_active: bool = None,
+    ) -> None:
+        stmt = sa.update(cls)
+        if event_id is not None:
+            stmt = stmt.where(cls.id == event_id)
+        elif page_id is not None:
+            stmt = stmt.where(cls.page_id == page_id)
 
-    if event_id:
-        query = query.where(EventTable.c.id == event_id)
-    elif page_id:
-        query = query.where(EventTable.c.page_id == page_id)
+        # apply each update directly
+        if title:
+            stmt = stmt.values(title=title)
+        if new_date:
+            stmt = stmt.values(event_date=new_date)
+        if new_time:
+            stmt = stmt.values(event_time=new_time)
+        if photo_id:
+            stmt = stmt.values(photo_id=photo_id)
+        if text:
+            stmt = stmt.values(text=text)
+        if entities:
+            stmt = stmt.values(entities=entities)
+        if text_1:
+            stmt = stmt.values(text_1=text_1)
+        if text_2:
+            stmt = stmt.values(text_2=text_2)
+        if text_3:
+            stmt = stmt.values(text_3=text_3)
+        if ticket_url:
+            stmt = stmt.values(ticket_url=ticket_url)
+        if is_active is not None:
+            stmt = stmt.values(is_active=is_active)
 
-    if title:
-        query = query.values(title=title)
-    if new_date:
-        query = query.values(event_date=new_date)
-    if new_time:
-        query = query.values(event_time=new_time)
-    if photo_id:
-        query = query.values(photo_id=photo_id)
-    if text:
-        query = query.values(text=text)
-    if entities:
-        query = query.values(entities=entities)
-    if ticket_url:
-        query = query.values(ticket_url=ticket_url)
-    if text_1:
-        query = query.values(text_1=text_1)
-    if text_2:
-        query = query.values(text_2=text_2)
-    if text_3:
-        query = query.values(text_3=text_3)
-    if is_active is not None:
-        query = query.values(is_active=is_active)
-    async with begin_connection() as conn:
-        await conn.execute(query)
+        async with begin_connection() as conn:
+            try:
+                await conn.execute(stmt)
+                await conn.commit()
+            except Exception as e:
+                log_error(f"update_event failed: {e}")
+                raise
 
+    @classmethod
+    async def get_events(cls, active: bool = False, last_10: bool = False) -> list[t.Self]:
+        stmt = sa.select(cls)
+        if active:
+            stmt = stmt.where(cls.is_active).order_by(cls.event_date)
+        if last_10:
+            stmt = stmt.limit(10).order_by(sa.desc(cls.event_date))
+        async with begin_connection() as conn:
+            result = await conn.execute(stmt)
+        return result.scalars().all()
 
-# возвращает ивенты
-async def get_events(active: bool = False, last_10: bool = False) -> tuple[EventRow]:
-    # query = EventTable.select().order_by(sa.desc(EventTable.c.created_at))
-    query = EventTable.select()
+    @classmethod
+    async def get_event(cls, event_id: int = None, page_id: int = None) -> t.Optional[t.Self]:
+        if event_id is not None:
+            stmt = sa.select(cls).where(cls.id == event_id)
+        elif page_id is not None:
+            stmt = sa.select(cls).where(cls.page_id == page_id)
+        else:
+            return None
+        async with begin_connection() as conn:
+            result = await conn.execute(stmt)
+        return result.scalars().first()
 
-    if active:
-        query = query.where(EventTable.c.is_active).order_by(EventTable.c.event_date)
-    if last_10:
-        # query = query.limit(10).order_by(EventTable.c.event_date)
-        query = query.limit(10).order_by(sa.desc(EventTable.c.event_date))
-    async with begin_connection() as conn:
-        result = await conn.execute(query)
+    @classmethod
+    async def get_popular_time_list(cls) -> list[PopTimeRow]:
+        stmt = (
+            sa.select(cls.event_time, sa.func.count(cls.id).label("count_time"))
+            .group_by(cls.event_time)
+            .order_by(sa.func.count(cls.id))
+            .limit(6)
+        )
+        async with begin_connection() as conn:
+            result = await conn.execute(stmt)
+        return result.all()
 
-    return result.all()
+    @classmethod
+    async def close_old_events(cls) -> None:
+        now = datetime.now(conf.tz)
+        stmt = sa.update(cls).where(cls.event_date < now.date()).values(is_active=False)
+        async with begin_connection() as conn:
+            try:
+                await conn.execute(stmt)
+                await conn.commit()
+            except Exception as e:
+                log_error(f"close_old_events failed: {e}")
+                raise
 
+    @classmethod
+    async def old_data_insert(cls) -> None:
+        """
+        Reads old data from old_data/events.csv (with header),
+        bulk-inserts all rows into the events table,
+        and writes a JSON file mapping old IDs to new IDs in old_data/events_id_map.json.
+        """
+        import csv
+        import json
+        from pathlib import Path
+        import sqlalchemy as sa
+        from datetime import datetime, date, time
 
-# возвращает ивент
-async def get_event(event_id: int = None, page_id: int = None) -> EventRow:
-    query = EventTable.select().where(EventTable.c.id == event_id)
-    if event_id:
-        query = query.where(EventTable.c.id == event_id)
-    elif page_id:
-        query = EventTable.select().where(EventTable.c.page_id == page_id)
-    async with begin_connection() as conn:
-        result = await conn.execute(query)
+        data_dir = Path("db/old_data")
+        # csv_path = os.path.join(data_dir, f"{cls.__tablename__}.csv")
+        csv_path = data_dir / f"{cls.__tablename__}.csv"
 
-    return result.first()
+        print(f'csv_path: {csv_path} {os.path.exists(csv_path)}')
+        if not os.path.exists(csv_path):
+            return
 
+        # read all old rows
+        with csv_path.open(newline="", encoding="utf-8") as f:
+        # with open(csv_path, "w", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
 
-# популярные варианты времени
-async def get_popular_time_list() -> tuple[PopTimeRow]:
-    query = (EventTable.select().with_only_columns(
-        EventTable.c.event_time,
-        sa.func.count(EventTable.c.id).label('count_time')).
-             group_by(EventTable.c.event_time).order_by(sa.func.count(EventTable.c.id)).limit(6)
-             )
-    async with begin_connection() as conn:
-        result = await conn.execute(query)
+        map_path = data_dir / "entities_map.json"
+        with map_path.open(encoding="utf-8") as mf:
+            raw_map = json.load(mf)
+        entities_map = {int(k): v for k, v in raw_map.items()}
 
-    return result.all()
+        id_map: dict[int, int] = {}
+        print(len(rows))
 
+        async with begin_connection() as conn:
+            for row in rows:
 
-# закрывает старые ивенты
-async def close_old_events() -> None:
-    now = datetime.now(Config.tz)
-    query = EventTable.update().where(EventTable.c.event_date < now.date()).values(is_active=False)
-    async with begin_connection() as conn:
-        await conn.execute(query)
+                print(row["id"])
+                old_id = int(row["id"])
+                stmt = sa.insert(cls).values(
+                    created_at=(datetime.fromisoformat(row["created_at"])
+                                if row.get("created_at") else None),
+                    title=row.get("title"),
+                    club=row.get("club"),
+                    event_date=(date.fromisoformat(row["event_date"])
+                                if row.get("event_date") else None),
+                    event_time=(time.fromisoformat(row["event_time"])
+                                if row.get("event_time") else None),
+                    text=row.get("text"),
+                    entities=None,
+                    photo_id=row.get("photo_id"),
+                    is_active=(row.get("is_active") == "True"),
+                    page_id=(int(row["page_id"]) if row.get("page_id") else None),
+                    text_1=row.get("text_1") if row.get("text_1") != 'NULL' else None,
+                    text_2=row.get("text_2") if row.get("text_2") != 'NULL' else None,
+                    text_3=row.get("text_3") if row.get("text_3") != 'NULL' else None,
+                    ticket_url=row.get("ticket_url") if row.get("ticket_url") != 'NULL' else None,
+                )
+                result = await conn.execute(stmt)
+                # capture new primary key
+                new_id = result.inserted_primary_key[0]
+                id_map[old_id] = new_id
+
+                if row.get("photo_id"):
+                    dest = os.path.join(conf.photo_path, f'{new_id}.jpg')
+                    file = await bot.get_file(row.get("photo_id"))
+                    await bot.download(file=file, destination=dest)
+                # await conn.execute(stmt)
+
+                await conn.commit()
+
+        # write the mapping of old IDs to new IDs
+        # map_path = os.path.join(data_dir, f"id_map.json")
+        map_path = data_dir / f"id_map.json"
+
+        with open(map_path, "w", encoding="utf-8") as mf:
+            json.dump(id_map, mf, ensure_ascii=False, indent=2)
+

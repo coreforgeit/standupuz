@@ -1,0 +1,70 @@
+@media screen and (max-width: 1440px) {
+    .conteiner {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .cards_grid{
+        /* padding-top: 36px;
+        padding-bottom: 46px; */
+        /* display: flex; */
+        
+        /* justify-content: space-around; */
+        /* gap: 46px; */
+    }
+}
+
+@media screen and (max-width: 970px) {
+    .cards_grid{
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header_flex {
+        align-items: start;
+        /* margin-top: 63px; */
+    }
+    .logo {
+        width: 90px;
+    }
+    .header_menu {
+        display: none;
+    }
+    .header_right {
+        padding-right: 0;
+    }
+    .header_right_burger {
+        display: block;
+        margin-bottom: 10px;
+    }
+    .header_right_phone {
+        padding-bottom: 14px;
+    }
+    .header_right_phone a {
+        font-size: 14px;
+    }
+    .header_right_contacts a:last-child{
+        margin-left: 5px;
+    }
+
+    .cards_grid{
+        /* padding-top: 36px;
+        padding-bottom: 46px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px; */
+    }
+    .item {
+        /* border: 2px solid rgba(247, 225, 226, 1);
+        border-radius: 10px; */
+
+        min-height: 370px;
+        max-width: 370px;
+        width: 100%;
+    }
+
+    footer {
+        display: none;
+    }
+}

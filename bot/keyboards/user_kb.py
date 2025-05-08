@@ -5,7 +5,7 @@ from enums import UserCB, BaseCB, Action
 
 
 # список ивентов
-def get_events_list_kb(events: tuple[db.EventRow]) -> InlineKeyboardMarkup:
+def get_events_list_kb(events: list[db.Event]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text='Узнать о Standup.uz', callback_data=BaseCB.SOCIAL_MEDIAS.value)
     if events:
@@ -26,9 +26,10 @@ def get_social_medias_kb() -> InlineKeyboardMarkup:
 
 # забронировать места
 def get_book_kb(
-        options: tuple[db.OptionRow] = None, ticket_url: str = False, from_start: bool = False
+        options: list[db.Option] = None, ticket_url: str = False, from_start: bool = False
 ) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
+    print(f'ticket_url: {ticket_url}')
     if from_start:
         kb.button(text='🔙 Назад', callback_data=BaseCB.BACK_COM_START.value)
     else:

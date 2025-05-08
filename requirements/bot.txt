@@ -4,4 +4,7 @@ apscheduler
 asyncpg
 python-dotenv
 gspread
+gspread_asyncio
 pytz
+redis
+uvloop

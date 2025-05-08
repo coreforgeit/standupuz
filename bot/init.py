@@ -1,72 +1,59 @@
-from aiogram import Dispatcher
+from aiogram import Dispatcher, Router
 from aiogram.types.bot_command import BotCommand
 from aiogram import Bot
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
+from apscheduler.jobstores.redis import RedisJobStore
+from apscheduler.executors.asyncio import AsyncIOExecutor
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from sqlalchemy.ext.asyncio import create_async_engine
-from datetime import datetime
 
-import logging
-import traceback
-import os
 import asyncio
-import re
+import redis
+import uvloop
 
-from config import Config
-
-
-try:
-    import uvloop
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-except:
-    pass
+from sqlalchemy.ext.asyncio import create_async_engine
+from settings import conf
+from enums import MenuCommand
 
 
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 loop = asyncio.get_event_loop()
-dp = Dispatcher()
-bot = Bot(Config.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+bot = Bot(
+    token=conf.token,
+    loop=loop,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 
-scheduler = AsyncIOScheduler(timezone=Config.tz)
-ENGINE = create_async_engine(url=Config.db_url)
+main_router = Router()
+client_router = Router()
+error_router = Router()
+
+# Настройка Redis
+redis_client = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=0)
+redis_client_1 = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, db=1)
+
+
+scheduler = AsyncIOScheduler(
+    jobstores={
+        'default': RedisJobStore(host=conf.redis_host, port=conf.redis_port, db=1)
+    },
+    executors={
+        'default': AsyncIOExecutor()
+    },
+    job_defaults={
+        'coalesce': True,
+        'max_instances': 3
+    }
+)
+
+
+ENGINE = create_async_engine(url=conf.db_url)
 
 
 async def set_main_menu():
-    main_menu_commands = [
-        BotCommand(command='/start', description='Перезапуск 🚀'),
-    ]
-
-    await bot.set_my_commands(main_menu_commands)
-
-
-# запись ошибок
-def log_error(message, with_traceback: bool = True):
-    now = datetime.now(Config.tz)
-    log_folder = now.strftime ('%m-%Y')
-    log_path = os.path.join('logs', log_folder)
-
-    if not os.path.exists(log_path):
-        os.makedirs(log_path)
-
-    log_file_path = os.path.join(log_path, f'{now.day}.log')
-    logging.basicConfig (level=logging.WARNING, filename=log_file_path, encoding='utf-8')
-
-    if with_traceback:
-        ex_traceback = traceback.format_exc()
-        tb = ''
-        msg = ''
-        start_row = '  File "/app'
-        tb_split = ex_traceback.split('\n')
-        for row in tb_split:
-            if row.startswith(start_row) and not re.search ('venv', row):
-                tb += f'{row}\n'
-
-            if not row.startswith(' '):
-                msg += f'{row}\n'
-
-        logging.warning(f'{now}\n{tb}\n\n{msg}\n---------------------------------\n')
-        return msg
-    else:
-        logging.warning(f'{now}\n{message}\n\n---------------------------------\n')
+    await bot.set_my_commands([
+        BotCommand(command=cmd.command, description=cmd.label)
+        for cmd in MenuCommand
+    ])
 

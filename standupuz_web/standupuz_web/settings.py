@@ -10,19 +10,28 @@ SECRET_KEY = os.getenv('DJANGO_KEY')
 DEBUG = bool(int(os.getenv('DEBUG')))
 # DEBUG = bool(int(config('DEBUG')))
 
-TOKEN_BOT = os.getenv('TOKEN_BOT')
+DAY_STR_FORMAT = '%d/%m'
+TIME_STR_FORMAT = '%H:%M'
+
+if DEBUG:
+    TOKEN_BOT = os.getenv('TOKEN_TEST')
+else:
+    TOKEN_BOT = os.getenv('TOKEN')
 
 ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
+    'unfold',
     'django.contrib.admin',
     'django.contrib.auth',
-    'events',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'events',
+    'rest_framework',
+
     'corsheaders',
 
 ]
@@ -32,11 +41,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'standupuz_web.urls'
 
@@ -65,19 +75,13 @@ WSGI_APPLICATION = 'standupuz_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
-    }}
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
