@@ -70,7 +70,7 @@ async def edit_hello_text_3(cb: CallbackQuery, state: FSMContext):
 async def update_google_table(cb: CallbackQuery, state: FSMContext):
     sent = await cb.message.answer('⏳')
 
-    error_text = await google_update()
+    error_text = await google_update(cb.from_user.id)
     if len(error_text) == 0:
         text = '✅ База обновлена'
     else:

@@ -12,7 +12,8 @@ from .data import tags_dict
 def get_photo_url(photo_id: str) -> str:
     path = os.path.join(MEDIA_ROOT, f'{1}.jpg')
     if not os.path.exists(path):
-        download_file(1, path)
+        download_file('1', path)
+
     return f'../media/{1}.jpg'
 
 
@@ -20,5 +21,6 @@ def get_photo_url(photo_id: str) -> str:
 def get_photo_url_mob(photo_id: str) -> str:
     path = os.path.join(MEDIA_ROOT, f'{1}.jpg')
     if not os.path.exists(path):
-        download_file(1, path)
+        download_file('1', path)
+
     return f'/media/{1}.jpg'

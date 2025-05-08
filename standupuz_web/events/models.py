@@ -63,7 +63,7 @@ class Info(models.Model):
         verbose_name = 'Инфо'
         verbose_name_plural = 'Инфо'
         db_table = 'site_info'
-        # managed = False
+        managed = False
 
 
 # инфо бот
@@ -100,3 +100,23 @@ class User(models.Model):
         verbose_name_plural = 'Пользователи (бот)'
         db_table = 'users'
         managed = False
+
+
+class LogError(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name="ID")
+    created_at = models.DateTimeField( verbose_name="Дата создания")
+    user_id = models.BigIntegerField(verbose_name="ID пользователя")
+    traceback = models.TextField(verbose_name="Traceback ошибки")
+    message = models.TextField(verbose_name="Сообщение об ошибке")
+    comment = models.CharField(max_length=255, blank=True, null=True, verbose_name="Комментарий")
+
+    objects: models.Manager = models.Manager()
+
+    class Meta:
+        db_table = "logs_error"
+        verbose_name = "Журнал ошибок"
+        verbose_name_plural = "Журнал ошибок"
+        managed = False
+
+    def __str__(self):
+        return f"Ошибка (User: {self.user_id}) (Error: {self.message})"
