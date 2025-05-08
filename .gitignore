@@ -7,5 +7,5 @@ docker/.env
 .idea/
 .vscode/
 *.db
-__pycache__/
+*/__pycache__/
 /standupuz_web/media/

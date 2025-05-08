@@ -59,7 +59,7 @@ class EventDetailAPIView(APIView):
 
 
 class InfoAPIView(APIView):
-    def get(self, request, event_id, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         return Response({
             "phone": '+ 998 50 011 37 56',
             "text": '''<h3 class="about-h3">Мы русскоязычное стендап-сообщество в Узбекистане. </h3>
