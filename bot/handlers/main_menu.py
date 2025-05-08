@@ -5,6 +5,7 @@ from aiogram.enums.content_type import ContentType
 
 import db
 import keyboards as kb
+import utils as ut
 from settings import conf
 from init import main_router
 
@@ -14,9 +15,10 @@ from enums import BaseCB
 
 
 # команда старт
-# @dp.message()
+# @main_router.message()
 # async def com_start(msg: Message, state: FSMContext):
 #     if msg.photo:
+#         await ut.save_photo(file_id=msg.photo[-1].file_id, event_id=0)
 #         print(msg.photo[-1].file_id)
 
 

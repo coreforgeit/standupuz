@@ -7,8 +7,8 @@ from datetime import datetime, date, time
 import typing as t
 
 from .base import Base, begin_connection
-from settings.config import Config
-from settings import log_error
+from init import bot
+from settings import log_error, conf
 
 
 class PopTimeRow(t.Protocol):
@@ -26,7 +26,7 @@ class Event(Base):
     event_date: Mapped[date] = mapped_column(sa.Date(), nullable=True)
     event_time: Mapped[time] = mapped_column(sa.Time(), nullable=True)
     text: Mapped[str] = mapped_column(sa.Text(), nullable=True)
-    entities: Mapped[str] = mapped_column(sa.String(255), nullable=True)
+    entities: Mapped[str] = mapped_column(sa.Text, nullable=True)
     photo_id: Mapped[str] = mapped_column(sa.String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(sa.Boolean(), nullable=True)
     page_id: Mapped[int] = mapped_column(sa.Integer(), nullable=True)
@@ -52,7 +52,7 @@ class Event(Base):
             text_2: str = None,
             text_3: str = None,
     ) -> int:
-        now = datetime.now(Config.tz)
+        now = datetime.now(conf.tz)
         stmt = sa.insert(cls).values(
             created_at=now,
             title=title,
@@ -142,7 +142,7 @@ class Event(Base):
             stmt = stmt.limit(10).order_by(sa.desc(cls.event_date))
         async with begin_connection() as conn:
             result = await conn.execute(stmt)
-        return result.all()
+        return result.scalars().all()
 
     @classmethod
     async def get_event(cls, event_id: int = None, page_id: int = None) -> t.Optional[t.Self]:
@@ -170,7 +170,7 @@ class Event(Base):
 
     @classmethod
     async def close_old_events(cls) -> None:
-        now = datetime.now(Config.tz)
+        now = datetime.now(conf.tz)
         stmt = sa.update(cls).where(cls.event_date < now.date()).values(is_active=False)
         async with begin_connection() as conn:
             try:
@@ -207,11 +207,17 @@ class Event(Base):
             reader = csv.DictReader(f)
             rows = list(reader)
 
+        map_path = data_dir / "entities_map.json"
+        with map_path.open(encoding="utf-8") as mf:
+            raw_map = json.load(mf)
+        entities_map = {int(k): v for k, v in raw_map.items()}
+
         id_map: dict[int, int] = {}
         print(len(rows))
 
         async with begin_connection() as conn:
             for row in rows:
+
                 print(row["id"])
                 old_id = int(row["id"])
                 stmt = sa.insert(cls).values(
@@ -228,16 +234,20 @@ class Event(Base):
                     photo_id=row.get("photo_id"),
                     is_active=(row.get("is_active") == "True"),
                     page_id=(int(row["page_id"]) if row.get("page_id") else None),
-                    text_1=row.get("text_1"),
-                    text_2=row.get("text_2"),
-                    text_3=row.get("text_3"),
-                    ticket_url=row.get("ticket_url"),
+                    text_1=row.get("text_1") if row.get("text_1") != 'NULL' else None,
+                    text_2=row.get("text_2") if row.get("text_2") != 'NULL' else None,
+                    text_3=row.get("text_3") if row.get("text_3") != 'NULL' else None,
+                    ticket_url=row.get("ticket_url") if row.get("ticket_url") != 'NULL' else None,
                 )
                 result = await conn.execute(stmt)
                 # capture new primary key
                 new_id = result.inserted_primary_key[0]
                 id_map[old_id] = new_id
 
+                if row.get("photo_id"):
+                    dest = os.path.join(conf.photo_path, f'{new_id}.jpg')
+                    file = await bot.get_file(row.get("photo_id"))
+                    await bot.download(file=file, destination=dest)
                 # await conn.execute(stmt)
 
                 await conn.commit()

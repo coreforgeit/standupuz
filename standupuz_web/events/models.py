@@ -63,7 +63,7 @@ class Info(models.Model):
         verbose_name = 'Инфо'
         verbose_name_plural = 'Инфо'
         db_table = 'site_info'
-        # managed = False
+        managed = False
 
 
 # инфо бот

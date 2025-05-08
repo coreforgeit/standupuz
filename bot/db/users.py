@@ -54,14 +54,14 @@ class User(Base):
         stmt = sa.select(cls).where(cls.user_id == user_id)
         async with begin_connection() as conn:
             result = await conn.execute(stmt)
-        return result.first()
+        return result.scalars().first()
 
     @classmethod
     async def get_users(cls) -> list[t.Self]:
         stmt = sa.select(cls)
         async with begin_connection() as conn:
             result = await conn.execute(stmt)
-        return result.all()
+        return result.scalars().all()
 
     @classmethod
     async def update_user_info(cls, user_id: int, phone: str = None) -> None:
@@ -83,7 +83,7 @@ class User(Base):
         import sqlalchemy as sa
         from datetime import datetime
 
-        file_path = Path("old_data") / f"{cls.__tablename__}.csv"
+        file_path = Path("db/old_data") / f"{cls.__tablename__}.csv"
         if not file_path.exists():
             return
 
@@ -94,7 +94,7 @@ class User(Base):
         async with begin_connection() as conn:
             for row in rows:
                 data = {
-                    "id": int(row["id"]),
+                    # "id": int(row["id"]),
                     "user_id": int(row["user_id"]) if row.get("user_id") else None,
                     "full_name": row.get("full_name"),
                     "username": row.get("username"),
