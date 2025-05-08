@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http.request import HttpRequest
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -67,6 +68,7 @@ class InfoAPIView(APIView):
 
 
 # мобильная о мероприятии
+
 # def event_mob_view(request: HttpRequest, event_id):
 #     event = Event.objects.filter(id=event_id).first()
 #     info = Info.objects.get(id=1)
@@ -79,3 +81,4 @@ class InfoAPIView(APIView):
 #          }
 #     context = {'card': card, 'phone': info.phone}
 #     return render(request, 'index_affiche_mob.html', context)
+
