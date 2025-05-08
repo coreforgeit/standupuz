@@ -17,6 +17,7 @@ class Event(models.Model):
     text_1 = models.TextField('Текст 1', null=True, blank=True)
     text_2 = models.TextField('Текст 2', null=True, blank=True)
     text_3 = models.TextField('Текст 3', null=True, blank=True)
+    ticket_url = models.CharField('Текст 3', null=True, blank=True, max_length=255)
 
     objects = models.Manager()
 
