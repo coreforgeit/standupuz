@@ -21,3 +21,15 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+bot/.env
+standupuz_web/.env
+docker/.env
+*.env
+*.log
+*.json
+.idea/
+.vscode/
+*.db
+__pycache__/
+/standupuz_web/media/
