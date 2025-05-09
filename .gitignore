@@ -1,6 +1,7 @@
 bot/.env
 standupuz_web/.env
 docker/.env
+data
 *.env
 *.log
 *.json
@@ -11,3 +12,5 @@ __pycache__/
 /standupuz_web/media/
 standupuz/data
 standupuz/data/
+.idea
+data.zip

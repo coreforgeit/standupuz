@@ -10,6 +10,9 @@ SECRET_KEY = os.getenv('DJANGO_KEY')
 DEBUG = bool(int(os.getenv('DEBUG')))
 # DEBUG = bool(int(config('DEBUG')))
 
+DAY_STR_FORMAT = '%d/%m'
+TIME_STR_FORMAT = '%H:%M'
+
 if DEBUG:
     TOKEN_BOT = os.getenv('TOKEN_TEST')
 else:
@@ -21,11 +24,12 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'events',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'events',
+    'rest_framework',
     'corsheaders',
 
 ]
@@ -59,7 +63,7 @@ TEMPLATES = [
         },
     },
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True
 WSGI_APPLICATION = 'standupuz_web.wsgi.application'
 
 

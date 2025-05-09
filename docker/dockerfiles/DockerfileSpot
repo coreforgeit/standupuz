@@ -1,43 +1,16 @@
-## === Этап сборки ===
-# Dockerfile.dev
-FROM node:18-alpine
+# docker/dockerfiles/DockerfileSpot.prod
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-# 1) Копируем только манифесты, чтобы не пересобирать весь образ при каждом изменении кода
-COPY /spot/package.json .
-COPY /spot/package-lock.json* .
+# 1) Кэшируем зависимости
+#COPY /standupuz_2/package.json .
+#COPY /standupuz_2/package-lock.json .
+COPY /standupuz_2 .
 
-# 2) Устанавливаем зависимости
-RUN npm install      # или `yarn install`
+RUN npm ci
 
-# 3) Копируем всё приложение
-COPY . .
+# 2) Собираем продакшн-билд
+#COPY . .
+RUN npm run build
 
-# 4) Открываем порт дев-сервера CRA
-EXPOSE 3000
-
-# 5) Запускаем обычный `npm start`
-CMD ["npm", "start"]
-
-
-#FROM node:18-alpine AS builder
-#WORKDIR /app
-#
-## 1) Копируем манифесты зависимостей
-#COPY /spot/package.json .
-#COPY /spot/package-lock.json* .
-#
-#RUN npm ci --ignore-scripts
-#
-#COPY /spot .
-#RUN npm run build
-## или, если у вас в package.json скрипт build под Yarn:
-## RUN yarn build
-#
-## === Этап продакшн-сервера ===
-#FROM nginx:stable-alpine
-## Копируем статические файлы билда в папку Nginx
-#COPY --from=builder /app/build /usr/share/nginx/html
-#
-#EXPOSE 80
-#CMD ["nginx", "-g", "daemon off;"]
+# 3) Ничего не запускаем — на выходе просто артефакты в /app/build

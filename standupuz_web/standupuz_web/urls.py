@@ -14,7 +14,8 @@ urlpatterns = [
     # path('event_mob/<int:event_id>/', views.event_mob_view, name='event_mob'),
     # path('event_mob/', views.event_mob_view, name='event_mob'),
     # path('about/', views.about_view, name='about'),
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
+
 ]
 
 if settings.DEBUG:
