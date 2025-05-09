@@ -21,7 +21,7 @@ class SiteInfo(Base):
         from pathlib import Path
         import sqlalchemy as sa
 
-        file_path = Path("db/old_data") / f"{cls.__tablename__}.csv"
+        file_path = Path("old_data") / f"{cls.__tablename__}.csv"
         if not file_path.exists():
             return
 

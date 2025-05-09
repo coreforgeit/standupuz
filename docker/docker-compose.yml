@@ -48,22 +48,23 @@ services:
 #    depends_on:
 #      - api
 
-  bot:
-    build:
-      context: ..
-      dockerfile: docker/dockerfiles/DockerfileBot
-      args:
-        - --no-cache
-    container_name: bot_uz
-    volumes:
-      - ../bot:/app
-      - ../logs/bot:/app/logs
-      - ../photo:/app/data/photo
-    restart: unless-stopped
-    depends_on:
-      - db
-    env_file:
-      - .env
+
+#  bot:
+#    build:
+#      context: ..
+#      dockerfile: docker/dockerfiles/DockerfileBot
+#      args:
+#        - --no-cache
+#    container_name: bot_uz
+#    volumes:
+#      - ../bot:/app
+#      - ../logs/bot:/app/logs
+#    restart: unless-stopped
+#    depends_on:
+#      - db
+#    env_file:
+#      - .env
+
 
 #  api:
 #    build:
@@ -98,6 +99,7 @@ services:
 #        - --no-cache
 #    container_name: front_uz
 #    volumes:
+
 #      - ../standupuz_2:/app
 ##      - ../standupuz_2/node_modules:/app/node_modules
 #      - ../photo:/app/public/site/photo

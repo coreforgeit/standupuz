@@ -66,7 +66,7 @@ class Order(Base):
         stmt = sa.select(cls).where(cls.event_id.in_(event_list))
         async with begin_connection() as conn:
             result = await conn.execute(stmt)
-        return result.scalars().all()
+        return result.all()
 
     @classmethod
     async def old_data_insert(cls) -> None:
@@ -102,8 +102,9 @@ class Order(Base):
                 old_event = int(row["event_id"]) if row.get("event_id") else None
                 new_event = id_map.get(old_event, old_event)
                 data = {
-                    # "id": int(row["id"]),
-                    "created_at": datetime.now(),
+                    "id": int(row["id"]),
+                    "created_at": datetime.fromisoformat(row["created_at"])
+                        if row.get("created_at") else None,
                     "user_id": int(row["user_id"]) if row.get("user_id") else None,
                     "phone": row.get("phone"),
                     "event_id": new_event,

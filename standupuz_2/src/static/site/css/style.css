@@ -237,7 +237,9 @@ body {
     gap: 20px;
 }
 
-.header_right_contacts {}
+.header_right_contacts img {
+    max-width: 45px;
+}
 
 .modal-close {
     display: block;

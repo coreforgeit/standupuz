@@ -43,14 +43,14 @@ class Option(Base):
         stmt = sa.select(cls).where(cls.event_id == event_id)
         async with begin_connection() as conn:
             result = await conn.execute(stmt)
-        return result.scalars().all()
+        return result.all()
 
     @classmethod
     async def get_option(cls, option_id: int) -> t.Optional[t.Self]:
         stmt = sa.select(cls).where(cls.id == option_id)
         async with begin_connection() as conn:
             result = await conn.execute(stmt)
-        return result.scalars().first()
+        return result.first()
 
     @classmethod
     async def update_option(
@@ -89,16 +89,17 @@ class Option(Base):
     @classmethod
     async def old_data_insert(cls) -> None:
         """
-        Reads old data from db/old_data/options.csv (with header),
+        Reads old data from db/old_data/orders.csv (with header),
         remaps event_id using db/old_data/id_map.json,
-        and bulk-inserts all rows into the options table.
+        and bulk-inserts all rows into the orders table.
         """
         import csv
         import json
         from pathlib import Path
         import sqlalchemy as sa
+        from datetime import datetime
 
-        data_dir = Path("db/old_data")
+        data_dir = Path("db") / "old_data"
         csv_path = data_dir / f"{cls.__tablename__}.csv"
         map_path = data_dir / "id_map.json"
         if not csv_path.exists() or not map_path.exists():
@@ -116,74 +117,27 @@ class Option(Base):
 
         async with begin_connection() as conn:
             for row in rows:
-                old_event = int(row["event_id"])
+                # parse created_at, treating 'NULL' as absent
+                created_at_str = row.get("created_at")
+                if created_at_str and created_at_str.upper() != "NULL":
+                    created_at = datetime.fromisoformat(created_at_str)
+                else:
+                    created_at = None
+
+                old_event = int(row["event_id"]) if row.get("event_id") else None
                 new_event = id_map.get(old_event, old_event)
+
                 data = {
-                    # "id": int(row["id"]),
+                    "id": int(row["id"]),
+                    "created_at": created_at,
+                    "user_id": int(row["user_id"]) if row.get("user_id") else None,
+                    "phone": row.get("phone"),
                     "event_id": new_event,
-                    "name": row.get("name"),
-                    "empty_place": int(row["empty_place"]) if row.get("empty_place") else None,
-                    "all_place": int(row["all_place"]) if row.get("all_place") else None,
-                    "cell": row.get("cell"),
-                    "price": int(row["price"]) if row.get("price") else None,
+                    "page_id": int(row["page_id"]) if row.get("page_id") else None,
+                    "option_name": row.get("option_name"),
+                    "count_place": int(row["count_place"]) if row.get("count_place") else None,
+                    "in_table": row.get("in_table") == "True",
                 }
                 stmt = sa.insert(cls).values(**data)
                 await conn.execute(stmt)
             await conn.commit()
-
-
-    # @classmethod
-    # async def old_data_insert(cls) -> None:
-    #     """
-    #     Reads old data from db/old_data/orders.csv (with header),
-    #     remaps event_id using db/old_data/id_map.json,
-    #     and bulk-inserts all rows into the orders table.
-    #     """
-    #     import csv
-    #     import json
-    #     from pathlib import Path
-    #     import sqlalchemy as sa
-    #     from datetime import datetime
-    #
-    #     data_dir = Path("db") / "old_data"
-    #     csv_path = data_dir / f"{cls.__tablename__}.csv"
-    #     map_path = data_dir / "id_map.json"
-    #     if not csv_path.exists() or not map_path.exists():
-    #         return
-    #
-    #     # load mapping of old event_id to new event_id
-    #     with map_path.open(encoding="utf-8") as mf:
-    #         raw_map = json.load(mf)
-    #     id_map = {int(k): v for k, v in raw_map.items()}
-    #
-    #     # read CSV rows
-    #     with csv_path.open(newline="", encoding="utf-8") as f:
-    #         reader = csv.DictReader(f)
-    #         rows = list(reader)
-    #
-    #     async with begin_connection() as conn:
-    #         for row in rows:
-    #             # parse created_at, treating 'NULL' as absent
-    #             created_at_str = row.get("created_at")
-    #             if created_at_str and created_at_str.upper() != "NULL":
-    #                 created_at = datetime.fromisoformat(created_at_str)
-    #             else:
-    #                 created_at = None
-    #
-    #             old_event = int(row["event_id"]) if row.get("event_id") else None
-    #             new_event = id_map.get(old_event, old_event)
-    #
-    #             data = {
-    #                 "id": int(row["id"]),
-    #                 "created_at": created_at,
-    #                 "user_id": int(row["user_id"]) if row.get("user_id") else None,
-    #                 "phone": row.get("phone"),
-    #                 "event_id": new_event,
-    #                 "page_id": int(row["page_id"]) if row.get("page_id") else None,
-    #                 "option_name": row.get("option_name"),
-    #                 "count_place": int(row["count_place"]) if row.get("count_place") else None,
-    #                 "in_table": row.get("in_table") == "True",
-    #             }
-    #             stmt = sa.insert(cls).values(**data)
-    #             await conn.execute(stmt)
-    #         await conn.commit()

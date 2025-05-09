@@ -15,8 +15,7 @@ urlpatterns = [
     # path('event_mob/', views.event_mob_view, name='event_mob'),
     # path('about/', views.about_view, name='about'),
     path('admin/', admin.site.urls),
-    path('api/event/', views.EventsListAPIView.as_view(), name='api-event-list'),
-    path('api/event/<int:event_id>/', views.EventDetailAPIView.as_view(), name='api-event-detail'),
+
 ]
 
 if settings.DEBUG:

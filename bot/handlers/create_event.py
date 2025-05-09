@@ -78,13 +78,13 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
     event_id = int(event_id_str)
 
     if action == Action.NEW.value:
-        # if conf.debug:
-        #     photo_id = 'AgACAgIAAxkBAAIZ_2gUuLrNeqcp3rrc4EVFQ4TqQ6xeAAI58DEbRdSpSOA0drmJIeU3AQADAgADeAADNgQ'
-        # else:
-        #     photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
+        if conf.debug:
+            photo_id = 'AgACAgIAAxkBAAIZ_2gUuLrNeqcp3rrc4EVFQ4TqQ6xeAAI58DEbRdSpSOA0drmJIeU3AQADAgADeAADNgQ'
+        else:
+            photo_id = 'AgACAgIAAxkBAAMDZJLz5wR0skvRu9z8XLdrFaYsz80AAvzOMRuk6phIPY914z_9bZoBAAMCAANtAAMvBA'
         await state.update_data(data={
             'is_first': True,
-            'photo_id': conf.photo_default,
+            'photo_id': photo_id,
             'text': 'Добавьте текст',
             'title': '',
             'entities': [],
@@ -215,7 +215,6 @@ async def edit_text(msg: Message, state: FSMContext):
                 tariffs = []
                 tariff_list = msg.text.split(',')
                 for tariff in tariff_list:
-                    print(tariff)
                     tariff_info = tariff.strip().split(' ')
                     place = int(tariff_info[0]) if tariff_info[0].isdigit() else 0
                     price = int(tariff_info[1]) if tariff_info[1].isdigit() else 0
@@ -253,31 +252,29 @@ async def edit_event_2(cb: CallbackQuery, state: FSMContext):
 @client_router.callback_query(lambda cb: cb.data.startswith(AdminCB.EDIT_EVENT_ACCEPT.value))
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    try:
 
-        if data['type'] == Action.NEW.value:
+    if data['type'] == Action.NEW.value:
 
-            if data['title'] == '':
-                await cb.answer('❗️Ошибка. Добавьте название', show_alert=True)
-                return
+        if data['title'] == '':
+            await cb.answer('❗️Ошибка. Добавьте название', show_alert=True)
+            return
 
-            if not data['tariffs'] and not data['ticket_url']:
-                await cb.answer('❗️Ошибка. Добавьте опции', show_alert=True)
-                return
+        if not data['tariffs'] and not data['ticket_url']:
+            await cb.answer('❗️Ошибка. Добавьте опции', show_alert=True)
+            return
 
-            page_id = await ut.create_new_page(
-                date=data['date'],
-                time=data['time'],
-                tariffs=data.get('tariffs'),
-                title=data['title'],
-                ticket_url=data['ticket_url'],
-            )
-            if not page_id:
-                await cb.answer(
-                    '❗️Ошибка. Вкладка с таким названием уже существует. Удалите старую вкладку или переименуйте '
-                    'ивент', show_alert=True)
-                return
-
+        page_id = await ut.create_new_page(
+            date=data['date'],
+            time=data['time'],
+            tariffs=data.get('tariffs'),
+            title=data['title'],
+            ticket_url=data['ticket_url'],
+        )
+        if not page_id:
+            await cb.answer(
+                '❗️Ошибка. Вкладка с таким названием уже существует. Удалите старую вкладку или переименуйте '
+                'ивент', show_alert=True)
+        else:
             await state.clear()
             event_id = await db.Event.add_event(
                 title=data['title'],
@@ -291,9 +288,9 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
                 page_id=page_id,
                 is_active=True,
             )
+            # await save_entities(event_id=event_id, entities=data['entities'])
 
-            # сохраняем фото для сайта
-            await ut.save_photo(data['photo_id'], event_id)
+            # tariffs.append({'place': place, 'price': price, 'text': text})
             row_number = 5
             for option in data['tariffs']:
                 await db.Option.add_option(
@@ -308,20 +305,16 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
 
             await cb.message.edit_reply_markup(reply_markup=kb.update_is_active_event_kb(True, event_id))
 
-        else:
-            await db.Event.update_event(
-                event_id=data['event_id'],
-                photo_id=data['photo_id'],
-                text=data['text'],
-                entities=ut.save_entities(data['entities']),
-            )
-            await ut.save_photo(data['photo_id'], data['event_id'])
-
-            await cb.message.edit_reply_markup(
-                reply_markup=kb.update_is_active_event_kb(data['is_active'], data['event_id']))
-
-    except Exception as e:
-        await cb.message.answer(f'❌ Не удалось сохранить\n{e}')
+    else:
+        await db.Event.update_event(
+            event_id=data['event_id'],
+            photo_id=data['photo_id'],
+            text=data['text'],
+            entities=ut.save_entities(data['entities']),
+        )
+        # await save_entities(event_id=data['event_id'], entities=data['entities'])
+        await cb.message.edit_reply_markup(
+            reply_markup=kb.update_is_active_event_kb(data['is_active'], data['event_id']))
 
 
 # изменить статус ивента

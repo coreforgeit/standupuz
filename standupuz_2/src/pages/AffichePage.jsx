@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import M from 'materialize-css'
 import { API_BASE_URL, API_PATHS } from '../api/config'
+// import { fetchInfo } from '../utils/base'
 
 export default function AffichePage() {
   const [cards, setCards] = useState([])
@@ -10,7 +11,7 @@ export default function AffichePage() {
   // инициализация Sidenav, загрузка events и info
   useEffect(() => {
     M.Sidenav.init(document.querySelectorAll('.sidenav'), {
-      edge: 'left',
+      edge: 'right',
       draggable: true,
     })
 
@@ -69,9 +70,11 @@ export default function AffichePage() {
               </ul>
             </div>
             <div className="header_right">
-              <a href="#!" data-target="slide-out" className="sidenav-trigger">
-                <img src="/site/img/Menu.svg" alt="Меню" />
-              </a>
+              <div className="header_right_burger">
+                <a href="#!" data-target="slide-out" className="sidenav-trigger">
+                  <img src="/site/img/Menu.svg" alt="Меню" />
+                </a>
+              </div>
               <div className="header_right_phone phone">
                 <a href={`tel:${phone}`}>{phone}</a>
               </div>
@@ -89,6 +92,20 @@ export default function AffichePage() {
                   rel="noopener noreferrer"
                 >
                   <img src="/site/img/Telegram.svg" alt="Telegram" />
+                </a>
+                <a
+                  href="https://t.me/standup_uztg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="/site/img/Telegram.svg" alt="Telegram" />
+                </a>
+                <a
+                  href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="/site/img/youtube.png" alt="YouTube" />
                 </a>
               </div>
             </div>
@@ -258,6 +275,20 @@ export default function AffichePage() {
               >
                 <img src="/site/img/Telegram.svg" alt="Telegram" />
               </a>
+              <a
+                  href="https://t.me/standup_uztg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="/site/img/Telegram.svg" alt="Telegram" />
+                </a>
+                <a
+                  href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="/site/img/youtube.png" alt="YouTube" />
+                </a>
             </div>
           </div>
         </div>
