@@ -19,17 +19,12 @@ dp = Dispatcher()
 
 async def main() -> None:
     await init_models()
-    # await db.Event.old_data_insert()
-    # await db.Option.old_data_insert()
-    # await db.Order.old_data_insert()
-    # await get_pay_token()
-    # await init_models()
     await set_main_menu()
     if not conf.debug:
         await start_schedulers()
-    # else:
-    #     pass
-    #     await start_schedulers()
+    else:
+        pass
+        await start_schedulers()
     dp.include_router(main_router)
     dp.include_router(client_router)
     dp.include_router(error_router)

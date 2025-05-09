@@ -8,7 +8,7 @@ from enums import Key
 # запускает планировщики
 async def start_schedulers():
     scheduler.add_job(
-        func=Event.close_old_events(),
+        func=Event.close_old_events,
         trigger=CronTrigger(hour=0),
         id=Key.CLOSE_EVENT.value,
         replace_existing=True,

@@ -40,9 +40,10 @@ def build_card(ev: Event) -> dict:
         'tg_link':    tg_link,
     }
 
+
 class EventsListAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        events = Event.objects.filter(is_active=True).order_by('event_date')
+        events = Event.objects.filter(is_active=True).order_by('event_date', 'event_time')
         cards = [build_card(ev) for ev in events]
         return Response({'cards': cards}, status=status.HTTP_200_OK)
 
