@@ -7,12 +7,13 @@ from datetime import datetime
 import asyncio
 
 import db
-from init import bot
-from settings import log_error, conf
+from settings.config import Config
+from settings import log_error
 
 import gspread_asyncio
 from google.oauth2.service_account import Credentials
 
+from settings import conf
 
 
 def get_creds():
@@ -68,7 +69,7 @@ async def create_new_page(date: str, time: str, title: str, tariffs: list[dict] 
     # gc = gspread.service_account(filename=Config.google_key_path)
     # table = agcm.open_by_key(Config.google_table_id)
     agc = await agcm.authorize()
-    spreadsheet = await agc.open_by_key(conf.google_table_id)
+    spreadsheet = await agc.open_by_key(conf.spreadsheet_id)
     # table = await spreadsheet.worksheet(sheet_name)
     # проверка таблицы
     try:
@@ -132,16 +133,13 @@ async def create_new_page(date: str, time: str, title: str, tariffs: list[dict] 
     return page.id
 
 
-async def google_update(chat_id: int) -> str:
+async def google_update() -> str:
     error_text = ""
-
-    sent = await bot.send_message(chat_id=chat_id, text='Загрузка данных')
 
     # авторизуемся и открываем таблицу
     agc = await agcm.authorize()
-    spreadsheet = await agc.open_by_key(conf.google_table_id)
+    spreadsheet = await agc.open_by_key(Config.google_table_id)
 
-    await sent.edit_text('Обновление текстов')
     # обновляем базовые тексты
     try:
         sheet1 = await spreadsheet.get_worksheet(0)
@@ -159,23 +157,17 @@ async def google_update(chat_id: int) -> str:
         error_text += f"\n❌ Не удалось обновить базовые тексты: {ex}"
 
     # получаем список активных событий
-    await sent.edit_text('Обновление мероприятий')
-
     active_events = await db.Event.get_events(active=True)
     active_page_ids = {e.page_id for e in active_events}
 
     # обходим все листы в таблице
     worksheets = await spreadsheet.worksheets()
-    c = 0
     for ws in worksheets:
         if ws.id not in active_page_ids:
             continue
 
         event = await db.Event.get_event(page_id=ws.id)
         title = ws.title
-
-        c += 1
-        await sent.edit_text(f'Обновление мероприятий {c} {title}')
 
         # 1) обновляем тексты события
         try:
@@ -199,7 +191,7 @@ async def google_update(chat_id: int) -> str:
             new_title = (await ws.acell("B2")).value
             date_str = (await ws.acell("B3")).value
             time_str = (await ws.acell("B4")).value
-            dt = datetime.strptime(f"{date_str} {time_str}", conf.datetime_form)
+            dt = datetime.strptime(f"{date_str} {time_str}", Config.datetime_form)
 
             await db.Event.update_event(
                 page_id=ws.id,
@@ -224,7 +216,7 @@ async def google_update(chat_id: int) -> str:
                 cell_ref = f"B{row_num}"
 
                 formula_cell = await ws.acell(cell_ref, value_render_option=ValueRenderOption.formula)
-                all_place = int(formula_cell.value.split("-")[0].lstrip("="))
+                all_place = int(formula_cell.value.split("-")[0].lstrip("B"))
 
                 # ищем существующую опцию по cell
                 matching = [o for o in old_opts if o.cell == cell_ref]
@@ -250,7 +242,6 @@ async def google_update(chat_id: int) -> str:
             log_error(ex)
             error_text += f"\n❌ Ошибка обновления мест «{title}»: {ex}"
 
-    await sent.delete()
     return error_text
 
 
@@ -269,7 +260,7 @@ async def add_new_order_in_table(
     """
     try:
         agc = await agcm.authorize()
-        spreadsheet = await agc.open_by_key(conf.google_table_id)
+        spreadsheet = await agc.open_by_key(Config.google_table_id)
         worksheets = await spreadsheet.worksheets()
         # ищем лист по его internal id
         page = next((ws for ws in worksheets if ws.id == page_id), None)
@@ -311,7 +302,7 @@ async def add_new_order_in_table(
 #     tables = gc.open_by_key (Config.google_table_id)
 #
 #     agc = await agcm.authorize()
-#     tables = await agc.open_by_key(conf.google_table_id)
+#     tables = await agc.open_by_key(conf.spreadsheet_id)
 #     tables.get_sheet1()
 #     # обновляем настройки
 #     try:

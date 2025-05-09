@@ -74,9 +74,12 @@ body {
     font-weight: 500;
 }
 
-.header_right_contacts a:last-child {
+.header_right_contacts a {
     margin-left: 16px;
 }
+/* .header_right_contacts a:last-child {
+    margin-left: 16px;
+} */
 
 .cards {
     flex: 1;
@@ -237,7 +240,9 @@ body {
     gap: 20px;
 }
 
-.header_right_contacts {}
+.header_right_contacts img {
+    max-width: 45px;
+}
 
 .modal-close {
     display: block;
@@ -319,3 +324,20 @@ body {
     color: var(--text1);
     margin-bottom: 25px;
 }
+
+/* Убираем фон и рамку у кнопок закрытия */
+button.sidenav-close,
+a.sidenav-close {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Делаем <li> flex-контейнером, выравниваем по правому краю
+   и добавляем отступ в 32px */
+.sidenav li {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 32px;
+}
+

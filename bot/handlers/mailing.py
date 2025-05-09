@@ -113,6 +113,36 @@ async def send_message_4(cb: CallbackQuery, state: FSMContext):
                 message_id=cb.message.message_id,
                 parse_mode=None,
             )
+            # if cb.message.content_type == ContentType.TEXT:
+            #     await bot.send_message(
+            #         chat_id=user_id,
+            #         text=cb.message.text, entities=cb.message.entities,
+            #         parse_mode=None
+            #     )
+            # elif cb.message.content_type == ContentType.PHOTO:
+            #     await bot.send_photo(
+            #         chat_id=user_id,
+            #         photo=cb.message.photo[-1].file_id,
+            #         caption=cb.message.caption,
+            #         caption_entities=cb.message.caption_entities,
+            #         parse_mode=None
+            #     )
+            # elif cb.message.content_type == ContentType.VIDEO:
+            #     await bot.send_video(
+            #         chat_id=user_id,
+            #         video=cb.message.video.file_id,
+            #         caption=cb.message.caption,
+            #         caption_entities=cb.message.caption_entities,
+            #         parse_mode=None
+            #     )
+            # elif cb.message.content_type == ContentType.ANIMATION:
+            #     await bot.send_animation(
+            #         chat_id=user_id,
+            #         animation=cb.message.animation.file_id,
+            #         aption=cb.message.caption,
+            #         caption_entities=cb.message.caption_entities,
+            #         parse_mode=None
+            #     )
             counter += 1
             if random.randint(0, 50) == 30:
                 text = (
@@ -121,8 +151,8 @@ async def send_message_4(cb: CallbackQuery, state: FSMContext):
                 )
                 await sent.edit_text(text)
         except Exception as ex:
-            if conf.debug:
-                log_error(f'send message user {user_id} {ex}', wt=False)
+            pass
+            # log_error(f'send message user {user_id} {ex}', wt=False)
 
     await sent.edit_text(
                     f'<b>✅ Рассылка завершена</b>\n'

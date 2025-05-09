@@ -41,7 +41,7 @@ async def end_book(data: dict):
 
     i = 0
     try:
-        await add_new_order_in_table(
+        add_new_order_in_table(
             count_place=data['count_place'],
             option=option_info.name,
             name=data['name'],

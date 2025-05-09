@@ -1,12 +1,10 @@
 import sqlalchemy as sa
-import typing as t
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects import postgresql as psql
 from datetime import datetime
 
 
 from .base import Base, begin_connection
-
 
 class Info(Base):
     __tablename__ = "bot_info"
@@ -20,7 +18,7 @@ class Info(Base):
     text_3: Mapped[str] = mapped_column(sa.Text(), nullable=True)
 
     @classmethod
-    async def get_info(cls) -> t.Self:
+    async def get_info(cls) -> "Info":
         query = sa.select(cls).where(cls.id == 1)
         async with begin_connection() as conn:
             result = await conn.execute(query)
@@ -61,7 +59,7 @@ class Info(Base):
         Reads old data from old_data/bot_info.csv (with header)
         and bulk-inserts all rows into the bot_info table.
         """
-        file_path = Path('db/old_data') / f"{cls.__tablename__}.csv"
+        file_path = Path('old_data') / f"{cls.__tablename__}.csv"
         if not file_path.exists():
             return
 
@@ -73,7 +71,7 @@ class Info(Base):
             for row in rows:
                 data = {
                     "id": int(row["id"]),
-                    "last_update": datetime.now(),
+                    "last_update": datetime.fromisoformat(row["last_update"]) if row.get("last_update") else None,
                     "hello_text": row.get("hello_text"),
                     "hello_entities": row.get("hello_entities").split(";") if row.get("hello_entities") else None,
                     "text_1": row.get("text_1"),

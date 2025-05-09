@@ -8,7 +8,9 @@ data
 .idea/
 .vscode/
 *.db
-*/__pycache__/
+__pycache__/
 /standupuz_web/media/
+standupuz/data
+standupuz/data/
 .idea
 data.zip

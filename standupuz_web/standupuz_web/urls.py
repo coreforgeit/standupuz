@@ -15,6 +15,7 @@ urlpatterns = [
     # path('event_mob/', views.event_mob_view, name='event_mob'),
     # path('about/', views.about_view, name='about'),
     path('admin/', admin.site.urls),
+
 ]
 
 if settings.DEBUG:

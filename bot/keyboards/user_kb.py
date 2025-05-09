@@ -29,7 +29,6 @@ def get_book_kb(
         options: list[db.Option] = None, ticket_url: str = False, from_start: bool = False
 ) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    print(f'ticket_url: {ticket_url}')
     if from_start:
         kb.button(text='🔙 Назад', callback_data=BaseCB.BACK_COM_START.value)
     else:
