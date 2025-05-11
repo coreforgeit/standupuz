@@ -80,7 +80,9 @@ services:
       - front_build:/usr/share/nginx/html:ro
       - static_volume:/app/staticfiles:ro
       - ../nginx/conf.d/base.conf:/etc/nginx/conf.d/default.conf
-#      - ../nginx/conf.d/base.conf:/etc/nginx/conf.d/base.conf
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
     depends_on:
       - api
       - standup-front
@@ -92,6 +94,7 @@ services:
     container_name: front_uz
     volumes:
       - front_build:/app/build
+      - ../photo:/app/public/site/photo
     env_file:
       - .env
     depends_on:
@@ -103,6 +106,26 @@ services:
         echo '✔ React build complete' &&
         tail -f /dev/null
       "
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_bcx
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
+
+  certbot-renew:
+    image: certbot/certbot
+    container_name: certbot_renew_bcx
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - ../logs/certbot:/var/log/letsencrypt
+    entrypoint: sh -c
+    command: >
+      "trap exit TERM; while :; do certbot renew --quiet >> /var/log/letsencrypt/renew.log 2>&1; sleep 12h & wait $${!}; done;"
+    restart: unless-stopped
 
 
 volumes:
