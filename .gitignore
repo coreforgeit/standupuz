@@ -13,3 +13,5 @@ data
 .idea
 data.zip
 logs/
+media/
+nginx/conf.d
