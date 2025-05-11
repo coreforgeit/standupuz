@@ -28,7 +28,6 @@ class ViewAdminUser(ModelAdmin):
     readonly_fields = ['last_visit', 'user_id', 'full_name', 'username']
 
 
-
 @admin.register(Info)
 class ViewAdminInfo(ModelAdmin):
     list_display = ['text', 'phone']

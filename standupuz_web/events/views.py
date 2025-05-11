@@ -16,10 +16,6 @@ from .utils import get_photo_url
 from standupuz_web.settings import DAY_STR_FORMAT, TIME_STR_FORMAT
 
 
-def home_page_redirect(request):
-    return redirect('events')
-
-
 def build_card(ev: Event) -> dict:
     option = Option.objects.filter(event_id=ev.id).order_by('price').first()
     has_places = Option.objects.filter(event_id=ev.id, empty_place__gt=0).exists()
@@ -61,10 +57,6 @@ class InfoAPIView(APIView):
     def get(self, request, *args, **kwargs):
         info = Info.objects.get(id=1)
         return Response({'phone': info.phone, 'text': info.text,})
-
-
-
-
 
 
 # мобильная о мероприятии

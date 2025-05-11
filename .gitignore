@@ -12,3 +12,4 @@ data
 /standupuz_web/media/
 .idea
 data.zip
+logs/

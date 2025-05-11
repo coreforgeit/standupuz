@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'events',
     'rest_framework',
-
     'corsheaders',
 
 ]
@@ -65,7 +64,7 @@ TEMPLATES = [
         },
     },
 ]
-CORS_ALLOW_ALL_ORIGINS = True
+
 WSGI_APPLICATION = 'standupuz_web.wsgi.application'
 
 
