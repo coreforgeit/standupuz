@@ -32,22 +32,22 @@ services:
       - redis_data:/data
 
 
-  bot:
-    build:
-      context: ..
-      dockerfile: docker/dockerfiles/DockerfileBot
-      args:
-        - --no-cache
-    container_name: bot_uz
-    volumes:
-      - ../bot:/app
-      - ../logs/bot:/app/logs
-      - ../photo:/app/data/photo
-    restart: unless-stopped
-    depends_on:
-      - db
-    env_file:
-      - .env
+#  bot:
+#    build:
+#      context: ..
+#      dockerfile: docker/dockerfiles/DockerfileBot
+#      args:
+#        - --no-cache
+#    container_name: bot_uz
+#    volumes:
+#      - ../bot:/app
+#      - ../logs/bot:/app/logs
+#      - ../photo:/app/data/photo
+#    restart: unless-stopped
+#    depends_on:
+#      - db
+#    env_file:
+#      - .env
 
   api:
     build:
