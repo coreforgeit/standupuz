@@ -85,7 +85,7 @@ services:
 
     depends_on:
       - api
-      - standup-front
+#      - standup-front
 
 #  standup-front:
 #    build:
