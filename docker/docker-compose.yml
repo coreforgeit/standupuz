@@ -87,25 +87,25 @@ services:
       - api
       - standup-front
 
-  standup-front:
-    build:
-      context: ..
-      dockerfile: docker/dockerfiles/DockerfileSpot
-    container_name: front_uz
-    volumes:
-      - front_build:/app/build
-      - ../photo:/app/public/site/photo
-    env_file:
-      - .env
-    depends_on:
-      - api
-    command: >
-      sh -c "
-        npm ci &&
-        npm run build &&
-        echo '✔ React build complete' &&
-        tail -f /dev/null
-      "
+#  standup-front:
+#    build:
+#      context: ..
+#      dockerfile: docker/dockerfiles/DockerfileSpot
+#    container_name: front_uz
+#    volumes:
+#      - front_build:/app/build
+#      - ../photo:/app/public/site/photo
+#    env_file:
+#      - .env
+#    depends_on:
+#      - api
+#    command: >
+#      sh -c "
+#        npm ci &&
+#        npm run build &&
+#        echo '✔ React build complete' &&
+#        tail -f /dev/null
+#      "
 
   certbot:
     image: certbot/certbot
