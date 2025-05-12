@@ -14,7 +14,6 @@ import gspread_asyncio
 from google.oauth2.service_account import Credentials
 
 
-
 def get_creds():
     creds = Credentials.from_service_account_file(conf.google_key_path)
     scoped = creds.with_scopes([

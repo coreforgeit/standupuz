@@ -25,6 +25,7 @@ def build_card(ev: Event) -> dict:
 
     return {
         'event_id':   ev.id,
+        'title':   ev.title,
         'photo_path': get_photo_url(ev.id),
         'places':     1 if has_places else 0,
         'date_str':   ev.event_date.strftime(DAY_STR_FORMAT),

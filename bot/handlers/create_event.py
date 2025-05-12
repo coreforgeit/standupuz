@@ -22,6 +22,10 @@ async def edit_event(state: FSMContext, chat_id=None):
     await state.set_state(AdminStatus.CREATE_EVENT)
     data = await state.get_data()
 
+    if conf.debug:
+        for k, v in data.items():
+            print(f'{k}: {v}')
+
     tariff_text = ''
     for tariff in data['tariffs']:
         price_str = f'{tariff["price"]} UZS' if tariff["price"] else ''
@@ -91,7 +95,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             'date': '',
             'time': '',
             'tariffs': [],
-            'type': 'new',
+            'type': action,
             'club': '',
             'ticket_url': '',
         })
@@ -108,7 +112,7 @@ async def create_new_event(cb: CallbackQuery, state: FSMContext):
             'date': '',
             'time': '',
             'tariffs': [],
-            'type': 'edit',
+            'type': action,
             'club': '',
             'event_id': event_id,
             'is_active': event_info.is_active,

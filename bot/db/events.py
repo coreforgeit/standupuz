@@ -96,10 +96,12 @@ class Event(Base):
         is_active: bool = None,
     ) -> None:
         stmt = sa.update(cls)
-        if event_id is not None:
+        if event_id:
             stmt = stmt.where(cls.id == event_id)
-        elif page_id is not None:
+        elif page_id:
             stmt = stmt.where(cls.page_id == page_id)
+        else:
+            return
 
         # apply each update directly
         if title:
