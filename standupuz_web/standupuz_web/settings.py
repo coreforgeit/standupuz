@@ -18,7 +18,19 @@ if DEBUG:
 else:
     TOKEN_BOT = os.getenv('TOKEN')
 
-ALLOWED_HOSTS = ['*']
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['standupcomedy.uz', 'www.standupcomedy.uz', 'standupclub.uz', 'www.standupclub.uz']
+
+    CSRF_TRUSTED_ORIGINS = [
+        'https://standupcomedy.uz',
+        'https://www.standupcomedy.uz',
+        'https://standupclub.uz',
+        'https://www.standupclub.uz',
+    ]
+
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 INSTALLED_APPS = [

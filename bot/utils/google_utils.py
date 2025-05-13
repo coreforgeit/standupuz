@@ -214,36 +214,42 @@ async def google_update(chat_id: int) -> str:
         # 3) обновляем варианты мест
         try:
             options = await ws.get_values("A5:B9")
-            old_opts = await db.Option.get_options(event_id=event.id)
-            row_num = 5
+            if options[0][1][:5] == 'https':
+                await db.Event.update_event(
+                    event_id=event.id,
+                    ticket_url=options[0][1],
+                )
+            else:
+                old_opts = await db.Option.get_options(event_id=event.id)
+                row_num = 5
 
-            for opt in options:
-                option_name, empty_str = opt
-                empty_place = int(empty_str)
-                cell_ref = f"B{row_num}"
+                for opt in options:
+                    option_name, empty_str = opt
+                    empty_place = int(empty_str)
+                    cell_ref = f"B{row_num}"
 
-                formula_cell = await ws.acell(cell_ref, value_render_option=ValueRenderOption.formula)
-                all_place = int(formula_cell.value.split("-")[0].lstrip("="))
+                    formula_cell = await ws.acell(cell_ref, value_render_option=ValueRenderOption.formula)
+                    all_place = int(formula_cell.value.split("-")[0].lstrip("="))
 
-                # ищем существующую опцию по cell
-                matching = [o for o in old_opts if o.cell == cell_ref]
-                if matching:
-                    await db.Option.update_option(
-                        option_id=matching[0].id,
-                        name=option_name,
-                        empty_place=empty_place,
-                        all_place=all_place,
-                        cell=cell_ref,
-                    )
-                else:
-                    await db.Option.add_option(
-                        event_id=event.id,
-                        name=option_name,
-                        empty_place=empty_place,
-                        all_place=all_place,
-                        cell=cell_ref,
-                    )
-                row_num += 1
+                    # ищем существующую опцию по cell
+                    matching = [o for o in old_opts if o.cell == cell_ref]
+                    if matching:
+                        await db.Option.update_option(
+                            option_id=matching[0].id,
+                            name=option_name,
+                            empty_place=empty_place,
+                            all_place=all_place,
+                            cell=cell_ref,
+                        )
+                    else:
+                        await db.Option.add_option(
+                            event_id=event.id,
+                            name=option_name,
+                            empty_place=empty_place,
+                            all_place=all_place,
+                            cell=cell_ref,
+                        )
+                    row_num += 1
 
         except Exception as ex:
             log_error(ex)
