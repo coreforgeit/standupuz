@@ -1,5 +1,7 @@
 // src/pages/AboutPage.jsx
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
+
 import M from 'materialize-css';
 import { API_BASE_URL, API_PATHS } from '../api/config';
 
@@ -39,6 +41,27 @@ export default function AboutPage() {
 
   return (
     <>
+      <Helmet>
+        <title>StandUp - О нас</title>
+        <meta name="description" content={info.text.slice(0, 155)} />
+        <link rel="canonical" href="https://standupcomedy.uz/about" />
+        {/* Open Graph */}
+        <meta property="og:title" content="StandUp - О нас" />
+        <meta property="og:description" content={info.text.slice(0, 155)} />
+        <meta property="og:url" content="https://standupcomedy.uz/about" />
+        <meta property="og:type" content="website" />
+        {/* JSON-LD для организации */}
+        <script type="application/ldjson">{`
+       {
+         "@context": "https://schema.org",
+         "@type": "Organization",
+         "name": "StandUpUz",
+         "url": "https://standupcomedy.uz",
+         "logo": "https://standupcomedy.uz/site/img/WhiteSUz_wof_Png%202.svg"
+       }
+     `}</script>
+      </Helmet>
+
       {/* Mobile Sidenav */}
       <ul id="slide-out" className="sidenav">
         <li>
@@ -122,6 +145,7 @@ export default function AboutPage() {
 
       {/* About Section */}
       <section className="about">
+        {/* <h1>О проекте StandUpUz</h1> */}
         <div className="container">
           <div
             className="about_text"
