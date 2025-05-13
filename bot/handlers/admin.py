@@ -21,7 +21,8 @@ async def as_user(cb: CallbackQuery):
 async def send_message_1(cb: CallbackQuery, state: FSMContext):
     text = '<b>Изменить ивент</b>'
 
-    events = await db.Event.get_events(last_10=True)
+    # events = await db.Event.get_events(last_10=True)
+    events = await db.Event.get_events(active=True)
     await cb.message.edit_text(text, reply_markup=kb.get_10_last_event_kb(events))
 
 

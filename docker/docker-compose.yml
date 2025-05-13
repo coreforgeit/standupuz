@@ -75,6 +75,7 @@ services:
     container_name: nginx_uz
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ../logs/nginx:/var/log/nginx
       - static_volume:/app/staticfiles:ro
