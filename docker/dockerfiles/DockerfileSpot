@@ -3,8 +3,8 @@ FROM node:lts-alpine AS builder
 WORKDIR /app
 
 # 1) Кэшируем зависимости
-#COPY /standupuz_2/package.json .
-#COPY /standupuz_2/package-lock.json .
+COPY /standupuz_2/package.json .
+COPY /standupuz_2/package-lock.json .
 COPY /standupuz_2 .
 
 RUN npm ci
