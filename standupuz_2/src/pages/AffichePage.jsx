@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import M from 'materialize-css'
 import { API_BASE_URL, API_PATHS } from '../api/config'
+import { Helmet } from 'react-helmet'
 // import { fetchInfo } from '../utils/base'
 
 export default function AffichePage() {
@@ -52,6 +53,35 @@ export default function AffichePage() {
 
   return (
     <>
+
+    <Helmet>
+      <title>StandUp - Афиша</title>
+      <meta name="description" content="Расписание ближайших стендап-шоу в Ташкенте от StandUpUz" />
+      <link rel="canonical" href="https://standupcomedy.uz/events" />
+      <meta property="og:title" content="Афиша StandUpUz" />
+      <meta property="og:description" content="Расписание ближайших стендап-шоу в Ташкенте от StandUpUz" />
+      <meta property="og:url" content="https://standupcomedy.uz/events" />
+      <meta property="og:type" content="website" />
+
+       <script type="application/ld+json">{`
+        {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "itemListElement": [
+            ${cards.map((card, idx) => `{
+              "@type": "Event",
+              "position": ${idx + 1},
+              "name": "${card.title}",
+              "startDate": "${card.date_str}T${card.time_str}:00",
+              "url": "https://standupcomedy.uz/event/${card.event_id}"
+            }`).join(',')}
+          ]
+        }
+        `}</script>
+
+    </Helmet>
+
+
       {/* Header */}
       <header className="header">
         <div className="container">
@@ -126,10 +156,11 @@ export default function AffichePage() {
 
       {/* Cards Section */}
       <section className="cards">
+        {/* <h1>Афиша StandUpUz</h1> */}
         <div className="container">
           <div className="cards_grid">
             {cards.map((card, idx) => {
-              const imgPath = card.photo_path.replace(/^\.\.\/+/, '')
+              const imgPath = card.photo_path.replace(/^\.\.\//, '')
               const imageUrl = `${API_BASE_URL}/${imgPath}`
               const href = isMobile
                 ? `/event_mob/${card.event_id}`
@@ -176,7 +207,7 @@ export default function AffichePage() {
 
       {/* Modals */}
       {cards.map((card, idx) => {
-        const imgPath = card.photo_path.replace(/^\.\.\/+/, '')
+        const imgPath = card.photo_path.replace(/^\.\.\//, '')
         const imageUrl = `${API_BASE_URL}/${imgPath}`
         const hasPlaces = card.places > 0
 

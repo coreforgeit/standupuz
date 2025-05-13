@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import M from 'materialize-css';
 import { API_BASE_URL, API_PATHS } from '../api/config';
+import { Helmet } from 'react-helmet';
 
 export default function EventMobPage() {
   const { id } = useParams();
@@ -63,6 +64,35 @@ export default function EventMobPage() {
 
   return (
     <>
+        <Helmet>
+      <title>{card.title} | StandUpUz</title>
+      <meta name="description" content={card.description.replace(/<[^>]+>/g, '').slice(0,155)} />
+      <link rel="canonical" href={`https://standupcomedy.uz/event/${id}`} />
+
+      {/* Open Graph */}
+      <meta property="og:title" content={card.title} />
+      <meta property="og:description" content={card.description.replace(/<[^>]+>/g, '').slice(0,155)} />
+      <meta property="og:image" content={imageUrl} />
+      <meta property="og:url" content={`https://standupcomedy.uz/event/${id}`} />
+      <meta property="og:type" content="event" />
+
+      {/* JSON-LD для события */}
+      <script type="application/ld+json">{`
+      {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": "${card.name}",
+        "startDate": "${card.date_str}T${card.time_str}:00",
+        "location": {
+          "@type": "Place",
+          "name": "${card.place}"
+        },
+        "image": "${imageUrl}",
+        "description": "${card.description.replace(/<[^>]+>/g, '')}"
+      }
+      `}</script>
+    </Helmet>
+
       {/* Mobile sidenav */}
       <ul id="slide-out" className="sidenav">
         <li>
@@ -108,6 +138,7 @@ export default function EventMobPage() {
       {/* Mobile event card (по макету index_affiche_mob.html) :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */}
       <div className="cards_mob">
         <div className="container">
+          {/* <h1>{card.title}</h1> */}
           <div
             className="card_mob_img"
             style={{ backgroundImage: `url(${imageUrl})` }}
