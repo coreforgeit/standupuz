@@ -14,4 +14,4 @@ data
 data.zip
 logs/
 media/
-nginx/conf.d
+/nginx/conf.d/
