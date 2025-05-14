@@ -75,4 +75,6 @@ Thumbs.db
 
 # Exclude all PyCharm project metadata folders
 **/.idea/
+*/migrations/
+/standupuz_web/events/migrations
 
