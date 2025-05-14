@@ -21,7 +21,13 @@ def build_card(ev: Event) -> dict:
     has_places = Option.objects.filter(event_id=ev.id, empty_place__gt=0).exists()
     price_str = str(option.price) if option else '0'
 
-    tg_link = ev.ticket_url if ev.ticket_url else f'https://t.me/standupuz_bot?start={ev.id}'
+    if ev.ticket_url:
+        tg_link = None
+        ticket_url = ev.ticket_url
+    else:
+        tg_link = f'https://t.me/standupuz_bot?start={ev.id}'
+        ticket_url = None
+
     places = 1 if has_places or ev.ticket_url else 0
     places = 1 if has_places else 0
     # if ev.ticket_url:
@@ -39,6 +45,7 @@ def build_card(ev: Event) -> dict:
         'min_amount': f'{price_str[:-3]} {price_str[-3:]}' if len(price_str) > 3 else price_str,
         'description': ev.text.replace('\n', '<br>'),
         'tg_link':    tg_link,
+        'ticket_url': ticket_url,
     }
 
 

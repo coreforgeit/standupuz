@@ -1,7 +1,7 @@
 bot/.env
 standupuz_web/.env
 docker/.env
-data
+/data
 *.env
 *.log
 *.json
