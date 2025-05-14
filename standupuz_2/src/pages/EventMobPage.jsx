@@ -134,8 +134,14 @@ export default function EventMobPage() {
                 <a href="https://t.me/StandUp_UZB" target="_blank" rel="noopener noreferrer">
                   <img src="/site/img/Telegram.svg" alt="Telegram" />
                 </a>
+                <a href="https://t.me/standup_uztg" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/img/Telegram.svg" alt="Instagram" />
+                </a>
+                <a href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/img/youtube.png" alt="Telegram" />
+                </a>
               </div>
-            </div>
+            </div> 
           </div>
         </div>
       </header>

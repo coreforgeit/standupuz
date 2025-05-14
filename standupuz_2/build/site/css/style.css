@@ -313,6 +313,9 @@ body {
     padding-top: 25px;
     margin-bottom: 25px;
 }
+.card_mob_img img{
+    max-width: 100%;
+}
 .mod_img {
     max-width: 440px;
     width: 100%;
