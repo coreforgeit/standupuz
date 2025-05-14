@@ -21,17 +21,15 @@ def build_card(ev: Event) -> dict:
     has_places = Option.objects.filter(event_id=ev.id, empty_place__gt=0).exists()
     price_str = str(option.price) if option else '0'
 
+    places = 1 if has_places else 0
+
     if ev.ticket_url:
         tg_link = None
         ticket_url = ev.ticket_url
+        places = 1
     else:
         tg_link = f'https://t.me/standupuz_bot?start={ev.id}'
         ticket_url = None
-
-    places = 1 if has_places or ev.ticket_url else 0
-    places = 1 if has_places else 0
-    # if ev.ticket_url:
-    #     places = 1
 
     return {
         'event_id':   ev.id,
