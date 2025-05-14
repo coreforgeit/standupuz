@@ -30,7 +30,6 @@ env.bak/
 venv.bak/
 
 # Distribution / packaging
-build/
 dist/
 *.egg-info/
 pip-wheel-metadata/
