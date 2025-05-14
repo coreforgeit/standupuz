@@ -51,10 +51,10 @@ export default function EventMobPage() {
   }
 
   // избавляемся от ведущих "../" в пути
-  const imgPath  = card.photo_path.replace(/^\.\.\//, '');
+  const imgPath = card.photo_path.replace(/^\.\.\//, '');
   const imageUrl = `${API_BASE_URL}/${imgPath}`;
   const hasPlaces = card.places > 0;
-  const copyIcon  = hasPlaces
+  const copyIcon = hasPlaces
     ? '/site/img/btn_mob_copy.svg'
     : '/site/img/btn_mob_copy_notActive.svg';
   const tgBtnStyle = hasPlaces
@@ -64,20 +64,20 @@ export default function EventMobPage() {
 
   return (
     <>
-        <Helmet>
-      <title>{card.title} | StandUpUz</title>
-      <meta name="description" content={card.description.replace(/<[^>]+>/g, '').slice(0,155)} />
-      <link rel="canonical" href={`https://standupcomedy.uz/event/${id}`} />
+      <Helmet>
+        <title>{card.title} | StandUpUz</title>
+        <meta name="description" content={card.description.replace(/<[^>]+>/g, '').slice(0, 155)} />
+        <link rel="canonical" href={`https://standupcomedy.uz/event/${id}`} />
 
-      {/* Open Graph */}
-      <meta property="og:title" content={card.title} />
-      <meta property="og:description" content={card.description.replace(/<[^>]+>/g, '').slice(0,155)} />
-      <meta property="og:image" content={imageUrl} />
-      <meta property="og:url" content={`https://standupcomedy.uz/event/${id}`} />
-      <meta property="og:type" content="event" />
+        {/* Open Graph */}
+        <meta property="og:title" content={card.title} />
+        <meta property="og:description" content={card.description.replace(/<[^>]+>/g, '').slice(0, 155)} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={`https://standupcomedy.uz/event/${id}`} />
+        <meta property="og:type" content="event" />
 
-      {/* JSON-LD для события */}
-      <script type="application/ld+json">{`
+        {/* JSON-LD для события */}
+        <script type="application/ld+json">{`
       {
         "@context": "https://schema.org",
         "@type": "Event",
@@ -91,7 +91,7 @@ export default function EventMobPage() {
         "description": "${card.description.replace(/<[^>]+>/g, '')}"
       }
       `}</script>
-    </Helmet>
+      </Helmet>
 
       {/* Mobile sidenav */}
       <ul id="slide-out" className="sidenav">
@@ -139,10 +139,9 @@ export default function EventMobPage() {
       <div className="cards_mob">
         <div className="container">
           {/* <h1>{card.title}</h1> */}
-          <div
-            className="card_mob_img"
-            style={{ backgroundImage: `url(${imageUrl})` }}
-          />
+          <div className="card_mob_img">
+            <img src={imageUrl} alt={card.place} className="card_mob_img__inner" />
+          </div>
           <p
             className="card_mob_p"
             dangerouslySetInnerHTML={{ __html: card.description }}
