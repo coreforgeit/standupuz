@@ -57,10 +57,15 @@ export default function EventMobPage() {
   const copyIcon = hasPlaces
     ? '/site/img/btn_mob_copy.svg'
     : '/site/img/btn_mob_copy_notActive.svg';
-  const tgBtnStyle = hasPlaces
+  // const tgBtnStyle = hasPlaces
+  //   ? { backgroundColor: 'rgba(247, 225, 226, 1)', color: 'rgba(128, 52, 56, 1)' }
+  //   : { backgroundColor: 'rgba(128, 117, 117, 1)', color: 'rgba(178, 167, 168, 1)' };
+  const tgBtnStyle = (hasPlaces || card.ticket_url)
     ? { backgroundColor: 'rgba(247, 225, 226, 1)', color: 'rgba(128, 52, 56, 1)' }
     : { backgroundColor: 'rgba(128, 117, 117, 1)', color: 'rgba(178, 167, 168, 1)' };
   const tgBtnClass = hasPlaces ? '' : 'disabled';
+  const btnLink = card.ticket_url ? card.ticket_url : card.tg_lin
+  const btnTetx = card.ticket_url ? 'Забронировать места' : 'Забронировать через Telegram'
 
   return (
     <>
@@ -149,14 +154,14 @@ export default function EventMobPage() {
           <div className="card_mob_footer">
             {/* кнопка бронирования */}
             <a
-              href={card.tg_link}
-              className={`card_mob_btn_tg ${!hasPlaces ? 'disabled' : ''}`}
+              href={btnLink}
+              className={`card_mob_btn_tg ${tgBtnClass}`}
               style={tgBtnStyle}
               onClick={e => { if (!hasPlaces) e.preventDefault(); }}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Забронировать через Telegram
+              {btnTetx}
             </a>
 
             {/* кнопка копирования ссылки */}
@@ -174,10 +179,7 @@ export default function EventMobPage() {
               }}
             >
               <img
-                src={hasPlaces
-                  ? '/site/img/btn_mob_copy.svg'
-                  : '/site/img/btn_mob_copy_notActive.svg'
-                }
+                src={copyIcon}
                 alt="Копировать"
               />
             </a>

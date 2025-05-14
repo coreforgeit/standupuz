@@ -54,16 +54,16 @@ export default function AffichePage() {
   return (
     <>
 
-    <Helmet>
-      <title>StandUp - Афиша</title>
-      <meta name="description" content="Расписание ближайших стендап-шоу в Ташкенте от StandUpUz" />
-      <link rel="canonical" href="https://standupcomedy.uz/events" />
-      <meta property="og:title" content="Афиша StandUpUz" />
-      <meta property="og:description" content="Расписание ближайших стендап-шоу в Ташкенте от StandUpUz" />
-      <meta property="og:url" content="https://standupcomedy.uz/events" />
-      <meta property="og:type" content="website" />
+      <Helmet>
+        <title>StandUp - Афиша</title>
+        <meta name="description" content="Расписание ближайших стендап-шоу в Ташкенте от StandUpUz" />
+        <link rel="canonical" href="https://standupcomedy.uz/events" />
+        <meta property="og:title" content="Афиша StandUpUz" />
+        <meta property="og:description" content="Расписание ближайших стендап-шоу в Ташкенте от StandUpUz" />
+        <meta property="og:url" content="https://standupcomedy.uz/events" />
+        <meta property="og:type" content="website" />
 
-       <script type="application/ld+json">{`
+        <script type="application/ld+json">{`
         {
           "@context": "https://schema.org",
           "@type": "ItemList",
@@ -79,7 +79,7 @@ export default function AffichePage() {
         }
         `}</script>
 
-    </Helmet>
+      </Helmet>
 
 
       {/* Header */}
@@ -168,6 +168,10 @@ export default function AffichePage() {
               const modalClass = isMobile ? '' : 'modal-trigger'
               const hasPlaces = card.places > 0
 
+
+              const hasPlacesStyle = hasPlaces
+                ? { background: 'linear-gradient(180deg, #993F43 0%, #803438 100%)' }
+                : { backgroundColor: 'rgba(128,117,117,1)' }
               return (
                 <a
                   key={card.event_id}
@@ -177,9 +181,7 @@ export default function AffichePage() {
                 >
                   <div
                     className="places"
-                    style={hasPlaces
-                      ? { background: 'linear-gradient(180deg, #993F43 0%, #803438 100%)' }
-                      : { backgroundColor: 'rgba(128, 117, 117, 1)' }}
+                    style={hasPlacesStyle}
                   >
                     {hasPlaces ? 'Места есть' : 'Мест нет'}
                   </div>
@@ -211,6 +213,14 @@ export default function AffichePage() {
         const imageUrl = `${API_BASE_URL}/${imgPath}`
         const hasPlaces = card.places > 0
 
+        const hasPlacesStyle = hasPlaces
+          ? { background: 'linear-gradient(180deg, #993F43 0%, #803438 100%)' }
+          : { backgroundColor: 'rgba(128,117,117,1)' }
+
+        const btnText = hasPlaces ? 'Забронировать места' : 'Забронировать через Telegram'
+        const btnLink = card.ticket_url ? card.ticket_url : card.tg_link
+        console.log(`hasPlaces: ${hasPlaces}`)
+
         return (
           <div id={`modal${idx}`} className="modal" key={`modal${idx}`}>
             <div className="modal-content">
@@ -227,35 +237,24 @@ export default function AffichePage() {
                 <img src={imageUrl} className="mod_img" alt={card.place} />
               </div>
               <div className="mod_footer">
-                <a
-                  href={card.tg_link}
-                  className={`btn_tg ${!hasPlaces ? 'disabled' : ''}`}
-                  style={
-                    hasPlaces
-                      ? { background: 'linear-gradient(180deg, #993F43 0%, #803438 100%)' }
-                      : { backgroundColor: 'rgba(128,117,117,1)', color: 'rgba(178,168,168,1)' }
-                  }
-                  onClick={e => !hasPlaces && e.preventDefault()}
-                  onMouseOver={e => {
-                    e.currentTarget.style.background = 'rgba(128, 52, 56, 1)';
-                  }}
-                  onMouseOut={e => {
-                    e.currentTarget.style.background = hasPlaces
-                      ? 'linear-gradient(180deg, #993F43 0%, #803438 100%)'
-                      : 'rgba(128,117,117,1)';
-                  }}
-                >
-                  Забронировать через Telegram
-                </a>
+                {
+                  <a
+                    href={btnLink}
+                    className={`btn_tg ${!hasPlaces ? 'disabled' : ''}`}
+                    style={hasPlacesStyle}
+                    onClick={e => !hasPlaces && e.preventDefault()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {btnText}
+                  </a>
+                }
+
                 <a
                   href="#"
                   className={`btn_copy ${!hasPlaces ? 'disabled' : ''}`}
                   title="Копировать ссылку"
-                  style={
-                    hasPlaces
-                      ? { background: 'linear-gradient(180deg, #993F43 0%, #803438 100%)' }
-                      : { backgroundColor: 'rgba(128,117,117,1)' }
-                  }
+                  style={hasPlacesStyle}
                   onClick={e => {
                     e.preventDefault()
                     if (hasPlaces) {
@@ -307,19 +306,19 @@ export default function AffichePage() {
                 <img src="/site/img/Telegram.svg" alt="Telegram" />
               </a>
               <a
-                  href="https://t.me/standup_uztg"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img src="/site/img/Telegram.svg" alt="Telegram" />
-                </a>
-                <a
-                  href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img src="/site/img/youtube.png" alt="YouTube" />
-                </a>
+                href="https://t.me/standup_uztg"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/site/img/Telegram.svg" alt="Telegram" />
+              </a>
+              <a
+                href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/site/img/youtube.png" alt="YouTube" />
+              </a>
             </div>
           </div>
         </div>
