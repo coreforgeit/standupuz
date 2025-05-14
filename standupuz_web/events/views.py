@@ -22,12 +22,16 @@ def build_card(ev: Event) -> dict:
     price_str = str(option.price) if option else '0'
 
     tg_link = ev.ticket_url if ev.ticket_url else f'https://t.me/standupuz_bot?start={ev.id}'
+    places = 1 if has_places or ev.ticket_url else 0
+    places = 1 if has_places else 0
+    # if ev.ticket_url:
+    #     places = 1
 
     return {
         'event_id':   ev.id,
         'title':   ev.title,
         'photo_path': get_photo_url(ev.id),
-        'places':     1 if has_places else 0,
+        'places':     places,
         'date_str':   ev.event_date.strftime(DAY_STR_FORMAT),
         'time_str':   ev.event_time.strftime(TIME_STR_FORMAT),
         'day_str':    days_of_week.get(ev.event_date.weekday(), ''),

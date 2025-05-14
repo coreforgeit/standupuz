@@ -14,7 +14,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(sa.BigInteger, unique=True, nullable=False)
     full_name: Mapped[str] = mapped_column(sa.String(255), nullable=False)
-    username: Mapped[str] = mapped_column(sa.String(255), nullable=False)
+    username: Mapped[str] = mapped_column(sa.String(255), nullable=True)
     last_visit: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True), nullable=False)
     phone: Mapped[str] = mapped_column(sa.String(255), nullable=True)
 

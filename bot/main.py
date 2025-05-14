@@ -28,6 +28,7 @@ async def main() -> None:
     dp.include_router(main_router)
     dp.include_router(client_router)
     dp.include_router(error_router)
+    # await db.Event.close_old_events()
     await dp.start_polling(bot)
     if not conf.debug:
         await shutdown_schedulers()
