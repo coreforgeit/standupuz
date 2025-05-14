@@ -58,26 +58,26 @@ export default function EventMobPage() {
     ? '/site/img/btn_mob_copy.svg'
     : '/site/img/btn_mob_copy_notActive.svg';
   const tgBtnStyle = hasPlaces
-    ? { background: 'linear-gradient(180deg, #993F43 0%, #803438 100%)' }
-    : { backgroundColor: 'rgba(128, 117, 117, 1)', color: 'rgba(178, 168, 168, 1)' };
+    ? { backgroundColor: 'rgba(247, 225, 226, 1)', color: 'rgba(128, 52, 56, 1)' }
+    : { backgroundColor: 'rgba(128, 117, 117, 1)', color: 'rgba(178, 167, 168, 1)' };
   const tgBtnClass = hasPlaces ? '' : 'disabled';
 
   return (
     <>
       <Helmet>
         <title>{card.title} | StandUpUz</title>
-        <meta name="description" content={card.description.replace(/<[^>]+>/g, '').slice(0, 155)} />
+        <meta name="description" content={card.description.replace(/<[^>]>/g, '').slice(0, 155)} />
         <link rel="canonical" href={`https://standupcomedy.uz/event/${id}`} />
 
         {/* Open Graph */}
         <meta property="og:title" content={card.title} />
-        <meta property="og:description" content={card.description.replace(/<[^>]+>/g, '').slice(0, 155)} />
+        <meta property="og:description" content={card.description.replace(/<[^>]>/g, '').slice(0, 155)} />
         <meta property="og:image" content={imageUrl} />
         <meta property="og:url" content={`https://standupcomedy.uz/event/${id}`} />
         <meta property="og:type" content="event" />
 
         {/* JSON-LD для события */}
-        <script type="application/ld+json">{`
+        <script type="application/ldjson">{`
       {
         "@context": "https://schema.org",
         "@type": "Event",
@@ -88,7 +88,7 @@ export default function EventMobPage() {
           "name": "${card.place}"
         },
         "image": "${imageUrl}",
-        "description": "${card.description.replace(/<[^>]+>/g, '')}"
+        "description": "${card.description.replace(/<[^>]>/g, '')}"
       }
       `}</script>
       </Helmet>
@@ -147,29 +147,40 @@ export default function EventMobPage() {
             dangerouslySetInnerHTML={{ __html: card.description }}
           />
           <div className="card_mob_footer">
+            {/* кнопка бронирования */}
             <a
               href={card.tg_link}
-              className={`card_mob_btn_tg ${tgBtnClass}`}
+              className={`card_mob_btn_tg ${!hasPlaces ? 'disabled' : ''}`}
               style={tgBtnStyle}
-              onClick={e => {
-                if (!hasPlaces) e.preventDefault();
-              }}
+              onClick={e => { if (!hasPlaces) e.preventDefault(); }}
               target="_blank"
               rel="noopener noreferrer"
             >
               Забронировать через Telegram
             </a>
-            <button
-              className="card_mob_btn_copy"
-              onClick={() => {
-                if (hasPlaces) {
-                  navigator.clipboard.writeText(card.tg_link).catch(console.error);
-                }
+
+            {/* кнопка копирования ссылки */}
+            <a
+              href={card.tg_link}
+              className={`card_mob_btn_copy ${!hasPlaces ? 'disabled' : ''}`}
+              title="Копировать ссылку"
+              style={hasPlaces
+                ? { backgroundColor: 'rgba(247, 225, 226, 1)' }
+                : { backgroundColor: 'rgba(128, 117, 117, 1)' }
+              }
+              onClick={e => {
+                e.preventDefault();
+                if (hasPlaces) navigator.clipboard.writeText(card.tg_link).catch(console.error);
               }}
-              aria-label="Копировать ссылку"
             >
-              <img src={copyIcon} alt="Копировать" />
-            </button>
+              <img
+                src={hasPlaces
+                  ? '/site/img/btn_mob_copy.svg'
+                  : '/site/img/btn_mob_copy_notActive.svg'
+                }
+                alt="Копировать"
+              />
+            </a>
           </div>
         </div>
       </div>
