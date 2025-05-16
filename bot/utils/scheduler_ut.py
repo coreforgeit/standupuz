@@ -9,7 +9,7 @@ from enums import Key
 async def start_schedulers():
     scheduler.add_job(
         func=Event.close_old_events,
-        trigger=CronTrigger(hour=5),
+        trigger=CronTrigger(hour=6),
         id=Key.CLOSE_EVENT.value,
         replace_existing=True,
     )

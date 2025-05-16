@@ -131,6 +131,13 @@ export default function AboutPage() {
                   <img src="/site/img/Telegram.svg" alt="Telegram" />
                 </a>
                 <a
+                  href="https://t.me/standup_uztg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="/site/img/Telegram.svg" alt="Telegram" />
+                </a>
+                <a
                   href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -175,6 +182,21 @@ export default function AboutPage() {
                 rel="noopener noreferrer"
               >
                 <img src="/site/img/Telegram.svg" alt="Telegram" />
+              </a>
+
+              <a
+                href="https://t.me/standup_uztg"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/site/img/Telegram.svg" alt="Telegram" />
+              </a>
+              <a
+                href="https://www.youtube.com/channel/UCtDA0xLMJ76jg0vmdk7FZdw"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/site/img/youtube.png" alt="YouTube" />
               </a>
             </div>
           </div>

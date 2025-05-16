@@ -22,13 +22,13 @@ async def main() -> None:
     await set_main_menu()
     if not conf.debug:
         await start_schedulers()
-    # else:
-    #     pass
-    #     await start_schedulers()
+        await db.Event.close_old_events()
+    else:
+        pass
+        await start_schedulers()
     dp.include_router(main_router)
     dp.include_router(client_router)
     dp.include_router(error_router)
-    # await db.Event.close_old_events()
     await dp.start_polling(bot)
     if not conf.debug:
         await shutdown_schedulers()

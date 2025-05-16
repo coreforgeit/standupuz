@@ -139,7 +139,7 @@ class Event(Base):
     async def get_events(cls, active: bool = False, last_10: bool = False) -> list[t.Self]:
         stmt = sa.select(cls)
         if active:
-            stmt = stmt.where(cls.is_active).order_by(cls.event_date)
+            stmt = stmt.where(cls.is_active).order_by(cls.event_date, cls.event_time)
         if last_10:
             stmt = stmt.limit(10).order_by(sa.desc(cls.event_date))
         async with begin_connection() as conn:
