@@ -3,5 +3,6 @@ Allow: /
 
 Disallow: /admin
 Disallow: /api
+Disallow: /event_mob
 
 Sitemap: https://standupcomedy.uz/sitemap.xml

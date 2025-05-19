@@ -8,7 +8,7 @@ import asyncio
 import db
 import keyboards as kb
 from init import client_router, bot
-
+from settings import log_error
 from utils.message_utils import send_event, end_book
 from enums import UserCB, UserStatus
 
@@ -125,12 +125,20 @@ async def book_5(phone: str, user_id: int, first_name: str,  state: FSMContext):
     data = await state.get_data()
 
     await state.set_state(UserStatus.SEND_NAME)
-    await bot.edit_message_text(
-        chat_id=data['chat_id'],
-        message_id=data['message_id'],
-        text='Укажите имя',
-        reply_markup=kb.get_sent_name_kb(first_name),
-        )
+    try:
+        await bot.edit_message_text(
+            chat_id=data['chat_id'],
+            message_id=data['message_id'],
+            text='Укажите имя',
+            reply_markup=kb.get_sent_name_kb(first_name),
+            )
+    except Exception as e:
+        log_error(f'{e} \nИМЯ: {first_name}', wt=False)
+        await bot.edit_message_text(
+            chat_id=data['chat_id'],
+            message_id=data['message_id'],
+            text='Укажите имя'
+            )
 
 
 # принимает телефон цифрой
