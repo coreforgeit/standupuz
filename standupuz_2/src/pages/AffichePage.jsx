@@ -219,7 +219,6 @@ export default function AffichePage() {
 
         const btnText = hasPlaces ? 'Забронировать места' : 'Забронировать через Telegram'
         const btnLink = card.ticket_url ? card.ticket_url : card.tg_link
-        console.log(`hasPlaces: ${hasPlaces}`)
 
         return (
           <div id={`modal${idx}`} className="modal" key={`modal${idx}`}>

@@ -160,10 +160,11 @@ export default function EventMobPage() {
           <div className="card_mob_footer">
             {/* кнопка бронирования */}
             <a
-              href={btnLink}
+              href={card.tg_link}
               className={`card_mob_btn_tg ${tgBtnClass}`}
               style={tgBtnStyle}
               onClick={e => { if (!hasPlaces) e.preventDefault(); }}
+              // onClick={e => { if (!hasPlaces) e.preventDefault(); }}
               target="_blank"
               rel="noopener noreferrer"
             >
