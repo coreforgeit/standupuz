@@ -5,7 +5,7 @@
 >
   <!-- Главная страница -->
   <url>
-    <loc>https://standupcomedy.uz/events</loc>
+    <loc>https://standupcomedy.uz/events/</loc>
     <lastmod>2025-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -13,7 +13,7 @@
 
   <!-- Страница "О проекте" -->
   <url>
-    <loc>https://standupcomedy.uz/about</loc>
+    <loc>https://standupcomedy.uz/about/</loc>
     <lastmod>2025-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
