@@ -173,7 +173,7 @@ class Event(Base):
     @classmethod
     async def close_old_events(cls) -> None:
         now = datetime.now(conf.tz)
-        log_error(f'close_old_events start: {now}')
+        log_error(f'close_old_events start: {now}', wt=False)
         stmt = sa.update(cls).where(cls.event_date < now.date()).values(is_active=False)
         async with begin_connection() as conn:
             try:
