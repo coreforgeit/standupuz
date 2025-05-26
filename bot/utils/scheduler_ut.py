@@ -1,4 +1,5 @@
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 
 from db import Event
 from init import scheduler, redis_client_1
@@ -14,6 +15,12 @@ async def start_schedulers():
         id=Key.CLOSE_EVENT.value,
         replace_existing=True,
     )
+    scheduler.add_job(
+        func=print_scheduled_jobs,
+        trigger=IntervalTrigger(hours=1),
+        id='print_scheduled_jobs',
+        replace_existing=True,
+    )
     scheduler.start()
     print_scheduled_jobs()
 
@@ -21,6 +28,7 @@ async def start_schedulers():
 # тормозит планировщики
 async def shutdown_schedulers():
     scheduler.remove_job(job_id=Key.CLOSE_EVENT.value)
+    scheduler.remove_job(job_id='print_scheduled_jobs')
     scheduler.shutdown()
 
 
