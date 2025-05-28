@@ -114,7 +114,7 @@ async def create_new_page(date: str, time: str, title: str, tariffs: list[dict] 
     await safe_update(worksheet=page, cell_range=f'D4:E4', values=[['Текст 2', info.text_2]])
 
     await safe_merge(worksheet=page, cell_range=f'E7:J9')
-    await safe_update(worksheet=page, cell_range=f'D1:E1', values=[['Финальный текст', info.text_3]])
+    await safe_update(worksheet=page, cell_range=f'D7:E7', values=[['Финальный текст', info.text_3]])
 
     # таблица гостей
     head_list = [['ID', 'Мест', 'Опции', 'Имя', 'Username', 'Телефон', 'Ссылка', 'Оплатил', 'Примечание', 'Откуда']]
