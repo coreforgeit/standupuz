@@ -149,7 +149,6 @@ export default function EventMobPage() {
       {/* Mobile event card (по макету index_affiche_mob.html) :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */}
       <div className="cards_mob">
         <div className="container">
-          {/* <h1>{card.title}</h1> */}
           <div className="card_mob_img">
             <img src={imageUrl} alt={card.place} className="card_mob_img__inner" />
           </div>
@@ -160,7 +159,8 @@ export default function EventMobPage() {
           <div className="card_mob_footer">
             {/* кнопка бронирования */}
             <a
-              href={card.tg_link}
+              // href={card.tg_link}
+              href={btnLink}
               className={`card_mob_btn_tg ${tgBtnClass}`}
               style={tgBtnStyle}
               onClick={e => { if (!hasPlaces) e.preventDefault(); }}
@@ -173,7 +173,8 @@ export default function EventMobPage() {
 
             {/* кнопка копирования ссылки */}
             <a
-              href={card.tg_link}
+              // href={card.tg_link}
+              href={btnLink}
               className={`card_mob_btn_copy ${!hasPlaces ? 'disabled' : ''}`}
               title="Копировать ссылку"
               style={hasPlaces

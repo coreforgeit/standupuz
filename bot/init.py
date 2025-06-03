@@ -4,7 +4,7 @@ from aiogram import Bot
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
-from apscheduler.jobstores.redis import RedisJobStore
+from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.executors.asyncio import AsyncIOExecutor
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -36,7 +36,7 @@ redis_client_1 = redis.StrictRedis(host=conf.redis_host, port=conf.redis_port, d
 
 scheduler = AsyncIOScheduler(
     jobstores={
-        'default': RedisJobStore(host=conf.redis_host, port=conf.redis_port, db=1)
+        'default': MemoryJobStore()
     },
     executors={
         'default': AsyncIOExecutor()
