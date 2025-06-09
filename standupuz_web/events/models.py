@@ -34,7 +34,12 @@ class Event(models.Model):
 # тарифы ивентов
 class Option(models.Model):
     id = models.AutoField ('ID', primary_key=True)
-    event_id = models.IntegerField ('ID ивента')
+    # event_id = models.IntegerField ('ID ивента')
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name='options'
+    )
     name = models.CharField ('Название', max_length=255)
     empty_place = models.IntegerField ('Осталось мест', null=True, blank=True)
     all_place = models.IntegerField ('Всего мест', null=True, blank=True)
@@ -101,6 +106,40 @@ class User(models.Model):
         verbose_name_plural = 'Пользователи (бот)'
         db_table = 'users'
         managed = False
+
+
+class Order(models.Model):
+    id = models.AutoField ('ID', primary_key=True)
+    created_at = models.DateTimeField()
+    # user_id = models.BigIntegerField()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='orders'
+    )
+    phone = models.CharField(max_length=255)
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name='orders'
+    )
+    page_id = models.BigIntegerField()
+    option = models.CharField(
+        'Option',
+        max_length=255,
+        db_column='option_name'
+    )
+    count_place = models.IntegerField()
+    in_table = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Билет'
+        verbose_name_plural = 'Билеты'
+        db_table = 'orders'
+        managed = False
+
+    def __str__(self):
+        return f'Order #{self.pk} for Event {self.event}'
 
 
 class LogError(models.Model):

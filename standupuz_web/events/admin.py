@@ -1,11 +1,29 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin, TabularInline
 
-from .models import Event, Option, Info, InfoBot, User, LogError
+from .models import Event, Option, Info, InfoBot, User, LogError, Order
+
+
+class OrderInline(TabularInline):
+    model = Order
+    extra = 0
+    fk_name = 'event'
+    fields = ('user', 'phone', 'option', 'count_place', 'in_table', 'created_at')
+    tab = True
+
+
+class OptionInline(TabularInline):
+    model = Option
+    extra = 0
+    fk_name = 'event'
+    fields = ('name', 'price', 'empty_place', 'all_place')
+    tab = True
 
 
 @admin.register(Event)
 class ViewAdminEvent(ModelAdmin):
+    inlines = [OptionInline, OrderInline]
+    # inlines = [OptionInline]
     list_display = ['title', 'event_date', 'event_time']
     readonly_fields = ['entities', 'created_at', 'photo_id']
 
