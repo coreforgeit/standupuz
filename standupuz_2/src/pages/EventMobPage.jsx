@@ -64,8 +64,9 @@ export default function EventMobPage() {
     ? { backgroundColor: 'rgba(247, 225, 226, 1)', color: 'rgba(128, 52, 56, 1)' }
     : { backgroundColor: 'rgba(128, 117, 117, 1)', color: 'rgba(178, 167, 168, 1)' };
   const tgBtnClass = hasPlaces ? '' : 'disabled';
-  const btnLink = card.ticket_url ? card.ticket_url : card.tg_lin
+  const btnLink = card.ticket_url ? card.ticket_url : card.tg_link
   const btnTetx = card.ticket_url ? 'Забронировать места' : 'Забронировать через Telegram'
+
 
   return (
     <>
@@ -183,7 +184,7 @@ export default function EventMobPage() {
               }
               onClick={e => {
                 e.preventDefault();
-                if (hasPlaces) navigator.clipboard.writeText(card.tg_link).catch(console.error);
+                if (hasPlaces) navigator.clipboard.writeText(btnLink).catch(console.error);
               }}
             >
               <img

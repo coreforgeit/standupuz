@@ -28,7 +28,7 @@ async def start_schedulers():
 # тормозит планировщики
 async def shutdown_schedulers():
     scheduler.remove_job(job_id=Key.CLOSE_EVENT.value)
-    scheduler.remove_job(job_id='print_scheduled_jobs')
+    # scheduler.remove_job(job_id='print_scheduled_jobs')
     scheduler.shutdown()
 
 

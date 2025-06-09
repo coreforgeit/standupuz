@@ -264,7 +264,7 @@ async def add_new_order_in_table(
             raise ValueError(f"Worksheet with id {page_id} not found")
 
         # считываем существующие строки C11:C200
-        client_table = await page.get_values("C11:C200")
+        client_table = await page.get_values("E11:E200")
         empty_row = len(client_table) + 11
         for idx, row in enumerate(client_table):
             if row == ["-"] or row == []:
@@ -283,7 +283,7 @@ async def add_new_order_in_table(
         cell_range = f"C{empty_row}:I{empty_row}"
 
         # небольшая пауза перед записью
-        await asyncio.sleep(1)
+        # await asyncio.sleep(1)
         await safe_update(page, cell_range, row_values)
 
     except Exception as ex:
