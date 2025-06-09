@@ -109,28 +109,29 @@ class User(models.Model):
 
 
 class Order(models.Model):
-    id = models.AutoField ('ID', primary_key=True)
-    created_at = models.DateTimeField()
-    # user_id = models.BigIntegerField()
+    id = models.AutoField('ID', primary_key=True)
+    created_at = models.DateTimeField('Дата создания')
     user = models.ForeignKey(
         User,
+        verbose_name='Пользователь',
         on_delete=models.CASCADE,
         related_name='orders'
     )
-    phone = models.CharField(max_length=255)
+    phone = models.CharField('Телефон', max_length=255)
     event = models.ForeignKey(
         Event,
+        verbose_name='Событие',
         on_delete=models.CASCADE,
         related_name='orders'
     )
-    page_id = models.BigIntegerField()
+    page_id = models.BigIntegerField('ID страницы')
     option = models.CharField(
-        'Option',
+        'Вариант',
         max_length=255,
         db_column='option_name'
     )
-    count_place = models.IntegerField()
-    in_table = models.BooleanField(default=False)
+    count_place = models.IntegerField('Количество мест')
+    in_table = models.BooleanField('В таблице', default=False)
 
     class Meta:
         verbose_name = 'Билет'
@@ -139,7 +140,7 @@ class Order(models.Model):
         managed = False
 
     def __str__(self):
-        return f'Order #{self.pk} for Event {self.event}'
+        return f'Билет #{self.pk} на событие {self.event}'
 
 
 class LogError(models.Model):
