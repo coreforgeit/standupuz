@@ -258,7 +258,6 @@ async def edit_event_2(cb: CallbackQuery, state: FSMContext):
 async def create_new_event(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     try:
-
         if data['type'] == Action.NEW.value:
 
             if data['title'] == '':

@@ -41,6 +41,14 @@ async def end_book(data: dict):
 
     i = 0
     try:
+        text = f'Новая бронь:\n' \
+               f'{option_info.name} - {data["count_place"]}\n' \
+               f'{data["event_title"]}\n' \
+               f'{data["name"]}\n' \
+               f'{data["phone"]}\n'
+
+        await bot.send_message(conf.admin_group_id, text)
+
         await add_new_order_in_table(
             count_place=data['count_place'],
             option=option_info.name,
@@ -52,13 +60,6 @@ async def end_book(data: dict):
         )
         in_table = True
         await db.Order.update_order(order_id=order_id, in_google=True)
-        text = f'Новая бронь:\n' \
-               f'{option_info.name} - {data["count_place"]}\n' \
-               f'{data["event_title"]}\n' \
-               f'{data["name"]}\n' \
-               f'{data["phone"]}\n'
-
-        await bot.send_message(conf.admin_group_id, text)
 
     except Exception as ex:
         i += 1
