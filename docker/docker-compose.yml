@@ -93,6 +93,7 @@ services:
       - ../standupuz_2/build:/usr/share/nginx/html
       - ../photo:/usr/share/nginx/html/site/photo
 
+    restart: unless-stopped
     depends_on:
       - api
 
