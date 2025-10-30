@@ -4,6 +4,13 @@ import db
 from enums import UserCB, BaseCB, Action
 
 
+# назад к старту
+def get_back_start_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(text='🔙 Назад', callback_data=BaseCB.BACK_COM_START.value)
+    return kb.adjust(1).as_markup()
+
+
 # список ивентов
 def get_events_list_kb(events: list[db.Event]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()

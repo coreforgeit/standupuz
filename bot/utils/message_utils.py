@@ -10,6 +10,16 @@ from utils.entities_utils import recover_entities
 
 async def send_event(event_id: int, user_id: int, from_start: bool = False) -> None:
     event_info = await db.Event.get_event(event_id)
+
+    if not event_info.is_active:
+        text = '❌ Мероприятие не доступно'
+        await bot.send_photo(
+            chat_id=user_id,
+            caption=text,
+            reply_markup=kb.get_back_start_kb()
+        )
+        return
+
     entities = recover_entities(event_info.entities)
     options = await db.Option.get_options(event_id)
 
